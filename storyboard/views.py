@@ -795,7 +795,7 @@ def signform(request):
 
 ####register all students with their andrewids and passwords
 def batchregister():
-    data =  pd.read_csv("group2.csv")
+    data =  pd.read_csv("userlist.csv")
     for i in range(len(data)):
         entry = data.iloc[i]
         andrewid = entry["andrewid"].strip()
