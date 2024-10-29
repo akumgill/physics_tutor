@@ -1,0 +1,47 @@
+{% extends "storyboard/nobase.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class = "col-sm-12 consentform">
+    <form class = "form-horizontal" method = "post" action = "{% url 'signform' %}">
+<h1>Consent</h1>
+<h3>Welcome to this research project that aims at improving learning experience in this course.</h3>
+
+<ol>
+    <li>The activity in this research is part of the regular curriculum for this course. You will complete this assignment and get credit as you do for other assignments. Consenting to participate in this research simply means researchers will have access to the data you produce from this assignment for use in improving the assignment for future classes.</li>
+    <li>You are free to choose not to participate in this research.  In that case, you will still be required to do the assignment, but your data will not be used to improve the course. Choosing not to participate will not harm your grade in this course in any way.</li>
+    <li>The data collected as part of this research will include the log and written data of this assignment, your grades in mid-term and the final exam that relate to the topic of think-aloud protocol. Please note that the course instructor will make the data anonymous before she hands over the data to the researchers.</li>
+    <li>After the study, we may share the de-identified data with other researchers inside and outside CMU, through CMU's DataShop repository to enable further research into student learning behavior. Again, all data researchers will ever access in the entire process is anonymized.</li>
+    <li>If you have questions pertaining to your rights as a research participant; or to report concerns to this study, you should contact the Office of Research Integrity and Compliance at Carnegie Mellon University. Email: irb-review@andrew.cmu.edu. Phone: 412-268-5460 </li>
+
+</ol>
+
+Please check all statements that apply.(Please note that you only need to read this once.)
+
+<table>
+<tr><td>
+<label>I am age 18 or older.</label>{{consentform.olderthan18}}</td></tr>
+<tr><td><label>I have read and understood the information above.</label>{{consentform.readinfo}}</td></tr>
+<tr><td><label>I agree to give researchers access to my de-identified data.</label>{{consentform.access}}</td></tr>
+<tr><td><label>I do not agree to give researchers access to my de-identified data.</label>{{consentform.noaccess}}</td></tr>
+
+<!-- <tr><td><label>I want to participate in this study and continue the task.</label>{{consentform.consent}}</td></tr> -->
+    {% if consentform.errors %}
+        <p style="color:red">
+            {{consentform.errors}}
+       </p>
+
+    
+    {% endif %}
+
+</table>
+{% csrf_token %}
+<input type="submit" class = "btn main" value="Submit">
+
+</div>
+</form>
+</div>
+
+
+{% endblock %}

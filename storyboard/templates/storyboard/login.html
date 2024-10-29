@@ -1,0 +1,33 @@
+{% extends "storyboard/nobase.html" %}
+
+{% load static %}
+
+{% block content %}
+    {% if form.errors %}
+        <p style="color:red">
+            Incorrect Andrew ID. Please use your Andrew ID as both username and password to login.
+        </p>
+    {% endif %}
+
+<div class = "col-sm-12">
+    <strong>Please use your Andrew ID as both username and password to login. <br>E.g., if your Andrew ID is abc, please type abc for both username and password.</strong>
+
+    <p>Note: If you are in Section A, Section D, or Section E. This activity will become available at midnight of Nov. 15.</p>
+    <br><br>
+    <form method = "post" action = "{% url 'login' %}">
+        <div class = "form-group">
+            <label>{{form.username.label_tag}}</label>
+            {{form.username}}
+        </div>
+        <div class= "form-group">
+            <label>{{form.password.label_tag}}</label>
+            {{form.password}}
+        </div>
+        <input type="submit" class = "btn main" value="Login">
+
+    {% csrf_token %} 
+    </form>
+
+</div>
+
+{% endblock %}

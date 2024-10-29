@@ -1,0 +1,150 @@
+body{
+font-size: 12pt;
+font-family: OpenSans,Arial,sans-serif;
+}
+
+
+h3 span{
+  font-size: 12pt;
+  font-family: OpenSans,Arial,sans-serif;
+
+}
+
+h2 span{
+  font-size: 12pt;
+}
+
+img {
+  max-height: 90%;
+
+  max-width: 90%;
+    border :1pt;
+  border-style: dashed;
+  border-color:  #4F67AE;
+}
+
+
+.questiontitle{
+
+    border-top: 1pt solid black;
+
+}
+
+.backgroundinfo{
+  margin-top: 10pt;
+}
+
+#id_response{
+  list-style-type: none;
+  font-size: 12pt;
+  font-weight: normal;
+
+}
+
+
+ul{
+  list-style:none;
+    padding-left:0;
+}
+
+
+label{
+
+  font-weight: normal
+}
+input{
+  font-weight: normal;
+
+}
+
+.crop{
+  /*width: 300px;*/
+  /*height:300px;*/
+  /*width: auto;*/
+  /*height: auto;*/
+  /*max-width: 300px;*/
+  /*max-height: 300px;*/
+
+
+
+
+  /*width: 100%;*/
+  /*height: 100%;*/
+  margin:8px;
+
+}
+
+.smallcrop{
+
+  max-width: 800px;
+  max-height: 800px;
+  width: auto;
+  height: auto;
+  padding:0;
+}
+
+.left-nav{
+    list-style-type: none;
+    margin:0;
+    padding: 0;
+    background-color: #f1f1f1;
+}
+
+.left-nav-a{
+    display: block;
+    color: #000;
+    padding: 8pt 16pt;
+    text-decoration: none;
+}
+
+.left-nav-a:hover{
+    background-color: #4F67AE;
+    color: white;
+
+}
+
+.active{
+    background-color: #4F67AE;
+    color: white;
+}
+
+
+table
+{
+    font-size: 18px;
+}
+
+
+/*used for btn main*/
+.main{
+  background: #4F67AE;
+  color:white;
+  text-align:center;
+}
+
+.main:hover,
+.main:focus {
+  background: #4F67AE !important;
+}
+
+
+
+.borderdiv{
+  border :1pt solid black;
+}
+.rightborder{
+  border-right :1pt solid black;
+}
+.leftborder{
+  border-left :1pt solid black;
+}
+.consentform{
+    border:1pt solid black;
+    background-color: #f1f1f1;
+
+}
+
+.textinput{
+  width: 300pt;
+  height: 100pt;
+}

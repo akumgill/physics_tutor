@@ -1,0 +1,182 @@
+{% extends "storyboard/base.html" %}
+
+{% load static %}
+{% static "" as baseUrl %}
+
+{% block user-info %}
+<div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
+{% endblock %}
+
+{% block content %}
+
+    <div class = "col-sm-12 backgroundinfo">
+<p>In this activity, imagine your peers are designing Storyboards to improve users' transportation experience around CMU. They first identified a list of user needs and then designed Storyboards to address the needs. For each user need, they created three storyboards that are "safe", "riskier", and "out there" ideas. Your task is to evaluate whether each set of the three storyboards follows the <strong>progression of increasing riskiness.</strong></p>
+
+
+
+
+    </div>
+
+
+    <div class = "col-sm-12">
+    <h1>Question {{pageid|add:1}} out of {{section.numberofquestions}}</h1>
+    </div>
+    
+    <form class = "form-horizontal" method = "post" action = "{% url 'nextpage3' %}">
+    <div class = "col-sm-12">
+     <br><br>
+    <p><strong>This set of Storyboards addresses the following user need:</strong></p>
+    {{question.question_stem|safe}}
+    <br><br>
+
+
+
+    <div class = "col-sm-12 crop">
+    <p>Safe design:</p><br>
+    <img src="/static/storyboard/images/{{image0}}"></img>
+    <br>
+    <br>
+
+    </div>
+
+    <div class = "col-sm-12 crop">
+    <p>Riskier design:</p><br>
+    <img src="/static/storyboard/images/{{image1}}"></img>
+    <br>
+    <br>
+
+    </div>
+
+    <div class = "col-sm-12 crop">
+    <p>"Out there" design:</p><br>
+    <img src="/static/storyboard/images/{{image2}}"></img>
+    <br>
+    <br>
+
+    </div>
+
+    
+    </div>
+    <div class = "col-sm-12">
+    <h4><strong>Does this set of three storyboards follow the progression of safe, riskier, and "out there" ideas?</strong></h4>
+    </div>
+    <div class = "col-sm-12">
+    {{form.response}}
+    </div>
+
+    <div class = "col-sm-12" id = "feedbackmessage">
+        {% if attempted %}
+        {{feedbackmessage|safe}}
+        {% endif %}
+    </div>
+    <div class = "col-sm-12">
+
+    {{form.justification}}
+    </div>
+
+    <div class = "col-sm-12">
+    <input type="hidden" name="pageid" id = "pageid" value = "{{pageid}}">
+    <input type="hidden" name="questionid" id = "questionid" value = "{{question.id}}">
+    <input type="hidden" name="sectionid" id = "sectionid" value = "{{section.pk}}">
+    <input type = "hidden" name = "attempted" id = "attempted" value = "{{attempted}}">
+
+    </div>
+
+
+    <div class = "col-sm-12" id = "nextquestion" style = "visibility:hidden;">
+    <button class = "btn main" id = "nextquestion">Next Question</button>
+    </div>
+    {% csrf_token %}
+    </form>
+    <div class = "col-sm-12" id = "checkanswerdiv">
+    <button class = "btn main" id = "checkanswer">Check Answer</button>
+    </div>
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    var sectionid = document.getElementById("sectionid").value;
+    section_a_name = "section"+sectionid+"_a";
+    var section_a = document.getElementById(section_a_name);
+    section_a.className+=" active";
+
+
+        var attempted = document.getElementById("attempted").value;
+        if (attempted == "True"){
+            document.getElementById("checkanswerdiv").style.visibility = "hidden";  
+            document.getElementById("nextquestion").style.visibility = "visible";  
+            document.getElementById("id_response_0").disabled = true;
+            document.getElementById("id_response_1").disabled = true;
+            document.getElementById("id_response_2").disabled = true;
+            document.getElementById("id_response_3").disabled = true;
+        }
+
+
+
+    $("#checkanswer").on("click", function(){
+        console.log("here");
+        var $form = $("form");
+        var data = getFormData($form);
+        if(!("response" in data)){
+            alert("Please answer the question.");
+        }
+        else{
+        $.ajax({
+            url: "/storyboard/imagefeedback3",
+            type:"POST",
+            data: data,
+            dataType: "json",
+            success: function(response){
+                        if (response.alertmessage == "True"){
+            alert("You are not allowed to modify your answers. Previous answers and feedback are shown.")
+             location.reload(true);       }
+
+             else{
+    
+            $('#feedbackmessage').empty();
+            $('#feedbackmessage').append(response.feedbackmessage);
+            document.getElementById("checkanswerdiv").style.visibility = "hidden";  
+            document.getElementById("nextquestion").style.visibility = "visible";  
+            document.getElementById("id_response_0").disabled = true;
+            document.getElementById("id_response_1").disabled = true;
+
+            }
+}
+        });
+    }
+
+
+    });
+
+});
+
+
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+
+    });
+    return indexed_array
+}
+
+function getCSRFToken(){
+    var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+        cookieitem = cookies[i].trim();
+        if (cookieitem.startsWith("csrftoken=")) {
+            return cookieitem.substring("csrftoken=".length, cookieitem.length);
+        }
+    }
+    return "unknown";
+}
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "storyboard/base.html" %}
+
+{% load static %}
+                    {% block user-info %}
+                    <div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
+                    {% endblock %}
+
+{% block content %}
+<div class = "col-sm-12">
+<h1>Instructions</h1>
+<p>
+This assignment is composed of four sections. Please click on the left navigation bar to go to each corresponding section.</p> 
+</div>
+<div class = "col-sm-12">
+    <h1>Progress</h1>
+    <p style = "color: green;">
+    {% for item in displaylist %}
+    <h4><strong>{{item.section.sectionname}} Score : </strong><span><label style=" color:green;"> {{item.score}}</label> / {{item.section.numberofquestions}} </span></h4>
+    {% endfor %}
+    </p>
+
+</div>
+
+{% endblock %}
