@@ -224,7 +224,7 @@ def section1_questionpage(request, id):
         imagelist.append(image_v.strip())
         context["imagelist"] = imagelist
 
-    return render(request, 'storyboard/questionpage.html', context)
+    return render(request, 'storyboard/questionpage_test.html', context)
 
 
 @login_required
@@ -795,7 +795,7 @@ def signform(request):
 
 ####register all students with their andrewids and passwords
 def batchregister():
-    data =  pd.read_csv("group2.csv")
+    data =  pd.read_csv("userlist.csv")
     for i in range(len(data)):
         entry = data.iloc[i]
         andrewid = entry["andrewid"].strip()
@@ -808,7 +808,7 @@ def batchregister():
     return successmessage        
 
 def batchregister_group1():
-    data =  pd.read_csv("group1.csv")
+    data =  pd.read_csv("userlist.csv")
     for i in range(len(data)):
         entry = data.iloc[i]
         andrewid = entry["andrewid"].strip()

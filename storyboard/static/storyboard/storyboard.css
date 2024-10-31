@@ -1,13 +1,12 @@
 body{
-font-size: 12pt;
-font-family: OpenSans,Arial,sans-serif;
+  font-size: 12pt;
+  font-family: OpenSans,Arial,sans-serif;
 }
 
 
 h3 span{
   font-size: 12pt;
   font-family: OpenSans,Arial,sans-serif;
-
 }
 
 h2 span{
@@ -147,4 +146,131 @@ table
 .textinput{
   width: 300pt;
   height: 100pt;
+}
+
+.entire-panel {
+  width: 100%;
+  display: flex;
+  border: 2px solid #00000000;
+}
+
+.left-panel, .right-panel {
+  width: 50%;
+  box-sizing: border-box;
+  border: 1px solid #00000000;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.question, .options, .submit-section, .hint {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.question, .hint {
+  padding: 5px;
+  /* border: 1px solid #ccc; */
+}
+
+.option-figure {
+  display: flex;
+  text-align: left;
+  width: 100%;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  width: 50%;
+}
+
+.option {
+  display: flex;
+  text-align: left;
+  padding: 5px;
+  /* border: 1px solid #ccc; */
+  cursor: pointer;
+}
+
+.option-value {
+  padding-left: 10px;
+}
+
+.figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
+
+img {
+  border: none;
+}
+
+.submit-section {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-section {
+  /* padding: 20px; */
+  border: 1px solid #ccc;
+  height: 150px;
+}
+
+.hint-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.knowledge-stars {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: left;
+  gap: 5px;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.knowledge {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.stars {
+  display: flex;
+  gap: 3px;
+  width: 50%;
+}
+
+.star {
+  width: 18px;
+  height: 18px;
+  background-color: rgb(25, 25, 25);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.starless {
+  width: 18px;
+  height: 18px;
+  background-color: rgb(208, 208, 208);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
