@@ -15,34 +15,22 @@
             <!-- Question Section -->
             <div class="question">
                 <!-- Add Question Content Here -->
-                Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?
+                <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
+                {{ question }}
             </div>
 
             <div class="option-figure">
             <!-- Options Section (Multiple Choice) -->
                 <form class="options">
+                    {% csrf_token %}
+                    {% for choice in choices_question %}
                     <label class="option">
-                        <input type="radio" name="answer" value="option1">
-                        <div class="option-value">4.8 m</div>
+                        <input type="radio" name="answer" value="{{ choice }}">
+                        <div class="option-value">{{ choice }}</div>
                     </label>
-                    <label class="option">
-                        <input type="radio" name="answer" value="option2">
-                        <div class="option-value">6.4 m</div>
-                    </label>
-                    <label class="option">
-                        <input type="radio" name="answer" value="option3">
-                        <div class="option-value">8.0 m</div>
-                    </label>
-                    <label class="option">
-                        <input type="radio" name="answer" value="option4">
-                        <div class="option-value">12.5 m</div>
-                    </label>
-                    <label class="option">
-                        <input type="radio" name="answer" value="option5">
-                        <div class="option-value">16.0 m</div>
-                    </label>
+                    {% endfor %}
                 </form>
-                <div class="figure"><img src="/static/storyboard/images/Q1/Q1_fig.png"/></div>
+                <div class="figure"><img src="/static/storyboard/images/{{ question_img_url }}"/></div>
             </div>
 
             <!-- Submit Section -->
@@ -54,46 +42,18 @@
             <!-- Knowledge Components Section -->
             <div class="knowledge-section">
                 <h3>Knowledge Components:</h3>
+
+                {% for kc in knowledge_components %}
                 <div class="knowledge-stars">
-                    <div class="knowledge">Understand Problem</div>
+                    <div class="knowledge">{{ kc.knowledge }}</div>
                     <div class="stars">
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="starless"></div>
+                        {% for star in kc.stars %}
+                        <div class="{{ star }}"></div>
+                        {% endfor %}
                     </div>
                 </div>
-                <div class="knowledge-stars">    
-                    <div class="knowledge">Split into Components</div>
-                    <div class="stars">
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                    </div>
-                </div>
-                <div class="knowledge-stars">     
-                    <div class="knowledge">Apply Relevant Equations</div>
-                    <div class="stars">
-                        <div class="star"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                    </div>
-                </div>
-                <div class="knowledge-stars">     
-                    <div class="knowledge">Perform algebra and arithmetic</div>
-                    <div class="stars">
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                        <div class="starless"></div>
-                    </div>
-                </div>
+                {% endfor %}
+
             </div>
         </div>
 
@@ -108,50 +68,22 @@
                 <!-- Question Section -->
                 <div class="hint">
                     <!-- Add Question Content Here -->
-                    Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?
+                    <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
+                    {{ hint }}
                 </div>
 
                 <div class="option-figure">
                 <!-- Options Section (Multiple Choice) -->
                     <form class="options">
+                        {% csrf_token %}
+                        {% for choice in choices_hint %}
                         <label class="option">
-                            <input type="radio" name="answer" value="option1">
-                            <div class="option-value">
-                                \(v_{0,x} = 25 \sin(30^o) m/s\) <br>
-                                \(v_{0,y} = 25 \sin(30^o) m/s\)
-                            </div>
-                            
+                            <input type="radio" name="answer" value="{{ choice|safe }}">
+                            <div class="option-value">{{ choice|safe }}</div>
                         </label>
-                        <label class="option">
-                            <input type="radio" name="answer" value="option2">
-                            <div class="option-value">
-                                \(v_{0,x} = 25 \sin(30^o) m/s\) <br>
-                                \(v_{0,y} = 25 \tan(30^o) m/s\)
-                            </div>
-                        </label>
-                        <label class="option">
-                            <input type="radio" name="answer" value="option3">
-                            <div class="option-value">
-                                \(v_{0,x} = 25 \cos(30^o) m/s\) <br>
-                                \(v_{0,y} = 25 \sin(30^o) m/s\)
-                            </div>
-                        </label>
-                        <label class="option">
-                            <input type="radio" name="answer" value="option4">
-                            <div class="option-value">
-                                \(v_{0,x} = 25 \tan(30^o) m/s\) <br>
-                                \(v_{0,y} = 25 \sin(30^o) m/s\)
-                            </div>
-                        </label>
-                        <label class="option">
-                            <input type="radio" name="answer" value="option5">
-                            <div class="option-value">
-                                \(v_{0,x} = 25 m/s\) <br>
-                                \(v_{0,y} = 0 m/s\)
-                            </div>
-                        </label>
+                        {% endfor %}
                     </form>
-                    <div class="figure"><img src="/static/storyboard/images/Q1/Q1_fig_hint1.png"/></div>
+                    <div class="figure"><img src="/static/storyboard/images/{{ hint_img_url }}"/></div>
                 </div>
 
             </div>
@@ -160,7 +92,7 @@
             <h3>Feedback:</h3>
             <div class="feedback-section">
                 <!-- Add Feedback Content Here -->
-                XXX
+                {{ feedback }}
             </div>
 
         </div>

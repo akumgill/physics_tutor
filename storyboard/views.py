@@ -223,6 +223,25 @@ def section1_questionpage(request, id):
     elif image_v!="None":
         imagelist.append(image_v.strip())
         context["imagelist"] = imagelist
+        
+    context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
+    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
+    context["question_img_url"] = "Q1/Q1_fig.png"
+    context["knowledge_components"] = [
+        {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
+        {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
+        {"knowledge": "Apply Relevant Equations", "stars": ["star", "starless", "starless", "starless", "starless"]},
+        {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
+    ]
+    context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
+    context["choices_hint"] = [
+        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
+        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \\tan(30^o) m/s\)",
+        "\(v_{0,x} = 25 \\tan(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
+        "\(v_{0,x} = 25 m/s\) <br> \(v_{0,y} = 0 m/s\)"
+    ]
+    context["hint_img_url"] = "Q1/Q1_fig_hint2.png"
+    context["feedback"] = "XXX"
 
     return render(request, 'storyboard/questionpage_test.html', context)
 
