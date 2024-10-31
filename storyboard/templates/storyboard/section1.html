@@ -2,14 +2,15 @@
 
 {% load static %}
 
-                    {% block user-info %}
-                    <div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
-                    {% endblock %}
+{% block user-info %}
+<div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
+{% endblock %}
+
 {% block content %}
 <div class = "col-sm-12">
 <h1>Instructions</h1>
 <form class = "form-horizontal" method = "post" action = "{% url 'section1' %}">
-<p>In this section, you will practice <strong>evaluating whether the design of a Storyboard aligns with user needs</strong>. You will see examples of Storyboards created by previous students. </p>
+<p>In this section, you will practice problems on the topic of <strong>2D Kinematics</strong>.</p>
 <p>
 <strong>Remember</strong> to reflect on these examples and try to learn from them instead of simply trying to get the answers right.</p>
 <p>
