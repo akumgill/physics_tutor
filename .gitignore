@@ -1,5 +1,6 @@
-
 /physics_tutor_venv
 /env
 db.sqlite3
 *.pyc
+__pycache__/
+/db.sqlite3

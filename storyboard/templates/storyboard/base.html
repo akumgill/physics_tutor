@@ -12,14 +12,17 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <title> {% block title %}User-Centered Research and Evaluation{% endblock %} </title>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+        <title> {% block title %}Physics Tutor{% endblock %} </title>
     </head>
 
     <body>
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/">User-Centered Research and Evaluation - Assginment 2.4 Evaluation Component</a>
+                    <a class="navbar-brand" href="/">Physics Tutor</a>
                 </div>
 
                 <div class="navbar-right">
@@ -36,15 +39,31 @@
 
         <div class = "col-sm-2">
             {% url 'section1' as section1 %}
-            {% url 'section2' as section2 %}
+            <!-- {% url 'section2' as section2 %}
             {% url 'section3' as section3 %}
-            {% url 'section4' as section4 %}
+            {% url 'section4' as section4 %} -->
 
             <ul class = "left-nav">
-                <li class = "{% if request.get_full_path == section1 %} active {% endif %}"><a id = "section1_a" class = "left-nav-a" href = "{% url 'section1' %}"><h2>Section 1 <br><span>Design Storyboards Based on User Needs</span></h2></a></li>
-                <li class = "{% if request.get_full_path == section2 %} active {% endif %}"><a id = "section2_a" class = "left-nav-a" href = "{% url 'section2' %}"><h2>Section 2 <br><span>Write Lead Questions</span></h2></a></li>
-                <li class = "{% if request.get_full_path == section3 %} active {% endif %}"><a id = "section3_a" class = "left-nav-a" href = "{% url 'section3' %}"><h2>Section 3 <br><span>Safe and Risky Storyboards</span></h2></a></li>
-                <li class = "{% if request.get_full_path == section4 %} active {% endif %}"><a id = "section4_a" class = "left-nav-a" href = "{% url 'section4' %}"><h2>Section 4 <br><span>Is This a Good Storyboard?</span></h2></a></li>
+                <li class = "{% if request.get_full_path == section1 %} active {% endif %}">
+                    <a id = "section1_a" class = "left-nav-a" href = "{% url 'section1' %}">
+                        <h2>Section 1 <br><span>2D Kinematics Problem</span></h2>
+                    </a>
+                </li>
+                <li class = "{% if request.get_full_path == section1 %} active {% endif %}">
+                    <a id = "section2_a" class = "left-nav-a" href = "{% url 'section1' %}">
+                        <h2>Section 2 <br><span>XXX</span></h2>
+                    </a>
+                </li>
+                <li class = "{% if request.get_full_path == section1 %} active {% endif %}">
+                    <a id = "section3_a" class = "left-nav-a" href = "{% url 'section1' %}">
+                        <h2>Section 3 <br><span>XXX</span></h2>
+                    </a>
+                </li>
+                <li class = "{% if request.get_full_path == section1 %} active {% endif %}">
+                    <a id = "section4_a" class = "left-nav-a" href = "{% url 'section1' %}">
+                        <h2>Section 4 <br><span>XXX</span></h2>
+                    </a>
+                </li>
 
             </ul>
         </div>

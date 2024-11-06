@@ -4,175 +4,98 @@
 {% static "" as baseUrl %}
 
 {% block user-info %}
-<div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
+    <div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
 {% endblock %}
 
 {% block content %}
 
-    <div class = "col-sm-12 backgroundinfo">
-        
-         <p>In this activity, imagine your peers are designing Storyboards to improve users' transportation experience around CMU. They first identified a list of user needs and then designed Storyboards to address the needs. Below, you will see Storyboards created by them. Your task now is to assess the <strong>user need </strong>each Storyboard addresses.</p>
+    <div class="entire-panel">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <!-- Question Section -->
+            <div class="question">
+                <!-- Add Question Content Here -->
+                <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
+                {{ question }}
+            </div>
+
+            <div class="option-figure">
+            <!-- Options Section (Multiple Choice) -->
+                <form class="options">
+                    {% csrf_token %}
+                    {% for choice in choices_question %}
+                    <label class="option">
+                        <input type="radio" name="answer" value="{{ choice }}">
+                        <div class="option-value">{{ choice }}</div>
+                    </label>
+                    {% endfor %}
+                </form>
+                <div class="figure"><img src="/static/storyboard/images/{{ question_img_url }}"/></div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button>See Example</button>
+                <button type="submit" form="options">Submit</button>
+            </div>
+
+            <!-- Knowledge Components Section -->
+            <div class="knowledge-section">
+                <h3>Knowledge Components:</h3>
+
+                {% for kc in knowledge_components %}
+                <div class="knowledge-stars">
+                    <div class="knowledge">{{ kc.knowledge }}</div>
+                    <div class="stars">
+                        {% for star in kc.stars %}
+                        <div class="{{ star }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Hint Section -->
+            <div class="hint-section">
+                <div class="hint-navigation">
+                    <button>Previous Hint</button>
+                    <button>Next Hint</button>
+                </div>
+                <!-- Question Section -->
+                <div class="hint">
+                    <!-- Add Question Content Here -->
+                    <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
+                    {{ hint }}
+                </div>
+
+                <div class="option-figure">
+                <!-- Options Section (Multiple Choice) -->
+                    <form class="options">
+                        {% csrf_token %}
+                        {% for choice in choices_hint %}
+                        <label class="option">
+                            <input type="radio" name="answer" value="{{ choice|safe }}">
+                            <div class="option-value">{{ choice|safe }}</div>
+                        </label>
+                        {% endfor %}
+                    </form>
+                    <div class="figure"><img src="/static/storyboard/images/{{ hint_img_url }}"/></div>
+                </div>
+
+            </div>
+
+            <!-- Feedback Section -->
+            <h3>Feedback:</h3>
+            <div class="feedback-section">
+                <!-- Add Feedback Content Here -->
+                {{ feedback }}
+            </div>
+
+        </div>
     </div>
-
-    <div class = "col-sm-12">
-    <h1>Question {{pageid|add:1}} out of {{section.numberofquestions}}</h1>
-    </div>
-    
-    <form class = "form-horizontal" method = "post" action = "{% url 'nextpage' %}">
-
-    <div class = "col-sm-12">
-    <br>   
-
-     <!-- writing UARs (Usability Aspect Report) about it. You will see examples of UARs they wrote. Below, you can see the evidence they found for a UAR from the think-aloud study. Your task is to read the evidence, the screenshot they took, and select a name for this UAR.   -->
-
-
-        <!-- Below you can see what they have described as their process for identifying a problematic feature in LightSide. Your task is to evaluate what they have said to see if they did the process correctly, and then select feedback from the multiple choice question below the example.   -->
-
-
-
-    <!-- Your peers are performaing error analysis with LightSide. They described their process of identifying a problematic feature in LightSide as below. Please read and evaluate their process and select a piece of feedback that best describes the issue of this process. -->
-    <br>
-    <p><strong>Below is a Storyboard to improve users' transportation experience around the CMU campus:</strong></p>
-    <br><br>
-    </div>
-
-    {% if imagelist %}
-    {% for img in imagelist%}
-    <div class = "col-sm-12 crop">
-    <img src="/static/storyboard/images/{{img}}"></img>
-    <br>
-    <br>
-
-    </div>
-    {% endfor %}
-    {% endif %}
-
-    <div class = "col-sm-12">
-    <h4>Which of the following best describes the <strong>user need</strong> this Storyboard is designed for?</h4>
-    </div>
-
-    <div class = "col-sm-12">
-    {{form.response}}
-    </div>
-
-    <div class = "col-sm-12" id = "feedbackmessage">
-        {% if attempted %}
-        {{feedbackmessage|safe}}
-        {% endif %}
-    </div>
-
-    <div class = "col-sm-12">
-
-    {{form.justification}}
-    </div>
-
-    <div class = "col-sm-12">
-    <input type="hidden" name="pageid" id = "pageid" value = "{{pageid}}">
-    <input type="hidden" name="questionid" id = "questionid" value = "{{question.id}}">
-    <input type="hidden" name="sectionid" id = "sectionid" value = "{{section.pk}}">
-    <input type = "hidden" name = "attempted" id = "attempted" value = "{{attempted}}">
-
-
-    </div>
-
-
-    <div class = "col-sm-12" id = "nextquestion" style = "visibility:hidden;">
-    <button class = "btn main" id = "nextquestion">Next Question</button>
-    </div>
-    {% csrf_token %}
-    </form>
-
-    <div class = "col-sm-12" id = "checkanswerdiv">
-    <button class = "btn main" id = "checkanswer">Check Answer</button>
-    </div>
-
-
-
-<script type="text/javascript">
-
-$(document).ready(function(){
-
-    var sectionid = document.getElementById("sectionid").value;
-    section_a_name = "section"+sectionid+"_a";
-    var section_a = document.getElementById(section_a_name);
-    section_a.className+=" active";
-
-
-        var attempted = document.getElementById("attempted").value;
-        if (attempted == "True"){
-            document.getElementById("checkanswerdiv").style.visibility = "hidden";  
-            document.getElementById("nextquestion").style.visibility = "visible";  
-            document.getElementById("id_response_0").disabled = true;
-            document.getElementById("id_response_1").disabled = true;
-            document.getElementById("id_response_2").disabled = true;
-            document.getElementById("id_response_3").disabled = true;
-        }
-
-
-
-    $("#checkanswer").on("click", function(){
-        console.log("here");
-        var $form = $("form");
-        var data = getFormData($form);
-        if(!("response" in data)){
-            alert("Please answer the question.");
-        }
-        else{
-        $.ajax({
-            url: "/storyboard/imagefeedback",
-            type:"POST",
-            data: data,
-            dataType: "json",
-            success: function(response){
-                            if (response.alertmessage == "True"){
-            alert("You are not allowed to modify your answers. Previous answers and feedback are shown.")
-             location.reload(true);       }
-    
-            else{
-            $('#feedbackmessage').empty();
-            $('#feedbackmessage').append(response.feedbackmessage);
-            document.getElementById("checkanswerdiv").style.visibility = "hidden";  
-            document.getElementById("nextquestion").style.visibility = "visible";  
-            document.getElementById("id_response_0").disabled = true;
-            document.getElementById("id_response_1").disabled = true;
-            document.getElementById("id_response_2").disabled = true;
-            document.getElementById("id_response_3").disabled = true;
-
-        }
-            }
-
-        });
-    }
-
-
-    });
-
-});
-
-
-function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-
-    });
-    return indexed_array
-}
-
-function getCSRFToken(){
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-        cookieitem = cookies[i].trim();
-        if (cookieitem.startsWith("csrftoken=")) {
-            return cookieitem.substring("csrftoken=".length, cookieitem.length);
-        }
-    }
-    return "unknown";
-}
-
-
-</script>
 
 {% endblock %}
