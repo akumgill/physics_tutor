@@ -1,2 +1,5 @@
+/physics_tutor_venv
+/env
 __pycache__/
 /db.sqlite3
+migrations/

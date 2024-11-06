@@ -25,8 +25,8 @@ class Participant(models.Model):
 
 
 class Section(models.Model):
-    s_id = models.CharField(primary_key=True)
-    sectionname = models.CharField(max_length = 500, blank = True)
+    s_id = models.IntegerField(primary_key=True)
+    sectionname = models.TextField(max_length = 500, blank = True)
     numberofquestions = models.PositiveIntegerField(blank = True, default = 0)
     def __unicode__(self):
         return 'id='+ str(self.pk)
@@ -34,20 +34,20 @@ class Section(models.Model):
 class Question(models.Model):
     section = models.ForeignKey(Section, default = None ,on_delete=models.CASCADE)
     img_url = models.TextField(verbose_name="img_url", default="")
-    q_id = models.CharField(primary_key=True)
+    q_id = models.TextField(primary_key=True)
     text = models.TextField(verbose_name="text", default="")
 
     def __unicode__(self):
         return 'id='+ str(self.pk)
     
 class KnowledgeComponent(models.Model):
-    kc_id = models.CharField(primary_key=True)
+    kc_id = models.TextField(primary_key=True)
     text = models.TextField(verbose_name="text", default="")
     def __unicode__(self):
         return 'id='+ str(self.pk)
 
 class Hint(models.Model):
-    h_id = models.CharField(primary_key=True)
+    h_id = models.TextField(primary_key=True)
     knowledgeComponent = models.ForeignKey(KnowledgeComponent, on_delete=models.CASCADE)
     text = models.TextField(verbose_name="text", default="")
     img_url = models.TextField(verbose_name="img_url", default="")
@@ -55,7 +55,7 @@ class Hint(models.Model):
         return 'id='+ str(self.pk)
     
 class Option(models.Model):
-    o_id = models.CharField(primary_key=True)
+    o_id = models.TextField(primary_key=True)
     text = models.TextField(verbose_name="text", default="")
     is_correct = models.BooleanField(default=False)
     feedback = models.TextField(verbose_name="feedback", default="")
