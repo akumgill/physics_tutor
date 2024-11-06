@@ -85,59 +85,32 @@ def home(request):
 
 @login_required
 def section1_questionpage(request):
-
     user = request.user
+    context = {"user": user}
+    
     section = get_object_or_404(Section, s_id=1)
-    context = {}
+    q_id = 1
+    question = get_object_or_404(Question, q_id=f"q{q_id}", section=section)
+    context["question"] = question.text
+    context["question_img_url"] = question.img_url
+    
+    choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
+    context["choices_question"] = [o.text for o in choices_question]
+    
+    h_id = 2
+    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
+    context["hint"] = hint.text
+    context["hint_img_url"] = hint.img_url
+    
+    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+    context["choices_hint"] = [o.text for o in choices_hint]
+    hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+    kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
+    context["knowledge_components"] = [
+        {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
+        for kc in kc_list
+        ]
 
-
-    # progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-    # progress = progress_list[0]
-    # trial = progress.trial
-
-    # question = Question.objects.filter(section = section).order_by("id")[int(id)]
-    # print(question.id)
-    # response = Response.objects.filter(student= user).filter(trial = trial).filter(section = section).filter(question = question)[0]
-
-    # optionlist = []
-    # optionlist.append(question.option1)
-    # optionlist.append(question.option2)
-    # optionlist.append(question.option3)
-    # optionlist.append(question.option4)
-
-    # print("mewmewresponse")
-    # print(response.response)
-
-    # if response.response!=0:
-    #     form = QuestionForm(instance = response, optionlist = optionlist)
-    #     attempted = True
-    #     context["feedbackmessage"] = response.feedbackmessage
-    # else:
-    #     form = QuestionForm(optionlist = optionlist)
-    #     attempted = False
-
-
-    context['user'] = user
-    # context['question'] = question
-    # context['form'] = form
-    # context['pageid'] = id
-    # context['section'] = section
-    # context['attempted'] = attempted
-    # context["feedbackmessage"] = response.feedbackmessage
-
-    # image_v= question.img
-    # imagelist =[]
-
-    # if ";" in image_v:
-    #     images = image_v.split(";")
-    #     for image in images:
-    #         imagelist.append(image.strip())
-    #     context["imagelist"] = imagelist
-
-    # elif image_v!="None":
-    #     imagelist.append(image_v.strip())
-    #     context["imagelist"] = imagelist
-        
     context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
     context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
     context["question_img_url"] = "Q1/Q1_fig.png"
