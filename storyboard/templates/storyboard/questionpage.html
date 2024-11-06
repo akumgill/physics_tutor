@@ -1,101 +1,172 @@
-{% extends "storyboard/base.html" %}
+{% extends "storyboard/base.html" %} {% load static %} {% static "" as baseUrl
+%} {% block user-info %}
+<div
+  style="color: white; font-size: 18px; padding-top: 5pt; padding-right: 5pt"
+>
+  {{user.username}}
+</div>
+{% endblock %} {% block content %}
 
-{% load static %}
-{% static "" as baseUrl %}
-
-{% block user-info %}
-    <div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
-{% endblock %}
-
-{% block content %}
-
-    <div class="entire-panel">
-        <!-- Left Panel -->
-        <div class="left-panel">
-            <!-- Question Section -->
-            <div class="question">
-                <!-- Add Question Content Here -->
-                <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
-                {{ question }}
-            </div>
-
-            <div class="option-figure">
-            <!-- Options Section (Multiple Choice) -->
-                <form class="options">
-                    {% csrf_token %}
-                    {% for choice in choices_question %}
-                    <label class="option">
-                        <input type="radio" name="answer" value="{{ choice }}">
-                        <div class="option-value">{{ choice }}</div>
-                    </label>
-                    {% endfor %}
-                </form>
-                <div class="figure"><img src="/static/storyboard/images/{{ question_img_url }}"/></div>
-            </div>
-
-            <!-- Submit Section -->
-            <div class="submit-section">
-                <button>See Example</button>
-                <button type="submit" form="options">Submit</button>
-            </div>
-
-            <!-- Knowledge Components Section -->
-            <div class="knowledge-section">
-                <h3>Knowledge Components:</h3>
-
-                {% for kc in knowledge_components %}
-                <div class="knowledge-stars">
-                    <div class="knowledge">{{ kc.knowledge }}</div>
-                    <div class="stars">
-                        {% for star in kc.stars %}
-                        <div class="{{ star }}"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-
-            </div>
-        </div>
-
-        <!-- Right Panel -->
-        <div class="right-panel">
-            <!-- Hint Section -->
-            <div class="hint-section">
-                <div class="hint-navigation">
-                    <button>Previous Hint</button>
-                    <button>Next Hint</button>
-                </div>
-                <!-- Question Section -->
-                <div class="hint">
-                    <!-- Add Question Content Here -->
-                    <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
-                    {{ hint }}
-                </div>
-
-                <div class="option-figure">
-                <!-- Options Section (Multiple Choice) -->
-                    <form class="options">
-                        {% csrf_token %}
-                        {% for choice in choices_hint %}
-                        <label class="option">
-                            <input type="radio" name="answer" value="{{ choice|safe }}">
-                            <div class="option-value">{{ choice|safe }}</div>
-                        </label>
-                        {% endfor %}
-                    </form>
-                    <div class="figure"><img src="/static/storyboard/images/{{ hint_img_url }}"/></div>
-                </div>
-
-            </div>
-
-            <!-- Feedback Section -->
-            <h3>Feedback:</h3>
-            <div class="feedback-section">
-                <!-- Add Feedback Content Here -->
-                {{ feedback }}
-            </div>
-
-        </div>
+<div class="entire-panel">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <!-- Question Section -->
+    <div class="question">
+      <!-- Add Question Content Here -->
+      <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
+      {{ question }}
     </div>
+
+    <div class="option-figure">
+      <!-- Options Section (Multiple Choice) -->
+      <form class="options" method="post" id="questionForm">
+        {% csrf_token %}
+        <input type="hidden" name="unique_identifier" value="submit_answer" />
+        {% for choice in choices_question %}
+        <label class="option">
+          <input type="radio" name="answer" value="{{ choice }}" />
+          <div class="option-value">{{ choice }}</div>
+        </label>
+        {% endfor %}
+        <div class="submit-section">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <div class="figure">
+        <img src="/static/storyboard/images/{{ question_img_url }}" />
+      </div>
+    </div>
+
+    <!-- Knowledge Components Section -->
+    <div class="knowledge-section">
+      <h3>Knowledge Components:</h3>
+
+      {% for kc in knowledge_components %}
+      <div class="knowledge-stars">
+        <div class="knowledge">{{ kc.knowledge }}</div>
+        <div class="stars">
+          {% for star in kc.stars %}
+          <div class="{{ star }}"></div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <!-- Hint Section -->
+    <div class="hint-section">
+      <div class="hint-navigation">
+        <button>Previous Hint</button>
+        <button>Next Hint</button>
+      </div>
+      <!-- Question Section -->
+      <div class="hint">
+        <!-- Add Question Content Here -->
+        <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
+        {{ hint }}
+      </div>
+
+      <div class="option-figure">
+        <!-- Options Section (Multiple Choice) -->
+        <form class="options">
+          {% csrf_token %} {% for choice in choices_hint %}
+          <label class="option">
+            <input type="radio" name="answer" value="{{ choice|safe }}" />
+            <div class="option-value">{{ choice|safe }}</div>
+          </label>
+          {% endfor %}
+        </form>
+        <div class="figure">
+          <img src="/static/storyboard/images/{{ hint_img_url }}" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <h3>Feedback:</h3>
+    <div class="feedback-section">
+      <!-- Add Feedback Content Here -->
+      {{ feedback }}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("questionForm").onsubmit = function (event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const optionLabels = form.querySelectorAll(".option-value");
+
+        // Reset all option text colors to black
+        optionLabels.forEach((label) => {
+          label.style.color = "black";
+        });
+
+        // Highlight the selected option based on correctness
+        optionLabels.forEach((label) => {
+          if (label.textContent.trim() === formData.get("answer")) {
+            label.style.color = data.correct ? "green" : "red";
+          }
+        });
+
+        // Update feedback section
+        document.querySelector(".feedback-section").textContent = data.feedback;
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+
+  // Add event listeners to hint options
+  document
+    .querySelectorAll('.hint-section .option input[type="radio"]')
+    .forEach((input) => {
+      input.addEventListener("change", function () {
+        const selectedValue = this.value;
+        const correctHint =
+          "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)"; // Example correct hint
+
+        console.log("selectedValue", selectedValue);
+        console.log("correctHint", correctHint);
+
+        const hintLabels = document.querySelectorAll(
+          ".hint-section .option-value"
+        );
+
+        // Reset all hint text colors to black
+        hintLabels.forEach((label) => {
+          label.style.color = "black";
+        });
+
+        // Highlight the selected hint based on correctness
+        hintLabels.forEach((label) => {
+          if (label.innerHTML.trim() === selectedValue) {
+            label.style.color = selectedValue === correctHint ? "green" : "red";
+          }
+        });
+
+        // Update feedback section for hints
+        const feedbackMessage =
+          selectedValue === correctHint
+            ? "Correct hint selected!"
+            : "Incorrect hint, try again.";
+        document.querySelector(".feedback-section").textContent =
+          feedbackMessage;
+      });
+    });
+</script>
 
 {% endblock %}

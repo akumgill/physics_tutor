@@ -26,6 +26,7 @@ from os import listdir
 from django.core.files import File
 import re, math
 from collections import Counter
+import logging
 
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
@@ -85,61 +86,23 @@ def home(request):
 
 @login_required
 def section1_questionpage(request):
-
     user = request.user
     section = get_object_or_404(Section, s_id=1)
     context = {}
 
+    correct_answer = "8.0m"  # Example correct answer
 
-    # progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-    # progress = progress_list[0]
-    # trial = progress.trial
-
-    # question = Question.objects.filter(section = section).order_by("id")[int(id)]
-    # print(question.id)
-    # response = Response.objects.filter(student= user).filter(trial = trial).filter(section = section).filter(question = question)[0]
-
-    # optionlist = []
-    # optionlist.append(question.option1)
-    # optionlist.append(question.option2)
-    # optionlist.append(question.option3)
-    # optionlist.append(question.option4)
-
-    # print("mewmewresponse")
-    # print(response.response)
-
-    # if response.response!=0:
-    #     form = QuestionForm(instance = response, optionlist = optionlist)
-    #     attempted = True
-    #     context["feedbackmessage"] = response.feedbackmessage
-    # else:
-    #     form = QuestionForm(optionlist = optionlist)
-    #     attempted = False
-
+    if request.method == "POST":
+        unique_identifier = request.POST.get('unique_identifier')
+        if unique_identifier == "submit_answer":
+            selected_answer = request.POST.get('answer')
+            feedback = "Correct! Well done." if selected_answer == correct_answer else "Incorrect. Try again."
+            print(f"Selected answer: {selected_answer}, Feedback: {feedback}")  # logging
+            return JsonResponse({'correct': selected_answer == correct_answer, 'feedback': feedback})
 
     context['user'] = user
-    # context['question'] = question
-    # context['form'] = form
-    # context['pageid'] = id
-    # context['section'] = section
-    # context['attempted'] = attempted
-    # context["feedbackmessage"] = response.feedbackmessage
-
-    # image_v= question.img
-    # imagelist =[]
-
-    # if ";" in image_v:
-    #     images = image_v.split(";")
-    #     for image in images:
-    #         imagelist.append(image.strip())
-    #     context["imagelist"] = imagelist
-
-    # elif image_v!="None":
-    #     imagelist.append(image_v.strip())
-    #     context["imagelist"] = imagelist
-        
     context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
-    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
+    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5m", "16.0m"]
     context["question_img_url"] = "Q1/Q1_fig.png"
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
@@ -149,13 +112,12 @@ def section1_questionpage(request):
     ]
     context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
     context["choices_hint"] = [
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \\tan(30^o) m/s\)",
-        "\(v_{0,x} = 25 \\tan(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 m/s\) <br> \(v_{0,y} = 0 m/s\)"
+        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)",
+        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\tan(30^o) m/s\\)",
+        "\\(v_{0,x} = 25 \\tan(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\sin(30^o) m/s\\)",
+        "\\(v_{0,x} = 25 m/s\\) <br> \\(v_{0,y} = 0 m/s\\)"
     ]
     context["hint_img_url"] = "Q1/Q1_fig_hint2.png"
-    context["feedback"] = "XXX"
 
     return render(request, 'storyboard/questionpage.html', context)
 
