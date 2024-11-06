@@ -137,10 +137,13 @@ def section1_questionpage(request):
     # elif image_v!="None":
     #     imagelist.append(image_v.strip())
     #     context["imagelist"] = imagelist
-        
-    context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
+
+    q1 = get_object_or_404(Question, q_id="q1")
+    context["question"] = q1.text
+    context["question_img_url"] = q1.img_name
+    # TODO[Akum]: import options and KCs
+    
     context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
-    context["question_img_url"] = "Q1/Q1_fig.png"
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
@@ -154,7 +157,7 @@ def section1_questionpage(request):
         "\(v_{0,x} = 25 \\tan(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
         "\(v_{0,x} = 25 m/s\) <br> \(v_{0,y} = 0 m/s\)"
     ]
-    context["hint_img_url"] = "Q1/Q1_fig_hint2.png"
+    context["hint_img_url"] = "Q1_fig_hint2.png"
     context["feedback"] = "XXX"
 
     return render(request, 'storyboard/questionpage.html', context)
@@ -292,16 +295,29 @@ def batchregister():
     return successmessage        
 
 
-def importsections():
+def import_sections():
     for name, num in zip(section_names, numberofquestions_list):
         section = Section(sectionname = name, numberofquestions = num)
         section.save()
     successmessage = "sections imported"
     return successmessage        
 
-    
+
+def import_questions():
+    data = pd.read_csv("questions.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        question = Question(
+            q_id = entry["q_id"],
+            text = entry["text"],
+            img_name = entry["img_name"],
+        )
+        question.save()
+    successmessage = "questions imported"
+    return successmessage
+
+
 def startup():
     print (batchregister())
-    print (importsections())
-
-
+    print (import_sections())
+    print (import_questions())
