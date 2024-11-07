@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import pandas as pd
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -142,8 +142,20 @@ def section1_questionpage(request):
     context["question"] = q1.text
     context["question_img_url"] = q1.img_name
     # TODO[Akum]: import options and KCs
-    
-    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
+   
+    # Fetch all objects with "q1." in o_id
+    options = get_list_or_404(Option, o_id__icontains="q1.")
+    # Extract the part of o_id after the first period if it starts with "o"
+    filtered_o_ids = []
+    for index, o in enumerate(options):
+        o_id_parts = o.o_id.split(".", 1)  # Split only at the first period
+        if len(o_id_parts) > 1 and o_id_parts[1].startswith("o"):
+            filtered_o_ids.append(o.text)
+            if o.is_correct: correct_option = index
+    # print(filtered_o_ids)
+    # print(correct_option)
+
+    context["choices_question"] = filtered_o_ids
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
@@ -316,8 +328,22 @@ def import_questions():
     successmessage = "questions imported"
     return successmessage
 
+def import_options():
+    data = pd.read_csv("options.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        option = Option(
+            o_id = entry["o_id"],
+            text = entry["text"],
+            is_correct = entry["is_correct"],
+            feedback = entry["feedback"],
+        )
+        option.save()
+    successmessage = "options imported"
+    return successmessage
 
 def startup():
     print (batchregister())
     print (import_sections())
     print (import_questions())
+    print (import_options())
