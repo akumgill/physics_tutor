@@ -110,17 +110,17 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        const optionLabels = form.querySelectorAll(".option-value");
+        const options = form.querySelectorAll(".option input[type='radio']");
 
-        // Reset all option text colors to black
-        optionLabels.forEach((label) => {
-          label.style.color = "black";
+        // Reset all option classes and colors
+        options.forEach((input) => {
+          input.classList.remove("correct", "incorrect");
         });
 
         // Highlight the selected option based on correctness
-        optionLabels.forEach((label) => {
-          if (label.textContent.trim() === formData.get("answer")) {
-            label.style.color = data.correct ? "green" : "red";
+        options.forEach((input) => {
+          if (input.value === formData.get("answer")) {
+            input.classList.add(data.correct ? "correct" : "incorrect");
           }
         });
 
@@ -139,22 +139,21 @@
         const correctHint =
           "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)"; // Example correct hint
 
-        console.log("selectedValue", selectedValue);
-        console.log("correctHint", correctHint);
-
-        const hintLabels = document.querySelectorAll(
-          ".hint-section .option-value"
+        const hintOptions = document.querySelectorAll(
+          ".hint-section .option input[type='radio']"
         );
 
-        // Reset all hint text colors to black
-        hintLabels.forEach((label) => {
-          label.style.color = "black";
+        // Reset all hint option classes
+        hintOptions.forEach((input) => {
+          input.classList.remove("correct", "incorrect");
         });
 
         // Highlight the selected hint based on correctness
-        hintLabels.forEach((label) => {
-          if (label.innerHTML.trim() === selectedValue) {
-            label.style.color = selectedValue === correctHint ? "green" : "red";
+        hintOptions.forEach((input) => {
+          if (input.value === selectedValue) {
+            input.classList.add(
+              selectedValue === correctHint ? "correct" : "incorrect"
+            );
           }
         });
 

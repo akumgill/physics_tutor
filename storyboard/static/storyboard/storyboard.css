@@ -196,13 +196,14 @@ table
 .option {
   display: flex;
   text-align: left;
+  align-items: center;
   padding: 5px;
-  /* border: 1px solid #ccc; */
   cursor: pointer;
 }
 
 .option-value {
   padding-left: 10px;
+  align-items: center;
 }
 
 .figure {
@@ -273,4 +274,37 @@ img {
   height: 18px;
   background-color: rgb(208, 208, 208);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.option input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.option input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: blue; /* Default color */
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+.option input[type="radio"].correct::before {
+  background-color: green;
+}
+
+.option input[type="radio"].incorrect::before {
+  background-color: red;
 }
