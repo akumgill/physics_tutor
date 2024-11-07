@@ -24,7 +24,7 @@
         <input type="hidden" name="unique_identifier" value="submit_answer" />
         {% for choice in choices_question %}
         <label class="option">
-          <input type="radio" name="answer" value="{{ choice }}" />
+          <input type="radio" name="answer" value="{{ forloop.counter0 }}" />
           <div class="option-value">{{ choice }}</div>
         </label>
         {% endfor %}
@@ -59,29 +59,33 @@
     <!-- Hint Section -->
     <div class="hint-section">
       <div class="hint-navigation">
-        <button>Previous Hint</button>
-        <button>Next Hint</button>
+        <button id="prevHint" data-hint-id="{{ hint.h_id }}">
+          Previous Hint
+        </button>
+        <button id="nextHint" data-hint-id="{{ hint.h_id }}">Next Hint</button>
       </div>
-      <!-- Question Section -->
-      <div class="hint">
-        <!-- Add Question Content Here -->
-        <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
-        {{ hint }}
-      </div>
+      <!-- Hint Question Section -->
+      <div class="hint">{{ hint }}</div>
 
       <div class="option-figure">
-        <!-- Options Section (Multiple Choice) -->
+        <!-- Hint Options Section (Multiple Choice) -->
         <form class="options">
           {% csrf_token %} {% for choice in choices_hint %}
           <label class="option">
-            <input type="radio" name="answer" value="{{ choice|safe }}" />
+            <input
+              type="radio"
+              name="hint_answer"
+              value="{{ forloop.counter0 }}"
+            />
             <div class="option-value">{{ choice|safe }}</div>
           </label>
           {% endfor %}
         </form>
+        {% if hint_img_url %}
         <div class="figure">
           <img src="/static/storyboard/images/{{ hint_img_url }}" />
         </div>
+        {% endif %}
       </div>
     </div>
 
@@ -136,36 +140,82 @@
     .forEach((input) => {
       input.addEventListener("change", function () {
         const selectedValue = this.value;
-        const correctHint =
-          "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)"; // Example correct hint
 
-        const hintOptions = document.querySelectorAll(
-          ".hint-section .option input[type='radio']"
-        );
+        const form = this.closest("form");
+        const formData = new FormData(form);
+        formData.append("hint_answer", selectedValue);
+        formData.append("unique_identifier", "submit_hint"); // To identify hint submissions in your view
 
-        // Reset all hint option classes
-        hintOptions.forEach((input) => {
-          input.classList.remove("correct", "incorrect");
-        });
-
-        // Highlight the selected hint based on correctness
-        hintOptions.forEach((input) => {
-          if (input.value === selectedValue) {
-            input.classList.add(
-              selectedValue === correctHint ? "correct" : "incorrect"
+        fetch(window.location.href, {
+          // or specify a different URL for hint processing
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+              .value,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const hintOptions = document.querySelectorAll(
+              ".hint-section .option input[type='radio']"
             );
-          }
-        });
 
-        // Update feedback section for hints
-        const feedbackMessage =
-          selectedValue === correctHint
-            ? "Correct hint selected!"
-            : "Incorrect hint, try again.";
-        document.querySelector(".feedback-section").textContent =
-          feedbackMessage;
+            // Reset all hint option classes
+            hintOptions.forEach((input) => {
+              input.classList.remove("correct", "incorrect");
+            });
+
+            // Highlight based on server response
+            hintOptions.forEach((input) => {
+              if (input.value === selectedValue) {
+                input.classList.add(data.correct ? "correct" : "incorrect");
+              }
+            });
+
+            // Update feedback from server response
+            document.querySelector(".feedback-section").textContent =
+              data.feedback;
+          })
+          .catch((error) => console.error("Error:", error));
       });
     });
+
+  document.getElementById("prevHint").addEventListener("click", function () {
+    navigateHint("prev");
+  });
+
+  document.getElementById("nextHint").addEventListener("click", function () {
+    navigateHint("next");
+  });
+
+  function navigateHint(direction) {
+    const currentHintId = document.querySelector("#prevHint").dataset.hintId;
+    const formData = new FormData();
+    formData.append("current_hint_id", currentHintId);
+    formData.append("direction", direction);
+
+    fetch(window.location.href, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+          .value,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Update the hint and hint image based on server response
+        document.querySelector(".hint").textContent = data.hint_text;
+        document.querySelector(
+          ".hint-section .figure img"
+        ).src = `/static/storyboard/images/${data.hint_img_url}`;
+        // Update the data-hint-id attribute for navigation
+        document.querySelector("#prevHint").dataset.hintId = data.hint_id;
+        document.querySelector("#nextHint").dataset.hintId = data.hint_id;
+      })
+      .catch((error) => console.error("Error:", error));
+  }
 </script>
 
 {% endblock %}

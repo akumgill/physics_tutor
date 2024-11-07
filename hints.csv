@@ -1,8 +1,8 @@
 h_id,kc_id,text,img_name
-q1.h1,kc1,"What kind of information can we get from the description? What are we solving for?",
+q1.h1,kc1,"What kind of information can we get from the description? What are we solving for?",no_img
 q1.h2,kc2,"The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?",Q1_fig_hint2.png
-q1.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\), and the final velocity, \(v_{f,y}\), when the dolphin is passing through the hoop at the maximum height. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",
-q1.h4_1,kc4,"You have selected the following equations of motion: \(v_{y,f}=v_{0,y}+a_y t\) and \(\Delta y = v_{0,y} t + 1/2 a t^2\). Which of the following options correctly applies these equations of motions?",
-q1.h4_2,kc4,"TODO: diff EOM",
-q1.h4_3,kc4,"TODO: diff EOM",
-q1.h4_4,kc4,"TODO: diff EOM",
+q1.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\), and the final velocity, \(v_{f,y}\), when the dolphin is passing through the hoop at the maximum height. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",no_img
+q1.h4_1,kc4,"You have selected the following equations of motion: \(v_{y,f}=v_{0,y}+a_y t\) and \(\Delta y = v_{0,y} t + 1/2 a t^2\). Which of the following options correctly applies these equations of motions?",no_img
+q1.h4_2,kc4,"TODO: diff EOM",no_img
+q1.h4_3,kc4,"TODO: diff EOM",no_img
+q1.h4_4,kc4,"TODO: diff EOM",no_img

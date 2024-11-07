@@ -73,51 +73,60 @@ def section1_questionpage(request):
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
     context["choices_question"] = [o.text for o in choices_question]
     correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
-    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
 
-    if request.method == "POST":
-        unique_identifier = request.POST.get('unique_identifier')
-        if unique_identifier == "submit_answer":
-            selected_answer_index = request.POST.get('answer')
-            feedback = choices_question[selected_answer_index].feedback
-            print(f"Selected answer: {context['choices_question'][selected_answer_index]}, Feedback: {feedback}")  # logging
-            return JsonResponse({'correct': selected_answer_index == correct_option_index, 'feedback': feedback})
-
-    # HINT
-    h_id = 2
-    print(f"q{q_id}.h{h_id}")
+    # Initial hint setup
+    h_id = 1
     hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
     context["hint"] = hint.text
-    context["hint_img_url"] = hint.img_name
-    
+    if hint.img_name != "no_img":
+        context["hint_img_url"] = hint.img_name
+
     # HINT OPTIONS
     choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
     context["choices_hint"] = [o.text for o in choices_hint]
+    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
 
-    # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
-    # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
-    # context["knowledge_components"] = [
-    #     {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
-    #     for kc in kc_list
-    #     ]
+    if request.method == "POST" and request.POST.get('direction'):
+        current_hint_id = request.POST.get('current_hint_id')
+        direction = request.POST.get('direction')
+        hint = navigate_hint(q_id, current_hint_id, direction)
+        return JsonResponse({'hint_text': hint.text, 'hint_img_url': hint.img_name, 'hint_id': hint.h_id})
 
-    # TODO: KNOWLEDGE COMPONENTS
+    # Handle POST requests for hint navigation
+    if request.method == "POST" and request.POST.get('unique_identifier'):
+        unique_identifier = request.POST.get('unique_identifier')
+        if unique_identifier == "submit_answer":
+            selected_answer_index = request.POST.get('answer')
+            feedback = choices_question[int(selected_answer_index)].feedback
+            return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
+        elif unique_identifier == 'submit_hint':
+            hint_answer_index = request.POST.get('hint_answer')
+            feedback = choices_hint[int(hint_answer_index)].feedback
+            return JsonResponse({'correct': int(hint_answer_index) == correct_hint_index, 'feedback': feedback})
+
+
+    # Knowledge Components
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
         {"knowledge": "Apply Relevant Equations", "stars": ["star", "starless", "starless", "starless", "starless"]},
         {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
     ]
-    context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
-    context["choices_hint"] = [
-        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\tan(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 \\tan(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\sin(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 m/s\\) <br> \\(v_{0,y} = 0 m/s\\)"
-    ]
-    context["hint_img_url"] = "Q1_fig_hint2.png"
 
     return render(request, 'storyboard/questionpage.html', context)
+
+def navigate_hint(q_id, current_hint_id, direction):
+    # Extract the current hint number
+    current_hint_number = int(current_hint_id.split('h')[-1])
+    if direction == "next":
+        new_hint_number = current_hint_number + 1
+    else:
+        new_hint_number = current_hint_number - 1
+
+    # Construct the new hint ID
+    new_hint_id = f"q{q_id}.h{new_hint_number}"
+    # Fetch the new hint
+    return get_object_or_404(Hint, h_id=new_hint_id)
 
 
 ####register all students with their andrewids and passwords

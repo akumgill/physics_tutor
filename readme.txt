@@ -2,7 +2,7 @@
 pip install -r requirements.txt
 
 rm db.sqlite3
-rm -rf migrations
+rm -rf storyboard/migrations
 python manage.py makemigrations storyboard
 python manage.py migrate
 python manage.py shell
