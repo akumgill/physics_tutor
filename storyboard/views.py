@@ -62,7 +62,7 @@ def section1_questionpage(request):
     
     section = get_object_or_404(Section, s_id=1)
     q_id = 1
-    question = get_object_or_404(Question, q_id=f"q{q_id}", section=section)
+    question = get_object_or_404(Question, q_id=f"q{q_id}")
     context["question"] = question.text
     context["question_img_url"] = question.img_url
     
