@@ -1,7 +1,7 @@
 o_id,text,is_correct,feedback
 q1.o1,"4.8 m",FALSE,
 q1.o2,"6.4 m",FALSE,
-q1.o3,"8.0 m",TRUE,
+q1.o3,"8.0 m",TRUE,"That's the correct answer. Congratulations on completing the problem!"
 q1.o4,"12.5 m",FALSE,
 q1.o5,"16.0 m",FALSE,
 q1.h1.o1,"Known Information: \(v_{0,x} = 25 m/s\) <br>

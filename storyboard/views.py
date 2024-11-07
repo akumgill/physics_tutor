@@ -71,8 +71,11 @@ def section1_questionpage(request):
     # QUESTION OPTIONS
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
     context["choices_question"] = [o.text for o in choices_question]
+    correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    
     # TODO: feedback from the selected option when the student presses submit
-    context["feedback"] = "XXX"
+    context["feedback"] = choices_question[correct_option_index].feedback
     
     # HINT
     h_id = 2
@@ -81,21 +84,16 @@ def section1_questionpage(request):
     context["hint"] = hint.text
     context["hint_img_url"] = hint.img_name
     
-    # TODO: HINT OPTIONS
-    # choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-    # context["choices_hint"] = [o.text for o in choices_hint]
+    # HINT OPTIONS
+    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+    context["choices_hint"] = [o.text for o in choices_hint]
+
     # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
     # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
     # context["knowledge_components"] = [
     #     {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
     #     for kc in kc_list
     #     ]
-    context["choices_hint"] = [
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \\tan(30^o) m/s\)",
-        "\(v_{0,x} = 25 \\tan(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 m/s\) <br> \(v_{0,y} = 0 m/s\)"
-    ]
 
     # TODO: KNOWLEDGE COMPONENTS
     context["knowledge_components"] = [
