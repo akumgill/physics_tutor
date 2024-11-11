@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import pandas as pd
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -61,22 +61,34 @@ def section1_questionpage(request):
     user = request.user
     context = {"user": user}
     
-    # section = get_object_or_404(Section, s_id=1)
-    # q_id = 1
-    # question = get_object_or_404(Question, q_id=f"q{q_id}")
-    # context["question"] = question.text
-    # context["question_img_url"] = question.img_url
+    section = get_object_or_404(Section, s_id=1)
     
-    # choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
-    # context["choices_question"] = [o.text for o in choices_question]
+    # QUESTION
+    q_id = 1
+    question = get_object_or_404(Question, q_id=f"q{q_id}")
+    context["question"] = question.text
+    context["question_img_url"] = question.img_name
     
-    # h_id = 2
-    # hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
-    # context["hint"] = hint.text
-    # context["hint_img_url"] = hint.img_url
+    # QUESTION OPTIONS
+    choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
+    context["choices_question"] = [o.text for o in choices_question]
+    correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
     
-    # choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-    # context["choices_hint"] = [o.text for o in choices_hint]
+    # TODO: feedback from the selected option when the student presses submit
+    context["feedback"] = choices_question[correct_option_index].feedback
+    
+    # HINT
+    h_id = 2
+    print(f"q{q_id}.h{h_id}")
+    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
+    context["hint"] = hint.text
+    context["hint_img_url"] = hint.img_name
+    
+    # HINT OPTIONS
+    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+    context["choices_hint"] = [o.text for o in choices_hint]
+
     # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
     # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
     # context["knowledge_components"] = [
@@ -84,41 +96,21 @@ def section1_questionpage(request):
     #     for kc in kc_list
     #     ]
 
-    # context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
-    # context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
-    
-    
-
-    correct_answer = "8.0m"  # Example correct answer
-
-    if request.method == "POST":
-        unique_identifier = request.POST.get('unique_identifier')
-        if unique_identifier == "submit_answer":
-            selected_answer = request.POST.get('answer')
-            feedback = "Correct! Well done." if selected_answer == correct_answer else "Incorrect. Try again."
-            print(f"Selected answer: {selected_answer}, Feedback: {feedback}")  # logging
-            return JsonResponse({'correct': selected_answer == correct_answer, 'feedback': feedback})
-
-    q1 = get_object_or_404(Question, q_id="q1")
-    context["question"] = q1.text
-    context["question_img_url"] = q1.img_name
-    # TODO[Akum]: import options and KCs
-    
-    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5m", "16.0m"]
+    # TODO: KNOWLEDGE COMPONENTS
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
         {"knowledge": "Apply Relevant Equations", "stars": ["star", "starless", "starless", "starless", "starless"]},
         {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
     ]
-    context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
-    context["choices_hint"] = [
-        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\tan(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 \\tan(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\sin(30^o) m/s\\)",
-        "\\(v_{0,x} = 25 m/s\\) <br> \\(v_{0,y} = 0 m/s\\)"
-    ]
-    context["hint_img_url"] = "Q1_fig_hint2.png"
+    # context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
+    # context["choices_hint"] = [
+    #     "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\cos(30^o) m/s\\)",
+    #     "\\(v_{0,x} = 25 \\sin(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\tan(30^o) m/s\\)",
+    #     "\\(v_{0,x} = 25 \\tan(30^o) m/s\\) <br> \\(v_{0,y} = 25 \\sin(30^o) m/s\\)",
+    #     "\\(v_{0,x} = 25 m/s\\) <br> \\(v_{0,y} = 0 m/s\\)"
+    # ]
+    # context["hint_img_url"] = "Q1_fig_hint2.png"
 
     return render(request, 'storyboard/questionpage.html', context)
 
@@ -159,9 +151,39 @@ def import_questions():
     successmessage = "questions imported"
     return successmessage
 
+def import_options():
+    data = pd.read_csv("options.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        option = Option(
+            o_id = entry["o_id"],
+            text = entry["text"],
+            is_correct = entry["is_correct"],
+            feedback = entry["feedback"],
+        )
+        option.save()
+    successmessage = "options imported"
+    return successmessage
+
+def import_hints():
+    data = pd.read_csv("hints.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        hint = Hint(
+            h_id = entry["h_id"],
+            # TODO[Akum]: add kc_id as foreign key after I import them
+            # kc_id = entry["kc_id"],
+            text = entry["text"],
+            img_name = entry["img_name"],
+        )
+        print(hint)
+        hint.save()
+    successmessage = "hints imported"
+    return successmessage
 
 def startup():
     print (batchregister())
     print (import_sections())
     print (import_questions())
-    
+    print (import_options())
+    print (import_hints())
