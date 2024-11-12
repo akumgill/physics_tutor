@@ -37,6 +37,7 @@ class Question(models.Model):
     q_id = models.TextField(primary_key=True)
     text = models.TextField(verbose_name="text", default="")
     img_name = models.TextField(verbose_name="img_name", default="")
+    total_hints = models.PositiveIntegerField(verbose_name="total_hints", default=0)
 
     def __unicode__(self):
         return 'id='+ str(self.pk)
@@ -63,3 +64,9 @@ class Option(models.Model):
     def __unicode__(self):
         return 'id='+ str(self.pk)
 
+class CurrentProgress(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
+    current_q_id = models.PositiveIntegerField(verbose_name="current_q_id", default=1)
+    current_h_id = models.TextField(verbose_name="current_h_id", default="0")
+    def __unicode__(self):
+        return 'id='+ str(self.pk)

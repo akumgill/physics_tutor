@@ -24,8 +24,8 @@
         <input type="hidden" name="unique_identifier" value="submit_answer" />
         {% for choice in choices_question %}
         <label class="option">
-          <input type="radio" name="answer" value="{{ choice }}" />
-          <div class="option-value">{{ choice }}</div>
+          <input type="radio" name="answer" value="{{ choice.idx }}" />
+          <div class="option-value">{{ choice.text }}</div>
         </label>
         {% endfor %}
         <div class="submit-section">
@@ -33,7 +33,7 @@
         </div>
       </form>
       <div class="figure">
-        <img src="/static/storyboard/images/{{ question_img_url }}" />
+        <img src="/static/storyboard/images/{{ question_img_url }}" alt="No Image"/>
       </div>
     </div>
 
@@ -74,13 +74,13 @@
         <form class="options">
           {% csrf_token %} {% for choice in choices_hint %}
           <label class="option">
-            <input type="radio" name="answer" value="{{ choice|safe }}" />
-            <div class="option-value">{{ choice|safe }}</div>
+            <input type="radio" name="answer" value="{{ choice.idx }}" />
+            <div class="option-value">{{ choice.text|safe }}</div>
           </label>
           {% endfor %}
         </form>
         <div class="figure">
-          <img src="/static/storyboard/images/{{ hint_img_url }}" />
+          <img src="/static/storyboard/images/{{ hint_img_url }}" alt="No Image"/>
         </div>
       </div>
     </div>
