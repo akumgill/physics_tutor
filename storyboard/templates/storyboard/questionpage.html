@@ -85,7 +85,7 @@
           {% endfor %}
         </form>
         {% if hint_img_url %}
-        <div class="figure">
+        <div class="hint-figure">
           <img
             src="/static/storyboard/images/{{ hint_img_url }}"
             alt="No Image"
@@ -105,6 +105,7 @@
 </div>
 
 <script>
+  // QUESTION FORM
   document.getElementById("questionForm").onsubmit = function (event) {
     event.preventDefault(); // Prevent the form from submitting normally
 
@@ -140,7 +141,7 @@
       .catch((error) => console.error("Error:", error));
   };
 
-  // Add event listeners to hint options
+  // HINT FORM
   document
     .querySelectorAll('.hint-section .option input[type="radio"]')
     .forEach((input) => {
@@ -187,19 +188,19 @@
       });
     });
 
+  // HINT NAVIGATION
   document.getElementById("prevHint").addEventListener("click", function () {
-    navigateHint("prev");
+    changeHint("false");
   });
 
   document.getElementById("nextHint").addEventListener("click", function () {
-    navigateHint("next");
+    changeHint("true");
   });
 
-  function navigateHint(direction) {
-    const currentHintId = document.querySelector("#prevHint").dataset.hintId;
+  function changeHint(isNextHint) {
     const formData = new FormData();
-    formData.append("current_hint_id", currentHintId);
-    formData.append("direction", direction);
+    formData.append("isNextHint", isNextHint);
+    formData.append("unique_identifier", "change_hint");
 
     fetch(window.location.href, {
       method: "POST",
@@ -211,14 +212,26 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        // Update the hint and hint image based on server response
-        document.querySelector(".hint").textContent = data.hint_text;
+        // Update the hint and hint options based on the server response
+        document.querySelector(".hint").textContent = data.hint;
         document.querySelector(
-          ".hint-section .figure img"
+          ".hint-figure img"
         ).src = `/static/storyboard/images/${data.hint_img_url}`;
-        // Update the data-hint-id attribute for navigation
-        document.querySelector("#prevHint").dataset.hintId = data.hint_id;
-        document.querySelector("#nextHint").dataset.hintId = data.hint_id;
+
+        const hintOptionsContainer = document.querySelector(
+          ".hint-section .options"
+        );
+        hintOptionsContainer.innerHTML = ""; // Clear existing options
+
+        data.choices_hint.forEach((choice, index) => {
+          const label = document.createElement("label");
+          label.className = "option";
+          label.innerHTML = `
+            <input type="radio" name="hint_answer" value="${index}" />
+            <div class="option-value">${choice.text}</div>
+          `;
+          hintOptionsContainer.appendChild(label);
+        });
       })
       .catch((error) => console.error("Error:", error));
   }
