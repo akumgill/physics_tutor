@@ -25,7 +25,7 @@
         {% for choice in choices_question %}
         <label class="option">
           <input type="radio" name="answer" value="{{ forloop.counter0 }}" />
-          <div class="option-value">{{ choice }}</div>
+          <div class="option-value">{{ choice.text }}</div>
         </label>
         {% endfor %}
         <div class="submit-section">
@@ -33,7 +33,10 @@
         </div>
       </form>
       <div class="figure">
-        <img src="/static/storyboard/images/{{ question_img_url }}" />
+        <img
+          src="/static/storyboard/images/{{ question_img_url }}"
+          alt="No Image"
+        />
       </div>
     </div>
 
@@ -77,13 +80,16 @@
               name="hint_answer"
               value="{{ forloop.counter0 }}"
             />
-            <div class="option-value">{{ choice|safe }}</div>
+            <div class="option-value">{{ choice.text|safe }}</div>
           </label>
           {% endfor %}
         </form>
         {% if hint_img_url %}
         <div class="figure">
-          <img src="/static/storyboard/images/{{ hint_img_url }}" />
+          <img
+            src="/static/storyboard/images/{{ hint_img_url }}"
+            alt="No Image"
+          />
         </div>
         {% endif %}
       </div>

@@ -38,6 +38,8 @@ def home(request):
     context = {}
     user = request.user
     participant = get_object_or_404(Participant, user=user)
+    if not CurrentProgress.objects.filter(user=user).exists():
+        CurrentProgress(user=user).save()
     # if not participant.signform:
     #     consentform = ConsentForm()
     #     context['consentform'] = consentform
@@ -62,29 +64,33 @@ def section1_questionpage(request):
     context = {"user": user}
     
     section = get_object_or_404(Section, s_id=1)
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
     
     # QUESTION
-    q_id = 1
+    q_id = cur_progress.current_q_id
     question = get_object_or_404(Question, q_id=f"q{q_id}")
     context["question"] = question.text
     context["question_img_url"] = question.img_name
     
     # QUESTION OPTIONS
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
-    context["choices_question"] = [o.text for o in choices_question]
+    context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
     correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    
+    # TODO: feedback from the selected option when the student presses submit
+    context["feedback"] = choices_question[correct_option_index].feedback
 
-    # Initial hint setup
-    h_id = 1
-    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
-    context["hint"] = hint.text
-    if hint.img_name != "no_img":
-        context["hint_img_url"] = hint.img_name
-
-    # HINT OPTIONS
-    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-    context["choices_hint"] = [o.text for o in choices_hint]
-    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
+    # HINT
+    h_id = cur_progress.current_h_id
+    print(f"q{q_id}.h{h_id}")
+    if h_id == "0":
+        context["hint"] = ""
+        context["hint_img_url"] = ""
+        context["choices_hint"] = ["", "", "", "", ""]
+    else:
+        context = findHint(context, q_id, h_id)
 
     if request.method == "POST" and request.POST.get('direction'):
         current_hint_id = request.POST.get('current_hint_id')
@@ -101,11 +107,17 @@ def section1_questionpage(request):
             return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
         elif unique_identifier == 'submit_hint':
             hint_answer_index = request.POST.get('hint_answer')
-            feedback = choices_hint[int(hint_answer_index)].feedback
-            return JsonResponse({'correct': int(hint_answer_index) == correct_hint_index, 'feedback': feedback})
+            feedback = context["choices_hint"][int(hint_answer_index)].feedback
+            return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
 
+    # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+    # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
+    # context["knowledge_components"] = [
+    #     {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
+    #     for kc in kc_list
+    #     ]
 
-    # Knowledge Components
+    # TODO: KNOWLEDGE COMPONENTS
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
@@ -127,6 +139,49 @@ def navigate_hint(q_id, current_hint_id, direction):
     new_hint_id = f"q{q_id}.h{new_hint_number}"
     # Fetch the new hint
     return get_object_or_404(Hint, h_id=new_hint_id)
+
+@login_required
+def changehint(request):
+    print("Change Hint")
+    user = request.user
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    if request.method == "POST":
+        context = {}
+        q_id = cur_progress.current_q_id
+        h_id = cur_progress.current_h_id
+        question = get_object_or_404(Question, q_id=f"q{q_id}")
+        cur_opt = request.POST["hint_option_idx"]
+        all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+        all_hints_of_question = [h.h_id for h in all_hints_of_question]
+        
+        if request.POST["isNextHint"] == 'true':
+            next_hint_id = str(max(int(h_id[0]) + 1, question.total_hints))
+        else:
+            next_hint_id = str(min(int(h_id[0]) - 1, 1))  
+        
+        if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
+            context = findHint(context, q_id, next_hint_id)
+        elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
+            context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
+        else:
+            context["hint"] = ""
+            context["hint_img_url"] = ""
+            context["choices_hint"] = ["", "", "", "", ""]
+        return context
+        
+            
+def findHint(context, q_id, h_id):
+    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
+    context["hint"] = hint.text
+    if hint.img_name != "no_img":
+        context["hint_img_url"] = hint.img_name
+    
+    # HINT OPTIONS
+    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+    context["choices_hint"] = [o.text for o in choices_hint]
+    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
+    context["correct_hint_index"] = correct_hint_index
+    return context
 
 
 ####register all students with their andrewids and passwords
@@ -181,6 +236,7 @@ def import_options():
 
 def import_hints():
     data = pd.read_csv("hints.csv", header=0, delimiter=',')
+    q_h_count = {}
     for i in range(len(data)):
         entry = data.iloc[i]
         hint = Hint(
@@ -192,6 +248,21 @@ def import_hints():
         )
         print(hint)
         hint.save()
+        
+        temp = entry["h_id"].split(".")
+        q_id = temp[0]
+        h_id = int(temp[1].split("_")[0][1:])
+        if q_id not in q_h_count:
+            q_h_count[q_id] = [h_id]
+        else:
+            if h_id not in q_h_count[q_id]:
+                q_h_count[q_id].append(h_id)
+    
+    for k in q_h_count.keys():
+        question = get_object_or_404(Question, q_id=k)
+        question.total_hints = len(q_h_count[k])
+        question.save()
+                    
     successmessage = "hints imported"
     return successmessage
 
