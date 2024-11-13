@@ -27,6 +27,8 @@ from django.core.files import File
 import re, math
 from collections import Counter
 import logging
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
@@ -102,49 +104,61 @@ def section1_questionpage(request):
             print(f"hint_answer_index: {hint_answer_index}")
             feedback = context["choices_hint"][int(hint_answer_index)].feedback
             return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
-        elif unique_identifier == "change_hint":
-            is_next_hint = request.POST.get('isNextHint') == 'true'
-            h_id = int(cur_progress.current_h_id)
-            # Determine the new hint ID with limits
-            if is_next_hint and h_id < 3:
-                h_id += 1
-            elif not is_next_hint and h_id > 0:
-                h_id -= 1
-
-            # Update the current progress with the new hint ID
-            cur_progress.current_h_id = str(h_id)
-            cur_progress.save()
-            # Fetch the new hint
-            context = findHint(context, q_id, h_id)
-            print(context)
-            return JsonResponse({
-                'hint': context["hint"],
-                'hint_img_url': context["hint_img_url"],
-                'choices_hint': [{"text": o.text} for o in context["choices_hint"]]
-            })
 
     return render(request, 'storyboard/questionpage.html', context)
 
 
+@csrf_exempt  # Allow CSRF exemption for this view
+def changehint(request):
+    print("Change Hint")
+    user = request.user
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    if request.method == "POST" and request.POST.get('unique_identifier') == "change_hint":
+        q_id = cur_progress.current_q_id
+        h_id = cur_progress.current_h_id
+
+        # Determine whether to get the next or previous hint
+        isNextHint = request.POST.get("isNextHint") == 'true'
+
+        if isNextHint:
+            next_hint_id = int(h_id) + 1
+        else:
+            next_hint_id = int(h_id) - 1
+
+        # Update current hint ID in user's progress
+        cur_progress.current_h_id = str(next_hint_id)
+        cur_progress.save()
+
+        # Get the new hint
+        context = findHint({}, q_id, str(next_hint_id))
+
+        # Prepare the data to send back
+        data = {
+            'hint_text': context.get('hint', ''),
+            'hint_img_url': context.get('hint_img_url', ''),
+            'hint_options_html': render_to_string('storyboard/hint_options.html', {'choices_hint': context.get('choices_hint', [])}),
+        }
+        return JsonResponse(data)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
 def findHint(context, q_id, h_id):
-    if h_id == "0":
-        context["hint"] = ""
+    try:
+        hint = Hint.objects.get(h_id=f"q{q_id}.h{h_id}")
+        context["hint"] = hint.text
+        context["hint_img_url"] = hint.img_name if hint.img_name != "no_img" else ""
+
+        # HINT OPTIONS
+        choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+        context["choices_hint"] = choices_hint  # Pass the queryset directly
+        correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
+        context["correct_hint_index"] = correct_hint_index
+    except Hint.DoesNotExist:
+        context["hint"] = "No more hints available."
         context["hint_img_url"] = ""
-        context["choices_hint"] = ["", "", "", "", ""]
-        return context
+        context["choices_hint"] = []
 
-    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
-    context["hint"] = hint.text
-    if hint.img_name != "no_img":
-        context["hint_img_url"] = hint.img_name
-
-    # HINT OPTIONS
-    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-    context["choices_hint"] = [o for o in choices_hint]
-    # print(context["choices_hint"])
-    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
-    context["correct_hint_index"] = correct_hint_index
-    # print(context["correct_hint_index"])
     return context
 
 

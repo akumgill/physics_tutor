@@ -62,34 +62,26 @@
     <!-- Hint Section -->
     <div class="hint-section">
       <div class="hint-navigation">
-        <button id="prevHint" data-hint-id="{{ hint.h_id }}">
-          Previous Hint
-        </button>
-        <button id="nextHint" data-hint-id="{{ hint.h_id }}">Next Hint</button>
+        <button id="prevHint">Previous Hint</button>
+        <button id="nextHint">Next Hint</button>
       </div>
       <!-- Hint Question Section -->
       <div class="hint">{{ hint }}</div>
 
       <div class="option-figure">
-        <!-- Hint Options Section (Multiple Choice) -->
-        <form class="options">
-          {% csrf_token %} {% for choice in choices_hint %}
-          <label class="option">
-            <input
-              type="radio"
-              name="hint_answer"
-              value="{{ forloop.counter0 }}"
-            />
-            <div class="option-value">{{ choice.text|safe }}</div>
-          </label>
-          {% endfor %}
-        </form>
+        <!-- Placeholder for hint options -->
+        {% include 'storyboard/hint_options.html' %}
+        <!-- End of hint options -->
         {% if hint_img_url %}
         <div class="hint-figure">
           <img
             src="/static/storyboard/images/{{ hint_img_url }}"
             alt="No Image"
           />
+        </div>
+        {% else %}
+        <div class="hint-figure">
+          <img src="" alt="No Image" style="display: none" />
         </div>
         {% endif %}
       </div>
@@ -188,53 +180,117 @@
       });
     });
 
-  // HINT NAVIGATION
+  // Add event listeners for hint navigation buttons
   document.getElementById("prevHint").addEventListener("click", function () {
-    changeHint("false");
+    changeHint(false); // false indicates we want the previous hint
   });
 
   document.getElementById("nextHint").addEventListener("click", function () {
-    changeHint("true");
+    changeHint(true); // true indicates we want the next hint
   });
 
   function changeHint(isNextHint) {
     const formData = new FormData();
-    formData.append("isNextHint", isNextHint);
     formData.append("unique_identifier", "change_hint");
+    formData.append("isNextHint", isNextHint);
 
-    fetch(window.location.href, {
+    fetch("{% url 'changehint' %}", {
       method: "POST",
       body: formData,
       headers: {
-        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
-          .value,
+        "X-CSRFToken": "{{ csrf_token }}",
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        // Update the hint and hint options based on the server response
-        document.querySelector(".hint").textContent = data.hint;
-        document.querySelector(
-          ".hint-figure img"
-        ).src = `/static/storyboard/images/${data.hint_img_url}`;
+        // Update the hint content
+        document.querySelector(".hint").innerHTML = data.hint_text;
 
+        // Update the hint image if available
+        if (data.hint_img_url) {
+          const hintFigure = document.querySelector(".hint-figure img");
+          hintFigure.src = "/static/storyboard/images/" + data.hint_img_url;
+          hintFigure.style.display = "block";
+        } else {
+          const hintFigure = document.querySelector(".hint-figure img");
+          hintFigure.style.display = "none";
+        }
+
+        // Update the hint options
         const hintOptionsContainer = document.querySelector(
           ".hint-section .options"
         );
-        hintOptionsContainer.innerHTML = ""; // Clear existing options
+        hintOptionsContainer.innerHTML = data.hint_options_html;
 
-        data.choices_hint.forEach((choice, index) => {
-          const label = document.createElement("label");
-          label.className = "option";
-          label.innerHTML = `
-            <input type="radio" name="hint_answer" value="${index}" />
-            <div class="option-value">${choice.text}</div>
-          `;
-          hintOptionsContainer.appendChild(label);
-        });
+        // Reattach the event listeners for the new hint options
+        attachHintOptionListeners();
+
+        // **Add the following line to re-render LaTeX**
+        if (window.MathJax) {
+          MathJax.typeset();
+        }
       })
       .catch((error) => console.error("Error:", error));
   }
+
+  function attachHintOptionListeners() {
+    document
+      .querySelectorAll('.hint-section .option input[type="radio"]')
+      .forEach((input) => {
+        input.addEventListener("change", function () {
+          const selectedValue = this.value;
+
+          const form = this.closest("form");
+          const formData = new FormData(form);
+          formData.append("hint_answer", selectedValue);
+          formData.append("unique_identifier", "submit_hint");
+
+          fetch(window.location.href, {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const hintOptions = document.querySelectorAll(
+                ".hint-section .option input[type='radio']"
+              );
+
+              // Reset all hint option classes
+              hintOptions.forEach((input) => {
+                input.classList.remove("correct", "incorrect");
+              });
+
+              // Highlight based on server response
+              hintOptions.forEach((input) => {
+                if (input.value === selectedValue) {
+                  input.classList.add(data.correct ? "correct" : "incorrect");
+                }
+              });
+
+              // Update feedback from server response
+              document.querySelector(".feedback-section").textContent =
+                data.feedback;
+
+              // **Add the following line to re-render LaTeX**
+              if (window.MathJax) {
+                MathJax.typeset();
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+      });
+
+    // **Add the following line to re-render LaTeX after attaching listeners**
+    if (window.MathJax) {
+      MathJax.typeset();
+    }
+  }
+
+  // Call the function to attach listeners on page load
+  attachHintOptionListeners();
 </script>
 
 {% endblock %}
