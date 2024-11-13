@@ -27,6 +27,8 @@ from django.core.files import File
 import re, math
 from collections import Counter
 import logging
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
@@ -65,7 +67,7 @@ def section1_questionpage(request):
     
     section = get_object_or_404(Section, s_id=1)
     cur_progress = get_object_or_404(CurrentProgress, user=user)
-    
+
     # QUESTION
     q_id = cur_progress.current_q_id
     question = get_object_or_404(Question, q_id=f"q{q_id}")
@@ -77,45 +79,11 @@ def section1_questionpage(request):
     context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
     correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
     print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
-    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
-    
-    # TODO: feedback from the selected option when the student presses submit
-    context["feedback"] = choices_question[correct_option_index].feedback
 
     # HINT
     h_id = cur_progress.current_h_id
     print(f"q{q_id}.h{h_id}")
-    if h_id == "0":
-        context["hint"] = ""
-        context["hint_img_url"] = ""
-        context["choices_hint"] = ["", "", "", "", ""]
-    else:
-        context = findHint(context, q_id, h_id)
-
-    if request.method == "POST" and request.POST.get('direction'):
-        current_hint_id = request.POST.get('current_hint_id')
-        direction = request.POST.get('direction')
-        hint = navigate_hint(q_id, current_hint_id, direction)
-        return JsonResponse({'hint_text': hint.text, 'hint_img_url': hint.img_name, 'hint_id': hint.h_id})
-
-    # Handle POST requests for hint navigation
-    if request.method == "POST" and request.POST.get('unique_identifier'):
-        unique_identifier = request.POST.get('unique_identifier')
-        if unique_identifier == "submit_answer":
-            selected_answer_index = request.POST.get('answer')
-            feedback = choices_question[int(selected_answer_index)].feedback
-            return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
-        elif unique_identifier == 'submit_hint':
-            hint_answer_index = request.POST.get('hint_answer')
-            feedback = context["choices_hint"][int(hint_answer_index)].feedback
-            return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
-
-    # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
-    # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
-    # context["knowledge_components"] = [
-    #     {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
-    #     for kc in kc_list
-    #     ]
+    context = findHint(context, q_id, h_id)
 
     # TODO: KNOWLEDGE COMPONENTS
     context["knowledge_components"] = [
@@ -125,62 +93,72 @@ def section1_questionpage(request):
         {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
     ]
 
+    if request.method == "POST" and request.POST.get('unique_identifier'):
+        unique_identifier = request.POST.get('unique_identifier')
+        if unique_identifier == "submit_answer":
+            selected_answer_index = request.POST.get('answer')
+            feedback = choices_question[int(selected_answer_index)].feedback
+            return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
+        elif unique_identifier == 'submit_hint':
+            hint_answer_index = request.POST.get('hint_answer')
+            print(f"hint_answer_index: {hint_answer_index}")
+            feedback = context["choices_hint"][int(hint_answer_index)].feedback
+            return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
+
     return render(request, 'storyboard/questionpage.html', context)
 
-def navigate_hint(q_id, current_hint_id, direction):
-    # Extract the current hint number
-    current_hint_number = int(current_hint_id.split('h')[-1])
-    if direction == "next":
-        new_hint_number = current_hint_number + 1
-    else:
-        new_hint_number = current_hint_number - 1
 
-    # Construct the new hint ID
-    new_hint_id = f"q{q_id}.h{new_hint_number}"
-    # Fetch the new hint
-    return get_object_or_404(Hint, h_id=new_hint_id)
-
-@login_required
+@csrf_exempt  # Allow CSRF exemption for this view
 def changehint(request):
     print("Change Hint")
     user = request.user
     cur_progress = get_object_or_404(CurrentProgress, user=user)
-    if request.method == "POST":
-        context = {}
+    if request.method == "POST" and request.POST.get('unique_identifier') == "change_hint":
         q_id = cur_progress.current_q_id
         h_id = cur_progress.current_h_id
-        question = get_object_or_404(Question, q_id=f"q{q_id}")
-        cur_opt = request.POST["hint_option_idx"]
-        all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
-        all_hints_of_question = [h.h_id for h in all_hints_of_question]
-        
-        if request.POST["isNextHint"] == 'true':
-            next_hint_id = str(max(int(h_id[0]) + 1, question.total_hints))
+
+        # Determine whether to get the next or previous hint
+        isNextHint = request.POST.get("isNextHint") == 'true'
+
+        if isNextHint:
+            next_hint_id = int(h_id) + 1
         else:
-            next_hint_id = str(min(int(h_id[0]) - 1, 1))  
-        
-        if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
-            context = findHint(context, q_id, next_hint_id)
-        elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
-            context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
-        else:
-            context["hint"] = ""
-            context["hint_img_url"] = ""
-            context["choices_hint"] = ["", "", "", "", ""]
-        return context
-        
-            
+            next_hint_id = int(h_id) - 1
+
+        # Update current hint ID in user's progress
+        cur_progress.current_h_id = str(next_hint_id)
+        cur_progress.save()
+
+        # Get the new hint
+        context = findHint({}, q_id, str(next_hint_id))
+
+        # Prepare the data to send back
+        data = {
+            'hint_text': context.get('hint', ''),
+            'hint_img_url': context.get('hint_img_url', ''),
+            'hint_options_html': render_to_string('storyboard/hint_options.html', {'choices_hint': context.get('choices_hint', [])}),
+        }
+        return JsonResponse(data)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
 def findHint(context, q_id, h_id):
-    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
-    context["hint"] = hint.text
-    if hint.img_name != "no_img":
-        context["hint_img_url"] = hint.img_name
-    
-    # HINT OPTIONS
-    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-    context["choices_hint"] = [o.text for o in choices_hint]
-    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
-    context["correct_hint_index"] = correct_hint_index
+    try:
+        hint = Hint.objects.get(h_id=f"q{q_id}.h{h_id}")
+        context["hint"] = hint.text
+        context["hint_img_url"] = hint.img_name if hint.img_name != "no_img" else ""
+
+        # HINT OPTIONS
+        choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+        context["choices_hint"] = choices_hint  # Pass the queryset directly
+        correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
+        context["correct_hint_index"] = correct_hint_index
+    except Hint.DoesNotExist:
+        context["hint"] = "No more hints available."
+        context["hint_img_url"] = ""
+        context["choices_hint"] = []
+
     return context
 
 
@@ -220,6 +198,7 @@ def import_questions():
     successmessage = "questions imported"
     return successmessage
 
+
 def import_options():
     data = pd.read_csv("options.csv", header=0, delimiter=',')
     for i in range(len(data)):
@@ -233,6 +212,7 @@ def import_options():
         option.save()
     successmessage = "options imported"
     return successmessage
+
 
 def import_hints():
     data = pd.read_csv("hints.csv", header=0, delimiter=',')
@@ -265,6 +245,7 @@ def import_hints():
                     
     successmessage = "hints imported"
     return successmessage
+
 
 def startup():
     print (batchregister())

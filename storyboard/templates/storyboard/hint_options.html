@@ -1,0 +1,8 @@
+<form class="options">
+  {% csrf_token %} {% for choice in choices_hint %}
+  <label class="option">
+    <input type="radio" name="hint_answer" value="{{ forloop.counter0 }}" />
+    <div class="option-value">{{ choice.text|safe }}</div>
+  </label>
+  {% endfor %}
+</form>
