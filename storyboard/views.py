@@ -2,14 +2,14 @@
 from __future__ import unicode_literals
 
 import pandas as pd
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 # Used to create and manually log in a user
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
-from storyboard.forms import *
+# from storyboard.forms import *
 from storyboard.models import *
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -26,257 +26,162 @@ from os import listdir
 from django.core.files import File
 import re, math
 from collections import Counter
+import logging
 
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
-# Section 3 (Perform Your Own Error Analysis)'
-totalnum_list = [6, 5, 5 ,4]
-numberofquestions_list = [6, 5, 5 ,4]
+numberofquestions_list = [1, 0, 0, 0]
 
 @ensure_csrf_cookie
 @login_required
 def home(request):
     context = {}
     user = request.user
-    participant = get_object_or_404(Participant, user=  user)
-    if not participant.signform:
-        consentform = ConsentForm()
-        context['consentform'] = consentform
-        return render(request, 'storyboard/recruitment.html', context)
-    else:
-        displaylist = []
-        for i in range(4):
-            section = get_object_or_404(Section, id = i+1)
-            progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-score")
-            progress = progress_list[0]
-            displaylist.append(progress)
-
-        context['displaylist'] = displaylist
-        context['user'] = user
-        print ("showshow")
-        return render(request, 'storyboard/welcome.html', context)
-
-@login_required
-def section1(request):
-    context = {}
-    user = request.user
-    section = get_object_or_404(Section, id= 1)
-    progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-    progress = progress_list[0]
-
-    if request.method == "GET":
-        if progress.trial == 0:
-            context['sectionstatus'] = "You haven't started this section yet. Please click on the button to start this section."         
-        else:
-            progress_highestscore = Progress.objects.filter(student = user).filter(section = section).order_by("-score")[0]
-            score= progress_highestscore.score
-            context["sectionstatus"] = "Your current score for this section is "+str(score)+". You can work on the section again to earn a new score."
-        return render(request, 'storyboard/section1.html', context)
-        
-    else:    
-        trial = progress.trial+1
-        progress = Progress(student = user, section  = section, trial = trial, score = 0)
-        progress.save()
-        number_of_questions = section.numberofquestions
-        for i in range(number_of_questions):
-            question = Question.objects.filter(section = section).order_by("id")[i]
-            response = Response(student = user, trial = trial, question = question, section = section)
-            response.save()
-        return redirect(reverse('section1_questionpage', args = (0,)))
-
-
-@login_required
-def section1_questionpage(request, id):
-
-    user = request.user
-    section = get_object_or_404(Section, id= 1)
-    context = {}
-
-
-    # progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-    # progress = progress_list[0]
-    # trial = progress.trial
-
-    # question = Question.objects.filter(section = section).order_by("id")[int(id)]
-    # print(question.id)
-    # response = Response.objects.filter(student= user).filter(trial = trial).filter(section = section).filter(question = question)[0]
-
-    # optionlist = []
-    # optionlist.append(question.option1)
-    # optionlist.append(question.option2)
-    # optionlist.append(question.option3)
-    # optionlist.append(question.option4)
-
-    # print("mewmewresponse")
-    # print(response.response)
-
-    # if response.response!=0:
-    #     form = QuestionForm(instance = response, optionlist = optionlist)
-    #     attempted = True
-    #     context["feedbackmessage"] = response.feedbackmessage
+    participant = get_object_or_404(Participant, user=user)
+    if not CurrentProgress.objects.filter(user=user).exists():
+        CurrentProgress(user=user).save()
+    # if not participant.signform:
+    #     consentform = ConsentForm()
+    #     context['consentform'] = consentform
+    #     return render(request, 'storyboard/recruitment.html', context)
     # else:
-    #     form = QuestionForm(optionlist = optionlist)
-    #     attempted = False
+    #     displaylist = []
+    #     for i in range(4):
+    #         section = get_object_or_404(Section, id = i+1)
+    #         progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-score")
+    #         progress = progress_list[0]
+    #         displaylist.append(progress)
 
-
+    #     context['displaylist'] = displaylist
     context['user'] = user
-    # context['question'] = question
-    # context['form'] = form
-    # context['pageid'] = id
-    # context['section'] = section
-    # context['attempted'] = attempted
-    # context["feedbackmessage"] = response.feedbackmessage
+    print ("showshow")
+    return render(request, 'storyboard/welcome.html', context)
 
-    # image_v= question.img
-    # imagelist =[]
 
-    # if ";" in image_v:
-    #     images = image_v.split(";")
-    #     for image in images:
-    #         imagelist.append(image.strip())
-    #     context["imagelist"] = imagelist
+@login_required
+def section1_questionpage(request):
+    user = request.user
+    context = {"user": user}
+    
+    section = get_object_or_404(Section, s_id=1)
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    
+    # QUESTION
+    q_id = cur_progress.current_q_id
+    question = get_object_or_404(Question, q_id=f"q{q_id}")
+    context["question"] = question.text
+    context["question_img_url"] = question.img_name
+    
+    # QUESTION OPTIONS
+    choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
+    context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
+    correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    
+    # TODO: feedback from the selected option when the student presses submit
+    context["feedback"] = choices_question[correct_option_index].feedback
 
-    # elif image_v!="None":
-    #     imagelist.append(image_v.strip())
-    #     context["imagelist"] = imagelist
-        
-    context["question"] = "Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?"
-    context["choices_question"] = ["4.8m", "6.4m", "8.0m", "12.5", "16.0m"]
-    context["question_img_url"] = "Q1/Q1_fig.png"
+    # HINT
+    h_id = cur_progress.current_h_id
+    print(f"q{q_id}.h{h_id}")
+    if h_id == "0":
+        context["hint"] = ""
+        context["hint_img_url"] = ""
+        context["choices_hint"] = ["", "", "", "", ""]
+    else:
+        context = findHint(context, q_id, h_id)
+
+    if request.method == "POST" and request.POST.get('direction'):
+        current_hint_id = request.POST.get('current_hint_id')
+        direction = request.POST.get('direction')
+        hint = navigate_hint(q_id, current_hint_id, direction)
+        return JsonResponse({'hint_text': hint.text, 'hint_img_url': hint.img_name, 'hint_id': hint.h_id})
+
+    # Handle POST requests for hint navigation
+    if request.method == "POST" and request.POST.get('unique_identifier'):
+        unique_identifier = request.POST.get('unique_identifier')
+        if unique_identifier == "submit_answer":
+            selected_answer_index = request.POST.get('answer')
+            feedback = choices_question[int(selected_answer_index)].feedback
+            return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
+        elif unique_identifier == 'submit_hint':
+            hint_answer_index = request.POST.get('hint_answer')
+            feedback = context["choices_hint"][int(hint_answer_index)].feedback
+            return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
+
+    # hint_list = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+    # kc_list = list(set(h.knowledgeComponent.text for h in hint_list))
+    # context["knowledge_components"] = [
+    #     {"knowledge": kc, "stars": ["star", "star", "star", "star", "star"]} 
+    #     for kc in kc_list
+    #     ]
+
+    # TODO: KNOWLEDGE COMPONENTS
     context["knowledge_components"] = [
         {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
         {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
         {"knowledge": "Apply Relevant Equations", "stars": ["star", "starless", "starless", "starless", "starless"]},
         {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
     ]
-    context["hint"] = "Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?"
-    context["choices_hint"] = [
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 \sin(30^o) m/s\) <br> \(v_{0,y} = 25 \\tan(30^o) m/s\)",
-        "\(v_{0,x} = 25 \\tan(30^o) m/s\) <br> \(v_{0,y} = 25 \sin(30^o) m/s\)",
-        "\(v_{0,x} = 25 m/s\) <br> \(v_{0,y} = 0 m/s\)"
-    ]
-    context["hint_img_url"] = "Q1/Q1_fig_hint2.png"
-    context["feedback"] = "XXX"
 
     return render(request, 'storyboard/questionpage.html', context)
 
-
-
-@login_required
-def nextpage(request):
-    print ("nextpage")
-    print (request.POST)
-    user = request.user
-    questionid = int(request.POST['questionid'])
-    pageid = int(request.POST['pageid'])
-    question = get_object_or_404(Question, id = questionid)
-    section = question.section
-
-    progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-    progress = progress_list[0]
-
-    if pageid>=section.numberofquestions-1:
-        progress.complete = True
-        progress.save()
-        return redirect(reverse('section'+str(section.id)))
+def navigate_hint(q_id, current_hint_id, direction):
+    # Extract the current hint number
+    current_hint_number = int(current_hint_id.split('h')[-1])
+    if direction == "next":
+        new_hint_number = current_hint_number + 1
     else:
+        new_hint_number = current_hint_number - 1
 
-        responses = Response.objects.filter(student =user).filter(question = question).order_by("-updated_at")
-        response = responses[0]
-        response.justification = request.POST['justification']
-        response.nextquestion_at= timezone.now()
-        response.save()
-        reversepage = "section1_questionpage"
-        return redirect(reverse(reversepage, args = (str(pageid+1),)))
+    # Construct the new hint ID
+    new_hint_id = f"q{q_id}.h{new_hint_number}"
+    # Fetch the new hint
+    return get_object_or_404(Hint, h_id=new_hint_id)
 
-
-
-@ensure_csrf_cookie
 @login_required
-def imagefeedback(request):
+def changehint(request):
+    print("Change Hint")
     user = request.user
-    if request.method =="POST":
-        print (request.POST)
-        sectionid = int(request.POST['sectionid'])
-        print (sectionid)
-        section = get_object_or_404(Section, id= sectionid)
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    if request.method == "POST":
+        context = {}
+        q_id = cur_progress.current_q_id
+        h_id = cur_progress.current_h_id
+        question = get_object_or_404(Question, q_id=f"q{q_id}")
+        cur_opt = request.POST["hint_option_idx"]
+        all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+        all_hints_of_question = [h.h_id for h in all_hints_of_question]
         
-        progress_list = Progress.objects.filter(student = user).filter(section = section).order_by("-trial")
-        progress = progress_list[0]
-        trial = progress.trial
-
-        questionid =int(request.POST["questionid"])
-        question = get_object_or_404(Question, pk = questionid)
-        
-        response = Response.objects.filter(student= user).filter(trial = trial).filter(section = section).filter(question = question)[0]
-        if response.response!=0:
-            alertmessage = "True"
-            response_text = '{ "alertmessage": "'+alertmessage+'"}'
-            print ("yesyes")
-            return HttpResponse(response_text, 'application/json')
-
-
-        response_choice = int(request.POST['response'])
-        if response_choice == int(question.correctanswer):
-            feedbackmessage =  "<p style = 'color:green;'>Great! You picked the user need the student created this Storyboard for.</p>"
-            correct = 1
+        if request.POST["isNextHint"] == 'true':
+            next_hint_id = str(max(int(h_id[0]) + 1, question.total_hints))
         else:
-            correctanswer = int(question.correctanswer)
-            optionlist = []
-            optionlist.append(question.option1)
-            optionlist.append(question.option2)
-            optionlist.append(question.option3)
-            optionlist.append(question.option4)
-            feedbackmessage = "<p style = 'color:red;'>Sorry, this Storyboard was created for the user need: <strong> #"+str(correctanswer)+"</strong></p>"
-            correct = 0
+            next_hint_id = str(min(int(h_id[0]) - 1, 1))  
         
-
-        response.response = response_choice
-        response.updated_at = timezone.now()
-        response.correct = correct
-        response.feedbackmessage = feedbackmessage
-        response.save()
-
-        pageid = int(request.POST['pageid'])
-
-        if pageid>=section.numberofquestions-1:
-            progress.complete = True
-            progress.save()
-        print (feedbackmessage)
-
-        question_response_list = Response.objects.filter(student =user).filter(section = section).filter(trial = trial)
-        score = 0
-        for item in question_response_list:
-            score = score+item.correct
-        progress.score = score
-        progress.save()
-
-        response_text = '{ "feedbackmessage": "'+feedbackmessage+'"}'
-        return HttpResponse(response_text, 'application/json')
-
-
-def signform(request):
-    user = request.user
-
-    participant = get_object_or_404(Participant, user=  user)
-
-    if "noaccess" in request.POST:
-        participant.exclude = True
-        participant.save()
-    if "access" in request.POST:
-        participant.share = True
-        participant.save()
-
-
-    for item in Section.objects.all():
-        progress = Progress(student = user, section = item, complete= False, score = 0, trial = 0)
-        progress.save()
-    participant.signform = True
-    participant.save()
-    return redirect(reverse('home'))
-
-###
+        if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
+            context = findHint(context, q_id, next_hint_id)
+        elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
+            context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
+        else:
+            context["hint"] = ""
+            context["hint_img_url"] = ""
+            context["choices_hint"] = ["", "", "", "", ""]
+        return context
+        
+            
+def findHint(context, q_id, h_id):
+    hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
+    context["hint"] = hint.text
+    if hint.img_name != "no_img":
+        context["hint_img_url"] = hint.img_name
+    
+    # HINT OPTIONS
+    choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
+    context["choices_hint"] = [o.text for o in choices_hint]
+    correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
+    context["correct_hint_index"] = correct_hint_index
+    return context
 
 
 ####register all students with their andrewids and passwords
@@ -290,58 +195,80 @@ def batchregister():
         participant = Participant(user = user)
         participant.save()
         print(andrewid)
-    successmessage = "group2 registered"
+    successmessage = "users registered"
     return successmessage        
 
-def batchregister_group1():
-    data =  pd.read_csv("userlist.csv")
-    for i in range(len(data)):
-        entry = data.iloc[i]
-        andrewid = entry["andrewid"].strip()
-        user = User.objects.create_user(username = andrewid, password =andrewid)
-        user.save()
-        participant = Participant(user = user)
-        participant.save()
-        print(andrewid)
-    successmessage = "group1 registered"
-    return successmessage   
 
-def importsections():
-    for i in range(len(section_names)):
-        section = Section(sectionname = section_names[i], numberofquestions = numberofquestions_list[i], totalnum = totalnum_list[i])
+def import_sections():
+    for name, num in zip(section_names, numberofquestions_list):
+        section = Section(sectionname = name, numberofquestions = num)
         section.save()
     successmessage = "sections imported"
     return successmessage        
 
-def import_questions_section1():
-    data = pd.read_csv("match_board_need.csv", header =0, encoding = "ISO-8859-1")
-    section = get_object_or_404(Section, pk = 1)
-
-    for i in range(len(data)):
-        entry = data.iloc[i]
-        question = Question(img = entry["img"],correctanswer = entry["correct"], option1 = entry["option1"], option2 = entry["option2"], option3=  entry["option3"], option4 = entry["option4"], section = section)
-        question.save()
-
-    successmessage = "section 1 questions imported"
-    return successmessage
-
-
-
-def register_new_user():
-    name = "jesses1"
-    user = User.objects.create_user(username = name, password =name)
-    user.save()
-    participant = Participant(user = user)
-    participant.save()
-    print ("new user registered")
-    
-def startup():
-    print (batchregister())
-    print (importsections())
 
 def import_questions():
-    print (import_questions_section1())
+    data = pd.read_csv("questions.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        question = Question(
+            q_id = entry["q_id"],
+            text = entry["text"],
+            img_name = entry["img_name"],
+        )
+        question.save()
+    successmessage = "questions imported"
+    return successmessage
 
-def group1():
-    print (batchregister_group1())
+def import_options():
+    data = pd.read_csv("options.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        option = Option(
+            o_id = entry["o_id"],
+            text = entry["text"],
+            is_correct = entry["is_correct"],
+            feedback = entry["feedback"],
+        )
+        option.save()
+    successmessage = "options imported"
+    return successmessage
 
+def import_hints():
+    data = pd.read_csv("hints.csv", header=0, delimiter=',')
+    q_h_count = {}
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        hint = Hint(
+            h_id = entry["h_id"],
+            # TODO[Akum]: add kc_id as foreign key after I import them
+            # kc_id = entry["kc_id"],
+            text = entry["text"],
+            img_name = entry["img_name"],
+        )
+        print(hint)
+        hint.save()
+        
+        temp = entry["h_id"].split(".")
+        q_id = temp[0]
+        h_id = int(temp[1].split("_")[0][1:])
+        if q_id not in q_h_count:
+            q_h_count[q_id] = [h_id]
+        else:
+            if h_id not in q_h_count[q_id]:
+                q_h_count[q_id].append(h_id)
+    
+    for k in q_h_count.keys():
+        question = get_object_or_404(Question, q_id=k)
+        question.total_hints = len(q_h_count[k])
+        question.save()
+                    
+    successmessage = "hints imported"
+    return successmessage
+
+def startup():
+    print (batchregister())
+    print (import_sections())
+    print (import_questions())
+    print (import_options())
+    print (import_hints())

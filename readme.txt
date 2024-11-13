@@ -1,12 +1,13 @@
 
 pip install -r requirements.txt
 
-python manage.py makemigrations
+rm db.sqlite3
+rm -rf storyboard/migrations
+python manage.py makemigrations storyboard
 python manage.py migrate
 python manage.py shell
 from storyboard import views
 views.startup()
-views.import_questions()
 exit()
 
 python manage.py runserver

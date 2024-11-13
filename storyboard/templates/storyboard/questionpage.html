@@ -1,101 +1,227 @@
-{% extends "storyboard/base.html" %}
+{% extends "storyboard/base.html" %} {% load static %} {% static "" as baseUrl
+%} {% block user-info %}
+<div
+  style="color: white; font-size: 18px; padding-top: 5pt; padding-right: 5pt"
+>
+  {{user.username}}
+</div>
+{% endblock %} {% block content %}
 
-{% load static %}
-{% static "" as baseUrl %}
-
-{% block user-info %}
-    <div style = "color:white; font-size: 18px; padding-top: 5pt; padding-right: 5pt;">{{user.username}}</div>
-{% endblock %}
-
-{% block content %}
-
-    <div class="entire-panel">
-        <!-- Left Panel -->
-        <div class="left-panel">
-            <!-- Question Section -->
-            <div class="question">
-                <!-- Add Question Content Here -->
-                <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
-                {{ question }}
-            </div>
-
-            <div class="option-figure">
-            <!-- Options Section (Multiple Choice) -->
-                <form class="options">
-                    {% csrf_token %}
-                    {% for choice in choices_question %}
-                    <label class="option">
-                        <input type="radio" name="answer" value="{{ choice }}">
-                        <div class="option-value">{{ choice }}</div>
-                    </label>
-                    {% endfor %}
-                </form>
-                <div class="figure"><img src="/static/storyboard/images/{{ question_img_url }}"/></div>
-            </div>
-
-            <!-- Submit Section -->
-            <div class="submit-section">
-                <button>See Example</button>
-                <button type="submit" form="options">Submit</button>
-            </div>
-
-            <!-- Knowledge Components Section -->
-            <div class="knowledge-section">
-                <h3>Knowledge Components:</h3>
-
-                {% for kc in knowledge_components %}
-                <div class="knowledge-stars">
-                    <div class="knowledge">{{ kc.knowledge }}</div>
-                    <div class="stars">
-                        {% for star in kc.stars %}
-                        <div class="{{ star }}"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-
-            </div>
-        </div>
-
-        <!-- Right Panel -->
-        <div class="right-panel">
-            <!-- Hint Section -->
-            <div class="hint-section">
-                <div class="hint-navigation">
-                    <button>Previous Hint</button>
-                    <button>Next Hint</button>
-                </div>
-                <!-- Question Section -->
-                <div class="hint">
-                    <!-- Add Question Content Here -->
-                    <!-- Hint 2 [Split into components]: The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity? -->
-                    {{ hint }}
-                </div>
-
-                <div class="option-figure">
-                <!-- Options Section (Multiple Choice) -->
-                    <form class="options">
-                        {% csrf_token %}
-                        {% for choice in choices_hint %}
-                        <label class="option">
-                            <input type="radio" name="answer" value="{{ choice|safe }}">
-                            <div class="option-value">{{ choice|safe }}</div>
-                        </label>
-                        {% endfor %}
-                    </form>
-                    <div class="figure"><img src="/static/storyboard/images/{{ hint_img_url }}"/></div>
-                </div>
-
-            </div>
-
-            <!-- Feedback Section -->
-            <h3>Feedback:</h3>
-            <div class="feedback-section">
-                <!-- Add Feedback Content Here -->
-                {{ feedback }}
-            </div>
-
-        </div>
+<div class="entire-panel">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <!-- Question Section -->
+    <div class="question">
+      <!-- Add Question Content Here -->
+      <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
+      {{ question }}
     </div>
+
+    <div class="option-figure">
+      <!-- Options Section (Multiple Choice) -->
+      <form class="options" method="post" id="questionForm">
+        {% csrf_token %}
+        <input type="hidden" name="unique_identifier" value="submit_answer" />
+        {% for choice in choices_question %}
+        <label class="option">
+          <input type="radio" name="answer" value="{{ forloop.counter0 }}" />
+          <div class="option-value">{{ choice.text }}</div>
+        </label>
+        {% endfor %}
+        <div class="submit-section">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <div class="figure">
+        <img
+          src="/static/storyboard/images/{{ question_img_url }}"
+          alt="No Image"
+        />
+      </div>
+    </div>
+
+    <!-- Knowledge Components Section -->
+    <div class="knowledge-section">
+      <h3>Knowledge Components:</h3>
+
+      {% for kc in knowledge_components %}
+      <div class="knowledge-stars">
+        <div class="knowledge">{{ kc.knowledge }}</div>
+        <div class="stars">
+          {% for star in kc.stars %}
+          <div class="{{ star }}"></div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <!-- Hint Section -->
+    <div class="hint-section">
+      <div class="hint-navigation">
+        <button id="prevHint" data-hint-id="{{ hint.h_id }}">
+          Previous Hint
+        </button>
+        <button id="nextHint" data-hint-id="{{ hint.h_id }}">Next Hint</button>
+      </div>
+      <!-- Hint Question Section -->
+      <div class="hint">{{ hint }}</div>
+
+      <div class="option-figure">
+        <!-- Hint Options Section (Multiple Choice) -->
+        <form class="options">
+          {% csrf_token %} {% for choice in choices_hint %}
+          <label class="option">
+            <input
+              type="radio"
+              name="hint_answer"
+              value="{{ forloop.counter0 }}"
+            />
+            <div class="option-value">{{ choice.text|safe }}</div>
+          </label>
+          {% endfor %}
+        </form>
+        {% if hint_img_url %}
+        <div class="figure">
+          <img
+            src="/static/storyboard/images/{{ hint_img_url }}"
+            alt="No Image"
+          />
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <h3>Feedback:</h3>
+    <div class="feedback-section">
+      <!-- Add Feedback Content Here -->
+      {{ feedback }}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("questionForm").onsubmit = function (event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const options = form.querySelectorAll(".option input[type='radio']");
+
+        // Reset all option classes and colors
+        options.forEach((input) => {
+          input.classList.remove("correct", "incorrect");
+        });
+
+        // Highlight the selected option based on correctness
+        options.forEach((input) => {
+          if (input.value === formData.get("answer")) {
+            input.classList.add(data.correct ? "correct" : "incorrect");
+          }
+        });
+
+        // Update feedback section
+        document.querySelector(".feedback-section").textContent = data.feedback;
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+
+  // Add event listeners to hint options
+  document
+    .querySelectorAll('.hint-section .option input[type="radio"]')
+    .forEach((input) => {
+      input.addEventListener("change", function () {
+        const selectedValue = this.value;
+
+        const form = this.closest("form");
+        const formData = new FormData(form);
+        formData.append("hint_answer", selectedValue);
+        formData.append("unique_identifier", "submit_hint"); // To identify hint submissions in your view
+
+        fetch(window.location.href, {
+          // or specify a different URL for hint processing
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+              .value,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const hintOptions = document.querySelectorAll(
+              ".hint-section .option input[type='radio']"
+            );
+
+            // Reset all hint option classes
+            hintOptions.forEach((input) => {
+              input.classList.remove("correct", "incorrect");
+            });
+
+            // Highlight based on server response
+            hintOptions.forEach((input) => {
+              if (input.value === selectedValue) {
+                input.classList.add(data.correct ? "correct" : "incorrect");
+              }
+            });
+
+            // Update feedback from server response
+            document.querySelector(".feedback-section").textContent =
+              data.feedback;
+          })
+          .catch((error) => console.error("Error:", error));
+      });
+    });
+
+  document.getElementById("prevHint").addEventListener("click", function () {
+    navigateHint("prev");
+  });
+
+  document.getElementById("nextHint").addEventListener("click", function () {
+    navigateHint("next");
+  });
+
+  function navigateHint(direction) {
+    const currentHintId = document.querySelector("#prevHint").dataset.hintId;
+    const formData = new FormData();
+    formData.append("current_hint_id", currentHintId);
+    formData.append("direction", direction);
+
+    fetch(window.location.href, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+          .value,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Update the hint and hint image based on server response
+        document.querySelector(".hint").textContent = data.hint_text;
+        document.querySelector(
+          ".hint-section .figure img"
+        ).src = `/static/storyboard/images/${data.hint_img_url}`;
+        // Update the data-hint-id attribute for navigation
+        document.querySelector("#prevHint").dataset.hintId = data.hint_id;
+        document.querySelector("#nextHint").dataset.hintId = data.hint_id;
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+</script>
 
 {% endblock %}
