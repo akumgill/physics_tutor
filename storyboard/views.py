@@ -114,51 +114,56 @@ def changehint(request):
     print("Change Hint")
     user = request.user
     cur_progress = get_object_or_404(CurrentProgress, user=user)
+    print(cur_progress)
     if request.method == "POST" and request.POST.get('unique_identifier') == "change_hint":
+        context = {}
         q_id = cur_progress.current_q_id
         h_id = cur_progress.current_h_id
+        question = get_object_or_404(Question, q_id=f"q{q_id}")
+        cur_opt = request.POST["hint_option_idx"]
+        all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+        all_hints_of_question = [h.h_id for h in all_hints_of_question]
 
         # Determine whether to get the next or previous hint
         isNextHint = request.POST.get("isNextHint") == 'true'
 
         if isNextHint:
-            next_hint_id = int(h_id) + 1
+            next_hint_id = str(min(int(h_id[0]) + 1, question.total_hints))
         else:
-            next_hint_id = int(h_id) - 1
+            next_hint_id = str(max(int(h_id[0]) - 1, 1))  
 
         # Update current hint ID in user's progress
         cur_progress.current_h_id = str(next_hint_id)
         cur_progress.save()
 
-        # Get the new hint
-        context = findHint({}, q_id, str(next_hint_id))
-
-        # Prepare the data to send back
-        data = {
-            'hint_text': context.get('hint', ''),
-            'hint_img_url': context.get('hint_img_url', ''),
-            'hint_options_html': render_to_string('storyboard/hint_options.html', {'choices_hint': context.get('choices_hint', [])}),
-        }
-        return JsonResponse(data)
+        if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
+            print(f"q{q_id}.h{next_hint_id}")
+            context = findHint(context, q_id, next_hint_id)
+        elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
+            print(f"q{q_id}.h{next_hint_id}_{cur_opt}")
+            context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
+        else:
+            context["hint"] = ""
+            context["hint_img_url"] = ""
+            context["choices_hint"] = ["", "", "", "", ""]
+        return JsonResponse(context)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 def findHint(context, q_id, h_id):
     try:
-        hint = Hint.objects.get(h_id=f"q{q_id}.h{h_id}")
+        hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
         context["hint"] = hint.text
         context["hint_img_url"] = hint.img_name if hint.img_name != "no_img" else ""
 
         # HINT OPTIONS
         choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-        context["choices_hint"] = choices_hint  # Pass the queryset directly
-        correct_hint_index = next((index for index, o in enumerate(choices_hint) if o.is_correct), -1)
-        context["correct_hint_index"] = correct_hint_index
+        context["choices_hint"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_hint)]
     except Hint.DoesNotExist:
         context["hint"] = "No more hints available."
         context["hint_img_url"] = ""
-        context["choices_hint"] = []
+        context["choices_hint"] = [{"idx": i, "text": ""} for i in range(5)]
 
     return context
 

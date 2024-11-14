@@ -19,22 +19,24 @@
 
     <div class="option-figure">
       <!-- Options Section (Multiple Choice) -->
-      <form class="options" method="post" id="questionForm">
-        {% csrf_token %}
-        <input type="hidden" name="unique_identifier" value="submit_answer" />
-        {% for choice in choices_question %}
-        <label class="option">
-          <input type="radio" name="answer" value="{{ forloop.counter0 }}" />
-          <div class="option-value">{{ choice.text }}</div>
-        </label>
-        {% endfor %}
-        <div class="submit-section">
-          <button type="submit">Submit</button>
-          <div class="see-example-section">
-            <button type="button" id="seeExample">See Example</button>
+      <div id="question_option" style="width: 50%">
+        <form class="options" method="post" id="questionForm">
+          {% csrf_token %}
+          <input type="hidden" name="unique_identifier" value="submit_answer" />
+          {% for choice in choices_question %}
+          <label class="option">
+            <input type="radio" name="answer" value="{{ choice.idx }}" />
+            <div class="option-value">{{ choice.text }}</div>
+          </label>
+          {% endfor %}
+          <div class="submit-section">
+            <button type="submit">Submit</button>
+            <div class="see-example-section">
+              <button type="button" id="seeExample">See Example</button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
       <div class="figure">
         <img
           src="/static/storyboard/images/{{ question_img_url }}"
@@ -69,23 +71,41 @@
         <button id="nextHint">Next Hint</button>
       </div>
       <!-- Hint Question Section -->
-      <div class="hint">{{ hint }}</div>
+      <div class="hint" id="hint_text">{{ hint }}</div>
 
       <div class="option-figure">
         <!-- Placeholder for hint options -->
-        {% include 'storyboard/hint_options.html' %}
+
         <!-- End of hint options -->
         {% if hint_img_url %}
-        <div class="hint-figure">
+        <div id="hint_option" style="width: 50%">
+          <form class="options" id="form_hint">
+            {% csrf_token %} {% for choice in choices_hint %}
+            <label class="option">
+              <input type="radio" name="hint_answer" value="{{ choice.idx }}" />
+              <div class="option-value">{{ choice.text|safe }}</div>
+            </label>
+            {% endfor %}
+          </form>
+        </div>
+        <div class="hint-figure" id="hint_figure" style="width: 50%">
           <img
             src="/static/storyboard/images/{{ hint_img_url }}"
             alt="No Image"
           />
         </div>
         {% else %}
-        <div class="hint-figure">
-          <img src="" alt="No Image" style="display: none" />
+        <div id="hint_option">
+          <form class="options" id="form_hint" style="width: 100%">
+            {% csrf_token %} {% for choice in choices_hint %}
+            <label class="option">
+              <input type="radio" name="hint_answer" value="{{ choice.idx }}" />
+              <div class="option-value">{{ choice.text|safe }}</div>
+            </label>
+            {% endfor %}
+          </form>
         </div>
+        <div class="hint-figure" id="hint_figure" style="width: 0%"></div>
         {% endif %}
       </div>
     </div>
@@ -201,6 +221,7 @@
     const formData = new FormData();
     formData.append("unique_identifier", "change_hint");
     formData.append("isNextHint", isNextHint);
+    formData.append("hint_option_idx", 0);
 
     fetch("{% url 'changehint' %}", {
       method: "POST",
@@ -212,23 +233,44 @@
       .then((response) => response.json())
       .then((data) => {
         // Update the hint content
-        document.querySelector(".hint").innerHTML = data.hint_text;
+        document.getElementById("hint_text").textContent = data.hint;
 
         // Update the hint image if available
+        const hintFigureDiv = document.getElementById("hint_figure");
+        hintFigureDiv.innerHTML = "";
+        const hintOptionDiv = document.getElementById("hint_option");
         if (data.hint_img_url) {
-          const hintFigure = document.querySelector(".hint-figure img");
+          const hintFigure = document.createElement("img");
           hintFigure.src = "/static/storyboard/images/" + data.hint_img_url;
           hintFigure.style.display = "block";
+          hintFigureDiv.appendChild(hintFigure);
+          hintFigureDiv.style.width = "50%";
+          hintOptionDiv.style.width = "50%";
         } else {
-          const hintFigure = document.querySelector(".hint-figure img");
-          hintFigure.style.display = "none";
+          hintFigureDiv.style.width = "0%";
+          hintOptionDiv.style.width = "100%";
         }
 
         // Update the hint options
-        const hintOptionsContainer = document.querySelector(
-          ".hint-section .options"
-        );
-        hintOptionsContainer.innerHTML = data.hint_options_html;
+        const hintForm = document.getElementById("form_hint");
+        hintForm.innerHTML = "";
+        data.choices_hint.forEach((choice) => {
+          const label = document.createElement("label");
+          label.className = "option";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = "hint_answer";
+          input.value = choice.idx;
+
+          const div = document.createElement("div");
+          div.className = "option-value";
+          div.innerHTML = choice.text;
+
+          label.appendChild(input);
+          label.appendChild(div);
+          hintForm.appendChild(label);
+        });
 
         // Reattach the event listeners for the new hint options
         attachHintOptionListeners();
