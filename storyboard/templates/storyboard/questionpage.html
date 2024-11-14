@@ -19,7 +19,7 @@
 
     <div class="option-figure">
       <!-- Options Section (Multiple Choice) -->
-      <div id="question_option" style="width: 50%;">
+      <div id="question_option" style="width: 50%">
         <form class="options" method="post" id="questionForm">
           {% csrf_token %}
           <input type="hidden" name="unique_identifier" value="submit_answer" />
@@ -31,6 +31,9 @@
           {% endfor %}
           <div class="submit-section">
             <button type="submit">Submit</button>
+            <div class="see-example-section">
+              <button type="button" id="seeExample">See Example</button>
+            </div>
           </div>
         </form>
       </div>
@@ -72,10 +75,10 @@
 
       <div class="option-figure">
         <!-- Placeholder for hint options -->
-        
+
         <!-- End of hint options -->
         {% if hint_img_url %}
-        <div id="hint_option" style="width: 50%;">
+        <div id="hint_option" style="width: 50%">
           <form class="options" id="form_hint">
             {% csrf_token %} {% for choice in choices_hint %}
             <label class="option">
@@ -85,7 +88,7 @@
             {% endfor %}
           </form>
         </div>
-        <div class="hint-figure" id="hint_figure" style="width: 50%;">
+        <div class="hint-figure" id="hint_figure" style="width: 50%">
           <img
             src="/static/storyboard/images/{{ hint_img_url }}"
             alt="No Image"
@@ -93,7 +96,7 @@
         </div>
         {% else %}
         <div id="hint_option">
-          <form class="options" id="form_hint" style="width: 100%;">
+          <form class="options" id="form_hint" style="width: 100%">
             {% csrf_token %} {% for choice in choices_hint %}
             <label class="option">
               <input type="radio" name="hint_answer" value="{{ choice.idx }}" />
@@ -102,16 +105,21 @@
             {% endfor %}
           </form>
         </div>
-        <div class="hint-figure" id="hint_figure" style="width: 0%;"></div>
+        <div class="hint-figure" id="hint_figure" style="width: 0%"></div>
         {% endif %}
       </div>
     </div>
 
     <!-- Feedback Section -->
     <h3>Feedback:</h3>
-    <div class="feedback-section">
-      <!-- Add Feedback Content Here -->
-      {{ feedback }}
+    <div class="feedback-section">{{ feedback|linebreaks|safe }}</div>
+  </div>
+
+  <!-- Overlay for 'See Example' -->
+  <div id="exampleOverlay" class="overlay" style="display: none">
+    <div class="overlay-content">
+      {{ example_problem|linebreaks|safe }}
+      <button id="closeExample">Close</button>
     </div>
   </div>
 </div>
@@ -262,7 +270,7 @@
           label.appendChild(input);
           label.appendChild(div);
           hintForm.appendChild(label);
-        })
+        });
 
         // Reattach the event listeners for the new hint options
         attachHintOptionListeners();
@@ -333,6 +341,21 @@
 
   // Call the function to attach listeners on page load
   attachHintOptionListeners();
+
+  // Open the overlay when 'See Example' button is clicked
+  document.getElementById("seeExample").addEventListener("click", function () {
+    document.getElementById("exampleOverlay").style.display = "block";
+    if (window.MathJax) {
+      MathJax.typeset();
+    }
+  });
+
+  // Close the overlay when 'Close' button is clicked
+  document
+    .getElementById("closeExample")
+    .addEventListener("click", function () {
+      document.getElementById("exampleOverlay").style.display = "none";
+    });
 </script>
 
 {% endblock %}
