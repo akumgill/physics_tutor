@@ -38,6 +38,7 @@ class Question(models.Model):
     text = models.TextField(verbose_name="text", default="")
     img_name = models.TextField(verbose_name="img_name", default="")
     total_hints = models.PositiveIntegerField(verbose_name="total_hints", default=0)
+    example_problem = models.TextField(verbose_name="example_problem", default="")
 
     def __unicode__(self):
         return 'id='+ str(self.pk)

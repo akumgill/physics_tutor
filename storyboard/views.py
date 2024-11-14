@@ -73,7 +73,8 @@ def section1_questionpage(request):
     question = get_object_or_404(Question, q_id=f"q{q_id}")
     context["question"] = question.text
     context["question_img_url"] = question.img_name
-    
+    context["example_problem"] = question.example_problem
+
     # QUESTION OPTIONS
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
     context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
@@ -193,6 +194,7 @@ def import_questions():
             q_id = entry["q_id"],
             text = entry["text"],
             img_name = entry["img_name"],
+            example_problem = entry["example_problem"],
         )
         question.save()
     successmessage = "questions imported"

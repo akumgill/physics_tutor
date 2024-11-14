@@ -30,6 +30,9 @@
         {% endfor %}
         <div class="submit-section">
           <button type="submit">Submit</button>
+          <div class="see-example-section">
+            <button type="button" id="seeExample">See Example</button>
+          </div>
         </div>
       </form>
       <div class="figure">
@@ -89,9 +92,14 @@
 
     <!-- Feedback Section -->
     <h3>Feedback:</h3>
-    <div class="feedback-section">
-      <!-- Add Feedback Content Here -->
-      {{ feedback }}
+    <div class="feedback-section">{{ feedback|linebreaks|safe }}</div>
+  </div>
+
+  <!-- Overlay for 'See Example' -->
+  <div id="exampleOverlay" class="overlay" style="display: none">
+    <div class="overlay-content">
+      {{ example_problem|linebreaks|safe }}
+      <button id="closeExample">Close</button>
     </div>
   </div>
 </div>
@@ -291,6 +299,21 @@
 
   // Call the function to attach listeners on page load
   attachHintOptionListeners();
+
+  // Open the overlay when 'See Example' button is clicked
+  document.getElementById("seeExample").addEventListener("click", function () {
+    document.getElementById("exampleOverlay").style.display = "block";
+    if (window.MathJax) {
+      MathJax.typeset();
+    }
+  });
+
+  // Close the overlay when 'Close' button is clicked
+  document
+    .getElementById("closeExample")
+    .addEventListener("click", function () {
+      document.getElementById("exampleOverlay").style.display = "none";
+    });
 </script>
 
 {% endblock %}

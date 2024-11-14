@@ -1,2 +1,40 @@
-q_id,text,img_name
-q1,"A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?","Q1_fig.png"
+q_id,text,img_name,example_problem
+q1,"A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?",Q1_fig.png,"Problem: A kangaroo jumps with an initial velocity of 20 m/s at an angle of 45° above the horizontal. The kangaroo passes through the center of a ring before landing back on the ground. If the kangaroo is moving horizontally at the instant it goes through the ring, how high, H, above the ground is the center of the ring?
+
+Step 1: Understand Problem
+We need to find the height at which the kangaroo passes through the ring. The kangaroo is moving horizontally at this point, which means its vertical velocity component is zero at the top of its trajectory.
+
+Step 2: Split into Components
+The initial velocity of the kangaroo is 20 m/s at an angle of 45°. We split this into horizontal and vertical components: 
+
+- Horizontal component: \( v_{0x} = 20 \cos(45°) \)
+- Vertical component: \( v_{0y} = 20 \sin(45°) \)
+
+Step 3: Apply Relevant Equations
+At the top of the trajectory, the vertical velocity is zero. We use the kinematic equation for vertical motion: 
+
+\( v_y = v_{0y} - gt \)
+
+Setting \( v_y = 0 \) gives us the time to reach the top of the trajectory. Then, we use the vertical displacement equation: 
+
+\( y = v_{0y}t - \frac{1}{2}gt^2 \)
+
+Step 4: Perform algebra and arithmetic
+Calculate the components:
+
+\( v_{0x} = 20 \cos(45°) = 20 \times \frac{\sqrt{2}}{2} = 14.14 \text{ m/s} \)
+\( v_{0y} = 20 \sin(45°) = 20 \times \frac{\sqrt{2}}{2} = 14.14 \text{ m/s} \)
+
+Find the time to reach the top:
+
+\( 0 = 14.14 - 9.8t \)
+\( t = \frac{14.14}{9.8} = 1.44 \text{ s} \)
+
+Calculate the height:
+
+\( y = 14.14 \times 1.44 - \frac{1}{2} \times 9.8 \times (1.44)^2 \)
+\( y = 20.34 - 10.15 = 10.19 \text{ m} \)
+
+Thus, the height of the ring above the ground is 10.19 meters.
+
+"
