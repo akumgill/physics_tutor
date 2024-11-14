@@ -15,8 +15,7 @@ h2 span{
 
 img {
   max-height: 90%;
-
-  max-width: 90%;
+  width: 100%;
     border :1pt;
   border-style: dashed;
   border-color:  #4F67AE;
