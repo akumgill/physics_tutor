@@ -50,7 +50,6 @@ class KnowledgeComponent(models.Model):
 
 class Hint(models.Model):
     h_id = models.TextField(primary_key=True)
-    # kc_id = models.ForeignKey(KnowledgeComponent, on_delete=models.CASCADE)
     text = models.TextField(verbose_name="text", default="")
     img_name = models.TextField(verbose_name="img_name", default="")
     def __unicode__(self):

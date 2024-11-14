@@ -189,7 +189,7 @@ table
   flex-direction: column;
   gap: 5px;
   text-align: left;
-  width: 50%;
+  width: 100%;
 }
 
 .option {

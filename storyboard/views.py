@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 import json
 from django.http import HttpResponse, Http404, JsonResponse
 from django.core.files import File
+from django.forms.models import model_to_dict
 import sqlite3
 import os
 import numpy as np
@@ -96,14 +97,23 @@ def section1_questionpage(request):
     if request.method == "POST" and request.POST.get('unique_identifier'):
         unique_identifier = request.POST.get('unique_identifier')
         if unique_identifier == "submit_answer":
-            selected_answer_index = request.POST.get('answer')
-            feedback = choices_question[int(selected_answer_index)].feedback
-            return JsonResponse({'correct': int(selected_answer_index) == correct_option_index, 'feedback': feedback})
+            selected_answer_index = int(request.POST.get('answer'))
+            feedback = choices_question[selected_answer_index].feedback
+            response = {
+                'correct': selected_answer_index == correct_option_index, 
+                'feedback': feedback
+            }
+            print(response)
+            return JsonResponse(response)
         elif unique_identifier == 'submit_hint':
-            hint_answer_index = request.POST.get('hint_answer')
+            hint_answer_index = int(request.POST.get('hint_answer')) - 1
             print(f"hint_answer_index: {hint_answer_index}")
-            feedback = context["choices_hint"][int(hint_answer_index)].feedback
-            return JsonResponse({'correct': int(hint_answer_index) == context["correct_hint_index"], 'feedback': feedback})
+            feedback = context["choices_hint"][hint_answer_index]["feedback"]
+            response = {
+                'correct': context["choices_hint"][hint_answer_index]["is_correct"], 
+                'feedback': feedback
+            }
+            return JsonResponse(response)
 
     return render(request, 'storyboard/questionpage.html', context)
 
@@ -158,11 +168,16 @@ def findHint(context, q_id, h_id):
 
         # HINT OPTIONS
         choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
-        context["choices_hint"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_hint)]
+        context["choices_hint"] = [model_to_dict(o) for o in choices_hint]
+        for i, o in enumerate(context["choices_hint"]):
+            o["idx"] = i + 1
+            o.pop("o_id", None)
     except Hint.DoesNotExist:
         context["hint"] = "No more hints available."
         context["hint_img_url"] = ""
-        context["choices_hint"] = [{"idx": i, "text": ""} for i in range(5)]
+        context["choices_hint"] = [
+            {"idx": i + 1, "text": "", "feedback": "", "is_correct": False} for i in range(5)
+        ]
 
     return context
 
