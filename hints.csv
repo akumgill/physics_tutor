@@ -7,3 +7,10 @@ q1.h4_1,kc4,"You have selected the following equations of motion: \(v_{y,f}=v_{0
 q1.h4_2,kc4,"TODO: diff EOM",no_img
 q1.h4_3,kc4,"TODO: diff EOM",no_img
 q1.h4_4,kc4,"TODO: diff EOM",no_img
+q2.h0,kc0,"Click Next Hint to see the first hint",no_img
+q2.h1,kc1,"What kind of information can we get from the description? What are we solving for?",no_img
+q2.h2,kc2,"The initial velocity is 10 m/s and is entirely horizontal. What are the x and y components of the initial velocity?",no_img
+q2.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\)=0. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",no_img
+q3.h0,kc0,"Click Next Hint to see the first hint",no_img
+q4.h0,kc0,"Click Next Hint to see the first hint",no_img
+q5.h0,kc0,"Click Next Hint to see the first hint",no_img

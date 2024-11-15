@@ -24,3 +24,43 @@ q1.h2.o4,"\(v_{0,x} = 25 \tan(30^o) m/s\) <br>
 \(v_{0,y} = 25 \sin(30^o) m/s\)",FALSE,"Wrong hint. Try again."
 q1.h2.o5,"\(v_{0,x} = 0 m/s\) <br> 
 \(v_{0,y} = 25 m/s\)",FALSE,"Wrong hint. Try again."
+q2.o1,"1.0 s",FALSE,"Wrong answer. Try again."
+q2.o2,"1.2 s",FALSE,"Wrong answer. Try again."
+q2.o3,"3.4 s",FALSE,"Wrong answer. Try again."
+q2.o4,"5.5 s",TRUE,"That's the correct answer. Congratulations on completing the problem!"
+q2.o5,"11.2 s",FALSE,"Wrong answer. Try again."
+q2.h1.o1,"Known Information: \(v_{0,x} = 10 m/s\) <br>
+We are solving for the time it takes for the rock to hit the ground",TRUE,"Correct hint. Good job!"
+q2.h1.o2,"Known Information: \(v_{0,y} = 10 m/s\) <br>
+We are solving for the maximum height of the rock's trajectory",FALSE,"Wrong hint. Try again."
+q2.h1.o3,"Known Information: \(v_{0,x} = 10 m/s\) <br>
+We are solving for the maximum horizontal distance of the rock's trajectory",FALSE,"Wrong hint. Try again."
+q2.h1.o4,"Known Information: \(v_{0,x} < 10 m/s\) <br>
+We are solving for the maximum horizontal distance of the rock's trajectory",FALSE,"Wrong hint. Try again."
+q2.h1.o5,"Known Information: \(v_{0,x} = 0 m/s\) <br>
+We are solving for the time it takes for the rock to hit the ground",FALSE,"Wrong hint. Try again."
+q2.h2.o1,"\(v_{0,x} = 10 \sin(0^o) m/s\) <br> 
+\(v_{0,y} = 10 \sin(0^o) m/s\)",FALSE,"Wrong hint. Try again."
+q2.h2.o2,"\(v_{0,x} = 10 \cos(0^o) m/s\) <br> 
+\(v_{0,y} = 25 \cos(0^o) m/s\)",FALSE,"Wrong hint. Try again."
+q2.h2.o3,"\(v_{0,x} = 10 \cos(0^o) m/s\) <br> 
+\(v_{0,y} = 10 \sin(0^o) m/s\)",TRUE,"Correct hint. Good job!" 
+q2.h2.o4,"\(v_{0,x} = 10 \tan(0^o) m/s\) <br> 
+\(v_{0,y} = 10 \sin(0^o) m/s\)",FALSE,"Wrong hint. Try again."
+q2.h2.o5,"\(v_{0,x} = 0 m/s\) <br> 
+\(v_{0,y} = 10 m/s\)",FALSE,"Wrong hint. Try again."
+q3.o1,"1.4 m",FALSE,"Wrong answer. Try again."
+q3.o2,"2.7 m",FALSE,"Wrong answer. Try again."
+q3.o3,"4.3 m",FALSE,"Wrong answer. Try again."
+q3.o4,"7.5 m",TRUE,"That's the correct answer. Congratulations on completing the problem!"
+q3.o5,"9.8 m",FALSE,"Wrong answer. Try again."
+q4.o1,"0.92",FALSE,"Wrong answer. Try again."
+q4.o2,"1.04",TRUE,"That's the correct answer. Congratulations on completing the problem!"
+q4.o3,"1.08",FALSE,"Wrong answer. Try again."
+q4.o4,"2.14",FALSE,"Wrong answer. Try again."
+q4.o5,"3.33",FALSE,"Wrong answer. Try again."
+q5.o1,"1",FALSE,"Wrong answer. Try again."
+q5.o2,"2",TRUE,"That's the correct answer. Congratulations on completing the problem!"
+q5.o3,"3",FALSE,"Wrong answer. Try again."
+q5.o4,"both 1 and 2",FALSE,"Wrong answer. Try again."
+q5.o5,"both 2 and 3",FALSE,"Wrong answer. Try again."
