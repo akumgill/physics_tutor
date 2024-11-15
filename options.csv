@@ -24,6 +24,13 @@ q1.h2.o4,"\(v_{0,x} = 25 \tan(30^o) m/s\) <br>
 \(v_{0,y} = 25 \sin(30^o) m/s\)",FALSE,"Wrong hint. Try again."
 q1.h2.o5,"\(v_{0,x} = 0 m/s\) <br> 
 \(v_{0,y} = 25 m/s\)",FALSE,"Wrong hint. Try again."
+q1.h3.o1,"\(v_f = v_0 + at\) <br> 
+\(h = v_0 t + at^2\)",FALSE,"Wrong hint. Try again."
+q1.h3.o2,"\(v_f = v_0 + at\) <br> 
+\(h = v_0 t + \frac{1}{2} at^2\)",TRUE,"This is a valid equation of motion to solve this problem!" 
+q1.h3.o3,"\(v_t^2 - v_0^2 = 2ah\)",TRUE,"This is a valid equation of motion to solve this problem!" 
+q1.h3.o4,"\(v_t^2 - v_0^2 = ah\)",FALSE,"Wrong hint. Try again."
+q1.h3.o5,"\(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\) <br>",TRUE,"This is a valid equation of motion to solve this problem!" 
 q2.o1,"1.0 s",FALSE,"Wrong answer. Try again."
 q2.o2,"1.2 s",FALSE,"Wrong answer. Try again."
 q2.o3,"3.4 s",FALSE,"Wrong answer. Try again."
