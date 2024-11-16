@@ -39,6 +39,7 @@ class Question(models.Model):
     img_name = models.TextField(verbose_name="img_name", default="")
     total_hints = models.PositiveIntegerField(verbose_name="total_hints", default=0)
     example_problem = models.TextField(verbose_name="example_problem", default="")
+    kcs = models.ManyToManyField('KnowledgeComponent')
 
     def __unicode__(self):
         return 'id='+ str(self.pk)
@@ -68,5 +69,7 @@ class CurrentProgress(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key=True)
     current_q_id = models.PositiveIntegerField(verbose_name="current_q_id", default=1)
     current_h_id = models.TextField(verbose_name="current_h_id", default="0")
+    kc_progress = models.JSONField(default=dict)
+
     def __unicode__(self):
         return 'id='+ str(self.pk)

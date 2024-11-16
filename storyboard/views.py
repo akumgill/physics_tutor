@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import pandas as pd
+import ast
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
@@ -69,6 +70,17 @@ def section1_questionpage(request):
     section = get_object_or_404(Section, s_id=1)
     cur_progress = get_object_or_404(CurrentProgress, user=user)
 
+    kcs = KnowledgeComponent.objects.all()
+    context["knowledge_components"] = []
+    for kc in kcs:
+        kc_id = kc.kc_id
+        progress_value = cur_progress.kc_progress.get(kc_id, 0)  # Default to 0.0 if not found
+        star_list = ["star" if i < progress_value else "starless" for i in range(5)]
+        context["knowledge_components"].append({
+            "knowledge": kc.text,
+            "stars": star_list
+        })
+
     # QUESTION
     q_id = cur_progress.current_q_id
     question = get_object_or_404(Question, q_id=f"q{q_id}")
@@ -87,24 +99,38 @@ def section1_questionpage(request):
     print(f"q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
 
-    # TODO: KNOWLEDGE COMPONENTS
-    context["knowledge_components"] = [
-        {"knowledge": "Understand Problem", "stars": ["star", "star", "star", "star", "starless"]},
-        {"knowledge": "Split into Components", "stars": ["star", "star", "star", "starless", "starless"]},
-        {"knowledge": "Apply Relevant Equations", "stars": ["star", "starless", "starless", "starless", "starless"]},
-        {"knowledge": "Perform algebra and arithmetic", "stars": ["star", "star", "starless", "starless", "starless"]},
-    ]
-
     if request.method == "POST" and request.POST.get('unique_identifier'):
         unique_identifier = request.POST.get('unique_identifier')
         if unique_identifier == "submit_answer":
             selected_answer_index = int(request.POST.get('answer'))
             feedback = choices_question[selected_answer_index].feedback
+            is_correct = selected_answer_index == correct_option_index
             response = {
-                'correct': selected_answer_index == correct_option_index, 
+                'correct': is_correct,
                 'feedback': feedback
             }
             print(response)
+
+            # Load kc_progress from JSONField
+            kc_progress = cur_progress.kc_progress
+            
+            # Move on to the next question
+            if is_correct:
+                print(is_correct)
+                print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id+1}")
+                # TODO better way to move to next question than refreshing
+                # TODO better handling for final question overflow
+                cur_progress.current_q_id += 1
+                cur_progress.current_h_id = 0
+                
+                # Increase KCs for correct answers
+                for kc in question.kcs.all():
+                    # Initialize KC to 1 if this is the first time the student is answering a question
+                    if kc.kc_id not in kc_progress:
+                        kc_progress[kc.kc_id] = 0
+                    kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id]+1,5)
+                cur_progress.kc_progress = kc_progress
+                cur_progress.save()
             return JsonResponse(response)
         elif unique_identifier == 'submit_hint':
             hint_answer_index = int(request.POST.get('hint_answer')) - 1
@@ -217,6 +243,11 @@ def import_questions():
             example_problem = entry["example_problem"],
         )
         question.save()
+
+        # Link questions to KCs
+        kc_ids = ast.literal_eval(entry["kcs"])
+        kcs_to_add = [KnowledgeComponent.objects.get(pk=kc_id) for kc_id in kc_ids]
+        question.kcs.set(kcs_to_add)
     successmessage = "questions imported"
     return successmessage
 
@@ -269,9 +300,22 @@ def import_hints():
     return successmessage
 
 
+def import_kcs():
+    data = pd.read_csv("kcs.csv", header=0, delimiter=',')
+    for i in range(len(data)):
+        entry = data.iloc[i]
+        kc = KnowledgeComponent(
+            kc_id = entry["kc_id"],
+            text = entry["kc_text"],
+        )
+        kc.save()
+    successmessage = "KCs imported"
+    return successmessage
+
 def startup():
     print (batchregister())
     print (import_sections())
+    print (import_kcs())
     print (import_questions())
     print (import_options())
     print (import_hints())
