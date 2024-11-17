@@ -101,7 +101,8 @@ def section1_questionpage(request):
             is_correct = selected_answer_index == correct_option_index
             response = {
                 'correct': is_correct,
-                'feedback': feedback
+                'feedback': feedback,
+                'isAllCorrect': False
             }
             print(response)
 
@@ -112,10 +113,8 @@ def section1_questionpage(request):
             if is_correct:
                 print(is_correct)
                 print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id + 1}")
-                # TODO better way to move to next question than refreshing
-                # TODO better handling for final question overflow
-                # cur_progress.current_q_id += 1
-                # cur_progress.current_h_id = 0
+                # better handling for final question overflow
+                response["isAllCorrect"] = q_id == 5
                 
                 # Increase KCs for correct answers
                 for kc in question.kcs.all():
@@ -163,6 +162,7 @@ def changequestion(request):
         context = updateKC(context, cur_progress)
         context["disable_prev_question"] = next_question_id == 1
         context["disable_prev_hint"] = True
+        context["is_last_question"] = next_question_id == 5
         
         # print(context)
         return JsonResponse(context)

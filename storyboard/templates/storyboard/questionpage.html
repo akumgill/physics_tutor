@@ -138,6 +138,13 @@
       <button id="closeExample">Close</button>
     </div>
   </div>
+
+  <div id="congratOverlay" class="overlay" style="display: none">
+    <div class="overlay-content">
+      Congratulations! You've passed all the questions! <br>
+      <button id="closeCongrat">Close</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -178,6 +185,12 @@
 
         // Update feedback section
         document.querySelector(".feedback-section").textContent = data.feedback;
+
+        // If all answers are correct
+        if (data.isAllCorrect) {
+          document.getElementById("congratOverlay").style.display = "block";
+          document.getElementById("next_question").disabled = true;
+        }
       })
       .catch((error) => console.error("Error:", error));
   };
@@ -502,6 +515,12 @@
     .addEventListener("click", function () {
       document.getElementById("exampleOverlay").style.display = "none";
     });
+
+  document
+    .getElementById("closeCongrat")
+    .addEventListener("click", function () {
+      document.getElementById("congratOverlay").style.display = "none";
+    }); 
 </script>
 
 {% endblock %}
