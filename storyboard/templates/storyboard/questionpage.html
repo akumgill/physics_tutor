@@ -11,7 +11,7 @@
   <!-- Left Panel -->
   <div class="left-panel">
     <!-- Question Section -->
-    <div class="question">
+    <div class="question" id="question_text">
       <!-- Add Question Content Here -->
       <!-- Question 1: A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop? -->
       {{ question }}
@@ -19,34 +19,46 @@
 
     <div class="option-figure">
       <!-- Options Section (Multiple Choice) -->
-      <div id="question_option" style="width: 50%">
-        <form class="options" method="post" id="questionForm">
-          {% csrf_token %}
-          <input type="hidden" name="unique_identifier" value="submit_answer" />
-          {% for choice in choices_question %}
-          <label class="option">
-            <input type="radio" name="answer" value="{{ choice.idx }}" />
-            <div class="option-value">{{ choice.text }}</div>
-          </label>
-          {% endfor %}
-          <div class="submit-section">
-            <button type="submit">Submit</button>
-            <div class="see-example-section">
-              <button type="button" id="seeExample">See Example</button>
-            </div>
+      <form class="options" method="post" id="questionForm">
+        {% csrf_token %}
+        <div style="display: flex;">
+          <div id="question_option" style="width: 50%;">
+            <!-- <input type="hidden" name="unique_identifier" value="submit_answer" /> -->
+            {% for choice in choices_question %}
+            <label class="option">
+              <input type="radio" name="answer" value="{{ choice.idx }}" />
+              <div class="option-value">{{ choice.text }}</div>
+            </label>
+            {% endfor %}
           </div>
-        </form>
-      </div>
-      <div class="figure">
-        <img
-          src="/static/storyboard/images/{{ question_img_url }}"
-          alt="No Image"
-        />
-      </div>
+          <div class="figure" id="question_figure">
+            <img
+              src="/static/storyboard/images/{{ question_img_url }}"
+              alt="No Image"
+            />
+          </div>
+        </div>
+        <div class="submit-section">
+          
+          <button type="submit">Submit</button>
+          <div class="see-example-section">
+            <button type="button" id="seeExample">See Example</button>
+          </div>
+          
+        </div>
+      </form>
+      
     </div>
-
+    <div>
+      {% if disable_prev_question %}
+      <button id="prev_question" onclick="changeQuestion(false)" disabled>Previous</button>
+      {% else %}
+      <button id="prev_question" onclick="changeQuestion(false)">Previous</button>
+      {% endif %}
+      <button id="next_question" onclick="changeQuestion(true)" disabled>Next</button>
+    </div>
     <!-- Knowledge Components Section -->
-    <div class="knowledge-section">
+    <div class="knowledge-section" id="kc_display">
       <h3>Knowledge Components:</h3>
 
       {% for kc in knowledge_components %}
@@ -67,7 +79,11 @@
     <!-- Hint Section -->
     <div class="hint-section">
       <div class="hint-navigation">
+        {% if disable_prev_hint %}
+        <button id="prevHint" disabled>Previous Hint</button>
+        {% else %}
         <button id="prevHint">Previous Hint</button>
+        {% endif %}
         <button id="nextHint">Next Hint</button>
       </div>
       <!-- Hint Question Section -->
@@ -112,7 +128,7 @@
 
     <!-- Feedback Section -->
     <h3>Feedback:</h3>
-    <div class="feedback-section">{{ feedback|linebreaks|safe }}</div>
+    <div class="feedback-section" id="feedback">{{ feedback|linebreaks|safe }}</div>
   </div>
 
   <!-- Overlay for 'See Example' -->
@@ -131,6 +147,7 @@
 
     const form = event.target;
     const formData = new FormData(form);
+    formData.append("unique_identifier", "submit_answer");
 
     fetch(form.action, {
       method: "POST",
@@ -141,6 +158,7 @@
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         const options = form.querySelectorAll(".option input[type='radio']");
 
         // Reset all option classes and colors
@@ -154,6 +172,9 @@
             input.classList.add(data.correct ? "correct" : "incorrect");
           }
         });
+
+        // Activate Next question button if correct
+        if (data.correct) document.getElementById("next_question").disabled = false;
 
         // Update feedback section
         document.querySelector(".feedback-section").textContent = data.feedback;
@@ -217,6 +238,97 @@
     changeHint(true); // true indicates we want the next hint
   });
 
+  function changeQuestion(isNextQuestion) {
+    const formData = new FormData();
+    formData.append("unique_identifier", "change_question");
+    formData.append("isNextQuestion", isNextQuestion);
+    // Deactivate Next question button if next question
+    if (isNextQuestion) document.getElementById("next_question").disabled = true;
+    else document.getElementById("next_question").disabled = false;
+
+    fetch("{% url 'changequestion' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        // Update the question content
+        document.getElementById("question_text").textContent = data.question;
+
+        // Update the question image if available
+        const questionFigureDiv = document.getElementById("question_figure");
+        questionFigureDiv.innerHTML = "";
+        const questionOptionDiv = document.getElementById("question_option");
+        if (data.question_img_url) {
+          const questionFigure = document.createElement("img");
+          questionFigure.src = "/static/storyboard/images/" + data.question_img_url;
+          questionFigure.style.display = "block";
+          questionFigureDiv.appendChild(questionFigure);
+          questionFigureDiv.style.width = "50%";
+          questionOptionDiv.style.width = "50%";
+        } else {
+          questionFigureDiv.style.width = "0%";
+          questionOptionDiv.style.width = "100%";
+        }
+
+        // Update the question options
+        const questionForm = document.getElementById("question_option");
+        questionForm.innerHTML = "";
+        data.choices_question.forEach((choice) => {
+          const label = document.createElement("label");
+          label.className = "option";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = "answer";
+          input.value = choice.idx;
+
+          const div = document.createElement("div");
+          div.className = "option-value";
+          div.innerHTML = choice.text;
+
+          label.appendChild(input);
+          label.appendChild(div);
+          questionForm.appendChild(label);
+        });
+
+        // Disable buttons is necessary
+        document.getElementById("prev_question").disabled = data.disable_prev_question;
+        document.getElementById("feedback").textContent = "";
+
+        // Update hint
+        updateHint(data);
+
+        // Update KC
+        updateKC(data);
+
+        // Update example question
+        const overlay = document.getElementById("exampleOverlay");
+        overlay.innerHTML = ""
+        const overlay_content = document.createElement("div");
+        overlay_content.className = "overlay-content";
+        overlay_content.innerText = data.example_problem;
+        const close_button = document.createElement("button");
+        close_button.id = "closeExample";
+        close_button.textContent = "Close";
+        close_button.addEventListener("click", function () {
+          document.getElementById("exampleOverlay").style.display = "none";
+        });
+        overlay_content.appendChild(close_button);
+        overlay.appendChild(overlay_content);
+
+        // **Add the following line to re-render LaTeX**
+        if (window.MathJax) {
+          MathJax.typeset();
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+
   function changeHint(isNextHint) {
     const formData = new FormData();
     formData.append("unique_identifier", "change_hint");
@@ -232,55 +344,89 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        // Update the hint content
-        document.getElementById("hint_text").textContent = data.hint;
-
-        // Update the hint image if available
-        const hintFigureDiv = document.getElementById("hint_figure");
-        hintFigureDiv.innerHTML = "";
-        const hintOptionDiv = document.getElementById("hint_option");
-        if (data.hint_img_url) {
-          const hintFigure = document.createElement("img");
-          hintFigure.src = "/static/storyboard/images/" + data.hint_img_url;
-          hintFigure.style.display = "block";
-          hintFigureDiv.appendChild(hintFigure);
-          hintFigureDiv.style.width = "50%";
-          hintOptionDiv.style.width = "50%";
-        } else {
-          hintFigureDiv.style.width = "0%";
-          hintOptionDiv.style.width = "100%";
-        }
-
-        // Update the hint options
-        const hintForm = document.getElementById("form_hint");
-        hintForm.innerHTML = "";
-        data.choices_hint.forEach((choice) => {
-          const label = document.createElement("label");
-          label.className = "option";
-
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = "hint_answer";
-          input.value = choice.idx;
-
-          const div = document.createElement("div");
-          div.className = "option-value";
-          div.innerHTML = choice.text;
-
-          label.appendChild(input);
-          label.appendChild(div);
-          hintForm.appendChild(label);
-        });
-
-        // Reattach the event listeners for the new hint options
-        attachHintOptionListeners();
-
-        // **Add the following line to re-render LaTeX**
-        if (window.MathJax) {
-          MathJax.typeset();
-        }
+        updateHint(data);
       })
       .catch((error) => console.error("Error:", error));
+  }
+
+  function updateHint(data) {
+    // Update the hint content
+    document.getElementById("hint_text").textContent = data.hint;
+
+    // Update the hint image if available
+    const hintFigureDiv = document.getElementById("hint_figure");
+    hintFigureDiv.innerHTML = "";
+    const hintOptionDiv = document.getElementById("hint_option");
+    if (data.hint_img_url) {
+      const hintFigure = document.createElement("img");
+      hintFigure.src = "/static/storyboard/images/" + data.hint_img_url;
+      hintFigure.style.display = "block";
+      hintFigureDiv.appendChild(hintFigure);
+      hintFigureDiv.style.width = "50%";
+      hintOptionDiv.style.width = "50%";
+    } else {
+      hintFigureDiv.style.width = "0%";
+      hintOptionDiv.style.width = "100%";
+    }
+
+    // Update the hint options
+    const hintForm = document.getElementById("form_hint");
+    hintForm.innerHTML = "";
+    data.choices_hint.forEach((choice) => {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "hint_answer";
+      input.value = choice.idx;
+
+      const div = document.createElement("div");
+      div.className = "option-value";
+      div.innerHTML = choice.text;
+
+      label.appendChild(input);
+      label.appendChild(div);
+      hintForm.appendChild(label);
+    });
+
+    document.getElementById("prevHint").disabled = data.disable_prev_hint;
+    document.getElementById("feedback").textContent = "";
+
+    // Reattach the event listeners for the new hint options
+    attachHintOptionListeners();
+
+    // **Add the following line to re-render LaTeX**
+    if (window.MathJax) {
+      MathJax.typeset();
+    }
+  }
+
+  function updateKC(data) {
+    const kc_section = document.getElementById("kc_display");
+    kc_section.innerHTML = "<h3>Knowledge Components:</h3>";
+
+    data.knowledge_components.forEach((kc) => {
+      const label = document.createElement("div");
+      label.className = "knowledge-stars";
+
+      const kc_name = document.createElement("div");
+      kc_name.className = "knowledge";
+      kc_name.textContent = kc.knowledge;
+
+      const div = document.createElement("div");
+      div.className = "stars";
+      
+      kc.stars.forEach((star) => {
+        const s = document.createElement("div");
+        s.className = star;
+        div.appendChild(s);
+      });
+
+      label.appendChild(kc_name);
+      label.appendChild(div);
+      kc_section.appendChild(label);
+    });
   }
 
   function attachHintOptionListeners() {

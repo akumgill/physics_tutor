@@ -36,6 +36,8 @@ urlpatterns  =[
     # re_path(r'^section3_questionpage/(?P<id>\d+)$', storyboard_views.section3_questionpage, name = 'section3_questionpage'),
     # re_path(r'^section4_questionpage/(?P<id>\d+)$', storyboard_views.section4_questionpage, name = 'section4_questionpage'),
 
-    re_path(r'^changehint$', storyboard_views.changehint, name="changehint")
+    re_path(r'^changehint$', storyboard_views.changehint, name="changehint"),
+    re_path(r'^changequestion$', storyboard_views.changequestion, name="changequestion")
+    
 
     ]

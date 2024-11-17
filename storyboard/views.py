@@ -34,7 +34,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
-numberofquestions_list = [1, 0, 0, 0]
+numberofquestions_list = [5, 0, 0, 0]
 
 @ensure_csrf_cookie
 @login_required
@@ -70,16 +70,8 @@ def section1_questionpage(request):
     section = get_object_or_404(Section, s_id=1)
     cur_progress = get_object_or_404(CurrentProgress, user=user)
 
-    kcs = KnowledgeComponent.objects.all()
-    context["knowledge_components"] = []
-    for kc in kcs:
-        kc_id = kc.kc_id
-        progress_value = cur_progress.kc_progress.get(kc_id, 0)  # Default to 0.0 if not found
-        star_list = ["star" if i < progress_value else "starless" for i in range(5)]
-        context["knowledge_components"].append({
-            "knowledge": kc.text,
-            "stars": star_list
-        })
+    # KC
+    context = updateKC(context, cur_progress)
 
     # QUESTION
     q_id = cur_progress.current_q_id
@@ -87,6 +79,7 @@ def section1_questionpage(request):
     context["question"] = question.text
     context["question_img_url"] = question.img_name
     context["example_problem"] = question.example_problem
+    context["disable_prev_question"] = q_id == 1
 
     # QUESTION OPTIONS
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
@@ -98,6 +91,7 @@ def section1_questionpage(request):
     h_id = cur_progress.current_h_id
     print(f"q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
+    context["disable_prev_hint"] = h_id == str(0)
 
     if request.method == "POST" and request.POST.get('unique_identifier'):
         unique_identifier = request.POST.get('unique_identifier')
@@ -117,18 +111,18 @@ def section1_questionpage(request):
             # Move on to the next question
             if is_correct:
                 print(is_correct)
-                print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id+1}")
+                print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id + 1}")
                 # TODO better way to move to next question than refreshing
                 # TODO better handling for final question overflow
-                cur_progress.current_q_id += 1
-                cur_progress.current_h_id = 0
+                # cur_progress.current_q_id += 1
+                # cur_progress.current_h_id = 0
                 
                 # Increase KCs for correct answers
                 for kc in question.kcs.all():
                     # Initialize KC to 1 if this is the first time the student is answering a question
                     if kc.kc_id not in kc_progress:
                         kc_progress[kc.kc_id] = 0
-                    kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id]+1,5)
+                    kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id] + 1, 5)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
             return JsonResponse(response)
@@ -143,6 +137,57 @@ def section1_questionpage(request):
             return JsonResponse(response)
 
     return render(request, 'storyboard/questionpage.html', context)
+
+@csrf_exempt
+def changequestion(request):
+    print("Change Question")
+    user = request.user
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    print(cur_progress)
+    if request.method == "POST" and request.POST.get('unique_identifier') == "change_question":
+        context = {}
+        q_id = cur_progress.current_q_id
+        
+        isNextQuestion = request.POST.get("isNextQuestion") == 'true'
+        if isNextQuestion:
+            next_question_id = min(q_id + 1, 5)
+        else:
+            next_question_id = max(q_id - 1, 1)
+        
+        cur_progress.current_q_id = next_question_id
+        cur_progress.current_h_id = str(0)
+        cur_progress.save()
+        
+        context = findQuestion(context, next_question_id)
+        context = findHint(context, next_question_id, str(0))
+        context = updateKC(context, cur_progress)
+        context["disable_prev_question"] = next_question_id == 1
+        context["disable_prev_hint"] = True
+        
+        # print(context)
+        return JsonResponse(context)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def findQuestion(context, q_id):
+    try:
+        question = get_object_or_404(Question, q_id=f"q{q_id}")
+        context["question"] = question.text
+        context["question_img_url"] = question.img_name
+        context["example_problem"] = question.example_problem
+
+        # QUESTION OPTIONS
+        choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
+        context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
+        correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
+        print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    except Question.DoesNotExist:
+        context["question"] = "No more question available."
+        context["question_img_url"] = ""
+        context["example_problem"] = ""
+        context["choices_question"] = [{"idx": i + 1, "text": ""} for i, o in enumerate(5)]
+    return context
 
 
 @csrf_exempt  # Allow CSRF exemption for this view
@@ -171,6 +216,7 @@ def changehint(request):
         # Update current hint ID in user's progress
         cur_progress.current_h_id = str(next_hint_id)
         cur_progress.save()
+        context["disable_prev_hint"] = str(next_hint_id) == str(0)
 
         if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}")
@@ -207,6 +253,19 @@ def findHint(context, q_id, h_id):
         ]
 
     return context
+
+def updateKC(context, cur_progress):
+    kcs = KnowledgeComponent.objects.all()
+    context["knowledge_components"] = []
+    for kc in kcs:
+        kc_id = kc.kc_id
+        progress_value = cur_progress.kc_progress.get(kc_id, 0)  # Default to 0.0 if not found
+        star_list = ["star" if i < progress_value else "starless" for i in range(5)]
+        context["knowledge_components"].append({
+            "knowledge": kc.text,
+            "stars": star_list
+        })
+    return context    
 
 
 ####register all students with their andrewids and passwords
