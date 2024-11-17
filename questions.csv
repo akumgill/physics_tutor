@@ -2,43 +2,128 @@ q_id,text,img_name,kcs,example_problem
 q1,"A dolphin jumps with an initial velocity of 25 m/s at an angle of 30° above the horizontal. The dolphin passes through the center of a hoop before returning to the water. If the dolphin is moving horizontally at the instant it goes through the hoop, how high, H, above the water is the center of the hoop?",Q1_fig.png,"['kc1','kc2','kc3','kc4']","Problem: A kangaroo jumps with an initial velocity of 20 m/s at an angle of 45° above the horizontal. The kangaroo passes through the center of a ring before landing back on the ground. If the kangaroo is moving horizontally at the instant it goes through the ring, how high, H, above the ground is the center of the ring?
 
 Step 1: Understand Problem
-We need to find the height at which the kangaroo passes through the ring. The kangaroo is moving horizontally at this point, which means its vertical velocity component is zero at the top of its trajectory.
+We need to determine the height, H, at which the kangaroo passes through the ring. The kangaroo's motion can be split into horizontal and vertical components. At the highest point of its trajectory, the vertical component of the velocity is zero, and it is moving horizontally.
 
 Step 2: Split into Components
-The initial velocity of the kangaroo is 20 m/s at an angle of 45°. We split this into horizontal and vertical components: 
+The initial velocity of the kangaroo is 20 m/s at an angle of 45°. We can split this into horizontal and vertical components using trigonometry:
 
-- Horizontal component: \( v_{0x} = 20 \cos(45°) \)
-- Vertical component: \( v_{0y} = 20 \sin(45°) \)
+- Horizontal component: \( v_{0x} = v_0 \cos(\theta) = 20 \cos(45°) \)
+- Vertical component: \( v_{0y} = v_0 \sin(\theta) = 20 \sin(45°) \)
 
 Step 3: Apply Relevant Equations
-At the top of the trajectory, the vertical velocity is zero. We use the kinematic equation for vertical motion: 
+At the highest point of the trajectory, the vertical velocity is zero. We can use the kinematic equation for vertical motion to find the height:
 
-\( v_y = v_{0y} - gt \)
+\( v_y^2 = v_{0y}^2 - 2gH \)
 
-Setting \( v_y = 0 \) gives us the time to reach the top of the trajectory. Then, we use the vertical displacement equation: 
+Since \( v_y = 0 \) at the highest point, the equation simplifies to:
 
-\( y = v_{0y}t - \frac{1}{2}gt^2 \)
+\( 0 = v_{0y}^2 - 2gH \)
 
 Step 4: Perform algebra and arithmetic
-Calculate the components:
+Substitute the known values into the equation:
 
-\( v_{0x} = 20 \cos(45°) = 20 \times \frac{\sqrt{2}}{2} = 14.14 \text{ m/s} \)
-\( v_{0y} = 20 \sin(45°) = 20 \times \frac{\sqrt{2}}{2} = 14.14 \text{ m/s} \)
+\( 0 = (20 \sin(45°))^2 - 2(9.8)H \)
 
-Find the time to reach the top:
+Calculate \( 20 \sin(45°) = 20 \times \frac{\sqrt{2}}{2} = 20 \times 0.7071 \approx 14.142 \)
 
-\( 0 = 14.14 - 9.8t \)
-\( t = \frac{14.14}{9.8} = 1.44 \text{ s} \)
+\( 0 = (14.142)^2 - 19.6H \)
 
-Calculate the height:
+\( 0 = 200 - 19.6H \)
 
-\( y = 14.14 \times 1.44 - \frac{1}{2} \times 9.8 \times (1.44)^2 \)
-\( y = 20.34 - 10.15 = 10.19 \text{ m} \)
+Solve for H:
 
-Thus, the height of the ring above the ground is 10.19 meters.
+\( 19.6H = 200 \)
+
+\( H = \frac{200}{19.6} \approx 10.2 \text{ meters} \)
+
+Thus, the center of the ring is approximately 10.2 meters above the ground.
 
 "
-q2,"A rock is launched horizontally at a speed of 10 m/s from the edge of a cliff of height H. It strikes the ground 55 m from the base of the cliff, as shown the figure below. Neglecting air resistance, how much time does the rock spend in the air?",Q2_fig.png,"['kc1','kc2','kc3','kc4']",none
-q3,"Eric the Human Cannon Ball is shot at an initial speed of 10m/s from the mouth of a cannon oriented 60° above the horizontal. If Eric wishes to land in the center of a net 2 m above the mouth of the cannon, how far in the horizontal direction from the cannon must the center of the net be placed in order for Eric to be successful?",Q3_fig.png,"['kc1','kc2','kc3','kc4']",none
-q4,"You toss two eggs (W and Z) from the same location in the trajectories shown below. The initial velocity of egg W is directed at an angle 75° above horizontal while that of egg Z is 30°. If the ratio of their ranges is RW/RZ = 5/8, what is the ratio of their initial speeds vW / vZ?",Q4_fig.png,"['kc1','kc2','kc3','kc4']",none
-q5,"A mass slides on a frictionless ramp, moving through locations 1, 2 and 3 shown below. At which location(s) is the net acceleration of the mass aligned with the positive y direction?",Q5_fig.png,"['kc1','kc2']",none
+q2,"A rock is launched horizontally at a speed of 10 m/s from the edge of a cliff of height H. It strikes the ground 55 m from the base of the cliff, as shown the figure below. Neglecting air resistance, how much time does the rock spend in the air?",Q2_fig.png,"['kc1','kc2','kc3','kc4']","Problem: A ball is thrown horizontally at a speed of 15 m/s from the top of a building of height H. It lands 75 m away from the base of the building. Neglecting air resistance, how much time does the ball spend in the air?
+
+Step 1: Understand Problem
+We need to determine the time the ball is in the air. The ball is thrown horizontally, so its initial vertical velocity is 0. The horizontal distance traveled is 75 m, and the horizontal velocity is 15 m/s.
+
+Step 2: Split into Components
+The horizontal motion can be described by the equation: \( x = v_{x} \cdot t \), where \( x = 75 \text{ m} \) and \( v_{x} = 15 \text{ m/s} \). The vertical motion is described by the equation: \( y = \frac{1}{2} g t^2 \), where \( g = 9.8 \text{ m/s}^2 \) and \( y = H \).
+
+Step 3: Apply Relevant Equations
+For horizontal motion: \( 75 = 15 \cdot t \). For vertical motion: \( H = \frac{1}{2} \cdot 9.8 \cdot t^2 \). We need to find \( t \) using the horizontal motion equation.
+
+Step 4: Perform algebra and arithmetic
+Solve the horizontal motion equation for \( t \): \( t = \frac{75}{15} = 5 \text{ seconds} \). Thus, the ball spends 5 seconds in the air.
+
+"
+q3,"Eric the Human Cannon Ball is shot at an initial speed of 10m/s from the mouth of a cannon oriented 60° above the horizontal. If Eric wishes to land in the center of a net 2 m above the mouth of the cannon, how far in the horizontal direction from the cannon must the center of the net be placed in order for Eric to be successful?",Q3_fig.png,"['kc1','kc2','kc3','kc4']","Problem: A basketball player throws a ball with an initial speed of 15 m/s at an angle of 45° above the horizontal. If the basket is 3 m above the point where the ball is released, how far horizontally from the release point should the basket be placed for the ball to go in?
+
+Step 1: Understand Problem
+We need to determine the horizontal distance the basketball travels before reaching a height of 3 m. The initial speed and angle of projection are given, and we need to find the horizontal distance at which the ball reaches the specified height.
+
+Step 2: Split into Components
+The initial velocity can be split into horizontal and vertical components. 
+Horizontal component: \( v_{x} = v_{0} \cos(\theta) \) 
+Vertical component: \( v_{y} = v_{0} \sin(\theta) \)
+
+Step 3: Apply Relevant Equations
+Use the kinematic equation for vertical motion to find the time it takes to reach 3 m: 
+\( y = v_{y}t - \frac{1}{2}gt^2 \) 
+where \( y = 3 \) m, \( g = 9.8 \) m/s². 
+Then use the horizontal motion equation to find the horizontal distance: 
+\( x = v_{x}t \)
+
+Step 4: Perform algebra and arithmetic
+Calculate the components: 
+\( v_{x} = 15 \cos(45°) = 15 \times \frac{\sqrt{2}}{2} = 10.61 \) m/s 
+\( v_{y} = 15 \sin(45°) = 15 \times \frac{\sqrt{2}}{2} = 10.61 \) m/s 
+
+Use the vertical motion equation: 
+\( 3 = 10.61t - \frac{1}{2} \times 9.8 \times t^2 \) 
+Solve for \( t \): 
+\( 4.9t^2 - 10.61t + 3 = 0 \) 
+Using the quadratic formula: 
+\( t = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \) 
+where \( a = 4.9 \), \( b = -10.61 \), \( c = 3 \) 
+\( t = \frac{10.61 \pm \sqrt{10.61^2 - 4 \times 4.9 \times 3}}{2 \times 4.9} \) 
+\( t = \frac{10.61 \pm \sqrt{112.5721 - 58.8}}{9.8} \) 
+\( t = \frac{10.61 \pm \sqrt{53.7721}}{9.8} \) 
+\( t = \frac{10.61 \pm 7.33}{9.8} \) 
+\( t = \frac{17.94}{9.8} \) or \( t = \frac{3.28}{9.8} \) 
+\( t = 1.83 \) s or \( t = 0.33 \) s 
+Choose the smaller positive time: \( t = 0.33 \) s 
+
+Calculate horizontal distance: 
+\( x = 10.61 \times 0.33 = 3.50 \) m 
+Thus, the basket should be placed 3.50 m horizontally from the release point.
+
+"
+q4,"You toss two eggs (W and Z) from the same location in the trajectories shown below. The initial velocity of egg W is directed at an angle 75° above horizontal while that of egg Z is 30°. If the ratio of their ranges is \( R_W/R_Z = 5/8 \), what is the ratio of their initial speeds \( v_W / v_Z \)?",Q4_fig.png,"['kc1','kc2','kc3','kc4']","Problem: You launch two projectiles (A and B) from the same location. The initial velocity of projectile A is directed at an angle 60° above horizontal while that of projectile B is 45°. If the ratio of their ranges is \( R_A/R_B = 3/4 \), what is the ratio of their initial speeds \( v_A / v_B \)?
+
+Step 1: Understand Problem
+We need to find the ratio of the initial speeds of two projectiles given the angles of projection and the ratio of their ranges. The range of a projectile is influenced by its initial speed, angle of projection, and gravity.
+
+Step 2: Split into Components
+The range \( R \) of a projectile is given by the formula \( R = \frac{v^2 \cdot \sin(2\theta)}{g} \), where \( v \) is the initial speed, \( \theta \) is the angle of projection, and \( g \) is the acceleration due to gravity. We have two projectiles with different angles and ranges, so we need to consider each separately.
+
+Step 3: Apply Relevant Equations
+For projectile A: \( R_A = \frac{v_A^2 \cdot \sin(2 \cdot 60°)}{g} \). For projectile B: \( R_B = \frac{v_B^2 \cdot \sin(2 \cdot 45°)}{g} \). We are given \( R_A/R_B = 3/4 \), so we set up the equation: \( \frac{v_A^2 \cdot \sin(120°)}{v_B^2 \cdot \sin(90°)} = \frac{3}{4} \).
+
+Step 4: Perform algebra and arithmetic
+First, calculate \( \sin(120°) = \sin(180° - 60°) = \sin(60°) = \frac{\sqrt{3}}{2} \) and \( \sin(90°) = 1 \). Substitute these into the equation: \( \frac{v_A^2 \cdot \frac{\sqrt{3}}{2}}{v_B^2 \cdot 1} = \frac{3}{4} \). Simplify to get: \( v_A^2 \cdot \frac{\sqrt{3}}{2} = \frac{3}{4} \cdot v_B^2 \). Solving for \( v_A/v_B \), we get: \( \left(\frac{v_A}{v_B}\right)^2 = \frac{3}{4} \cdot \frac{2}{\sqrt{3}} \). 
+Therefore, \( v_A/v_B = \sqrt{\frac{3}{4} \cdot \frac{2}{\sqrt{3}}} = \sqrt{\frac{3}{2\sqrt{3}}} = \sqrt{\frac{\sqrt{3}}{2}} = \frac{1}{\sqrt{2}} \).
+
+"
+q5,"A mass slides on a frictionless ramp, moving through locations 1, 2 and 3 shown below. At which location(s) is the net acceleration of the mass aligned with the positive y direction?",Q5_fig.png,"['kc1','kc2']","Problem: A block slides down a frictionless inclined plane. At which point(s) along the plane is the net acceleration of the block aligned with the positive y direction?
+
+Step 1: Understand Problem
+We need to determine the point(s) along the inclined plane where the net acceleration of the block is aligned with the positive y direction. The block is subject to gravitational force and normal force from the plane.
+
+Step 2: Split into Components
+The gravitational force acting on the block can be split into two components: one parallel to the plane and one perpendicular to the plane. The normal force acts perpendicular to the plane. The net force and thus the net acceleration will be along the plane, not aligned with the y direction unless the plane is vertical.
+
+Step 3: Apply Relevant Equations
+The gravitational force can be expressed as \( F_g = mg \), where \( m \) is the mass and \( g \) is the acceleration due to gravity. The component of gravitational force parallel to the plane is \( F_{g, \parallel} = mg \sin(\theta) \), and the component perpendicular to the plane is \( F_{g, \perp} = mg \cos(\theta) \). The normal force \( F_n \) balances \( F_{g, \perp} \), so the net force is \( F_{net} = F_{g, \parallel} \).
+
+Step 4: Perform algebra and arithmetic
+Since the net force is \( F_{net} = mg \sin(\theta) \), the net acceleration \( a = g \sin(\theta) \) is along the plane. For the net acceleration to be aligned with the positive y direction, \( \theta \) must be 90 degrees, meaning the plane is vertical. Therefore, there are no points along a non-vertical inclined plane where the net acceleration is aligned with the positive y direction.
+
+"

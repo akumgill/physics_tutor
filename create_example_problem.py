@@ -49,9 +49,11 @@ with open(csv_file_path, mode='r', newline='') as csv_file:
 
         # Use the model's output as data
         try:
+            print(f"Row {row['q_id']}")
+            print(response.choices[0].message.content + "\n")
             data = json.loads(response.choices[0].message.content)
         except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}, skipping row {row['id']}")
+            print(f"Error decoding JSON: {e}, skipping row {row['q_id']}")
             continue  # Skip this row and move to the next one
 
         # Format the data into the desired text format
