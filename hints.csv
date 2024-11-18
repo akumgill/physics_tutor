@@ -1,15 +1,28 @@
 h_id,kc_id,text,img_name
 q1.h0,kc0,"Click Next Hint to see the first hint",no_img
+q2.h0,kc0,"Click Next Hint to see the first hint",no_img
+q3.h0,kc0,"Click Next Hint to see the first hint",no_img
+q4.h0,kc0,"Click Next Hint to see the first hint",no_img
+q5.h0,kc0,"Click Next Hint to see the first hint",no_img
 q1.h1,kc1,"What kind of information can we get from the description? What are we solving for?",no_img
 q1.h2,kc2,"The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?",Q1_fig_hint2.png
 q1.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\), and the final velocity, \(v_{f,y}\), when the dolphin is passing through the hoop at the maximum height. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",no_img
 q1.h4_1,kc4,"You have selected the following equation: \(v_f = v_0 + at\) \n \(h = v_0 t + \frac{1}{2} at^2\). Which of the following options correctly applies these equations?",no_img
 q1.h4_2,kc4,"You have selected the following equation: \(v_t^2 - v_0^2 = 2ah\). Which of the following options correctly applies these equations?",no_img
 q1.h4_3,kc4,"You have selected the following equation: \(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\). Which of the following options correctly applies these equations?",no_img
-q2.h0,kc0,"Click Next Hint to see the first hint",no_img
 q2.h1,kc1,"What kind of information can we get from the description? What are we solving for?",no_img
 q2.h2,kc2,"The initial velocity is 10 m/s and is entirely horizontal. What are the x and y components of the initial velocity?",no_img
 q2.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\)=0. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",no_img
-q3.h0,kc0,"Click Next Hint to see the first hint",no_img
-q4.h0,kc0,"Click Next Hint to see the first hint",no_img
-q5.h0,kc0,"Click Next Hint to see the first hint",no_img
+q2.h4_1,kc4,"You have selected the equation: d = vt. Which of the following correctly calculates time, t?",no_img
+q3.h1,kc1,"What are the key pieces of information given in the problem, and what are we trying to solve for?",no_img
+q3.h2,kc2,What are the horizontal and vertical components of Eric's initial velocity?,no_img
+q3.h3,kc3,Which equation(s) of motion will you use to find the horizontal distance given the known vertical displacement and initial velocities?,no_img
+q3.h4_1,kc4,Solve for required time using vertical component: \( y = v_{0y} t + \frac{1}{2} a t^2 \) with known heights and then apply it to \( x = v_{0x} t \).,no_img
+q4.h1,kc1,What information do we need to find the ratio of initial speeds of egg W and egg Z?,no_img
+q4.h2,kc2,What are the horizontal components of the initial velocities for W and Z?,no_img
+q4.h3,kc3,Which equations relate horizontal range and initial velocities of projectiles launched at an angle?,no_img
+q4.h4_1,kc4,"Using the equation \( R = \frac{v_0^2}{g} \sin(2\theta) \) and the given \( R_W/R_Z = 5/8 \), what is \( v_W / v_Z \)?",no_img
+q5.h1,kc1,"Given a mass on a frictionless ramp, where is the net acceleration in the positive y direction?",no_img
+q5.h2,kc2,How do the forces acting on the mass resolve into components on the ramp?,no_img
+q5.h3,kc3,What equations govern the force and acceleration components in this scenario?,no_img
+q5.h4_1,kc4,At which location is the y-component of gravity responsible for the net acceleration?,no_img
