@@ -7,9 +7,9 @@ q5.h0,none,"Click Next Hint to see the first hint",no_img
 q1.h1,kc1,"What kind of information can we get from the description? What are we solving for?",no_img
 q1.h2,kc2,"The initial velocity is 25 m/s at an angle of 30° above the horizontal. What are the x and y components of the initial velocity?",Q1_fig_hint2.png
 q1.h3,kc3,"Focusing our attention in the vertical direction, we know the initial velocity, \(v_{0,y}\), and the final velocity, \(v_{f,y}\), when the dolphin is passing through the hoop at the maximum height. You also know that the acceleration is due to gravity, i.e. \(a_y = -g\). Which equation of motion would you like to use to solve the problem? Note that there is more than one acceptable answer.",no_img
-q1.h4_2,kc4,You have selected the following equation: \(v_f = v_0 + at h = v_0t+\frac{1}{2}at^2\). Which of the following options correctly applies this equation?,no_img
-q1.h4_3,kc4,You have selected the following equation: \(v_f^2 - v_0^2 = 2ah\). Which of the following options correctly applies this equation?,no_img
-q1.h4_5,kc4,You have selected the following equation: \(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\). Which of the following options correctly applies this equation?,no_img
+q1.h4_2,kc4,"You have selected the following equations: \(v_f = v_0 + at\),    \(h = v_0t+\frac{1}{2}at^2\). Which of the following options correctly applies this equation?",no_img
+q1.h4_3,kc4,"You have selected the following equation: \(v_f^2 - v_0^2 = 2ah\). Which of the following options correctly applies this equation?"",no_img
+q1.h4_5,kc4,"You have selected the following equation: \(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\). Which of the following options correctly applies this equation?"",no_img
 q2.h1,kc1,What information do we know about the problem? What are we solving for?,no_img
 q2.h2,kc2,The motion can be divided into horizontal and vertical components. What are the initial velocities in these directions?,no_img
 q2.h3,kc3,Which equations of motion can be used to find the time of flight for the rock in both horizontal and vertical directions?,no_img
