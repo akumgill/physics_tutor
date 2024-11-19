@@ -80,12 +80,18 @@ def section1_questionpage(request):
     context["question_img_url"] = question.img_name
     context["example_problem"] = question.example_problem
     context["disable_prev_question"] = q_id == 1
+    context["disable_next_question"] = True
+    if History.objects.filter(user=user).filter(q_id=q_id).exists():
+        context["disable_next_question"] = not get_object_or_404(History, user=user, q_id=q_id).is_correct
 
     # QUESTION OPTIONS
     choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
     context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
     correct_option_index = next((index for index, o in enumerate(choices_question) if o.is_correct), -1)
     print(f"Correct option id: {correct_option_index} -> {context['choices_question'][correct_option_index]}")
+    
+    # History
+    context = findHistory(context, user, q_id)
 
     # HINT
     h_id = cur_progress.current_h_id
@@ -105,6 +111,20 @@ def section1_questionpage(request):
                 'isAllCorrect': False
             }
             print(response)
+            
+            # Save history
+            if History.objects.filter(user=user).filter(q_id=q_id).exists():
+                history = get_object_or_404(History, user=user, q_id=q_id)
+                history.selected_opt_idx = selected_answer_index
+                history.is_correct = is_correct
+                history.save()
+            else:
+                History(
+                    user = user,
+                    q_id = q_id,
+                    selected_opt_idx = selected_answer_index,
+                    is_correct = is_correct
+                ).save()
 
             # Load kc_progress from JSONField
             kc_progress = cur_progress.kc_progress
@@ -157,18 +177,32 @@ def changequestion(request):
         cur_progress.current_h_id = str(0)
         cur_progress.save()
         
+        context = findHistory(context, user, next_question_id)        
         context = findQuestion(context, next_question_id)
         context = findHint(context, next_question_id, str(0))
         context = updateKC(context, cur_progress)
         context["disable_prev_question"] = next_question_id == 1
         context["disable_prev_hint"] = True
         context["is_last_question"] = next_question_id == 5
-        
-        # print(context)
+        context["disable_next_question"] = True
+        if History.objects.filter(user=user).filter(q_id=next_question_id).exists():
+            context["disable_next_question"] = not get_object_or_404(History, user=user, q_id=next_question_id).is_correct
+           
+        print(context)
         return JsonResponse(context)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
+def findHistory(context, user, q_id):
+    if History.objects.filter(user=user).filter(q_id=q_id).exists():
+        history = get_object_or_404(History, user=user, q_id=q_id)
+        context["selected_opt_idx"] = history.selected_opt_idx
+        context["is_correct"] = history.is_correct
+    else:
+        context["selected_opt_idx"] = -1
+        context["is_correct"] = False
+    return context
 
 def findQuestion(context, q_id):
     try:

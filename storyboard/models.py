@@ -73,3 +73,12 @@ class CurrentProgress(models.Model):
 
     def __unicode__(self):
         return 'id='+ str(self.pk)
+    
+class History(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+    q_id = models.PositiveIntegerField(verbose_name="q_id", default=1)
+    selected_opt_idx = models.PositiveIntegerField(verbose_name="selected_opt_idx", default=1)
+    is_correct = models.BooleanField(verbose_name="is_correct", default=False)
+    updated_at = models.DateTimeField(auto_now = True, blank = True)
+    def __unicode__(self):
+        return 'id='+ str(self.pk)

@@ -26,7 +26,12 @@
             <!-- <input type="hidden" name="unique_identifier" value="submit_answer" /> -->
             {% for choice in choices_question %}
             <label class="option">
-              <input type="radio" name="answer" value="{{ choice.idx }}" />
+              <input type="radio" name="answer" value="{{ choice.idx }}" 
+              {% if selected_opt_idx == choice.idx %} 
+              checked 
+                {% if is_correct %} class="correct" {% else %} class="incorrect" {% endif %}
+              {% endif %}
+              />
               <div class="option-value">{{ choice.text }}</div>
             </label>
             {% endfor %}
@@ -50,12 +55,10 @@
       
     </div>
     <div>
-      {% if disable_prev_question %}
-      <button id="prev_question" onclick="changeQuestion(false)" disabled>Previous</button>
-      {% else %}
-      <button id="prev_question" onclick="changeQuestion(false)">Previous</button>
-      {% endif %}
-      <button id="next_question" onclick="changeQuestion(true)" disabled>Next</button>
+      <button id="prev_question" onclick="changeQuestion(false)" 
+      {% if disable_prev_question %} disabled {% endif %}>Previous</button>
+      <button id="next_question" onclick="changeQuestion(true)" 
+      {% if disable_next_question %} disabled {% endif %}>Next</button>
     </div>
     <!-- Knowledge Components Section -->
     <div class="knowledge-section" id="kc_display">
@@ -256,8 +259,8 @@
     formData.append("unique_identifier", "change_question");
     formData.append("isNextQuestion", isNextQuestion);
     // Deactivate Next question button if next question
-    if (isNextQuestion) document.getElementById("next_question").disabled = true;
-    else document.getElementById("next_question").disabled = false;
+    // if (isNextQuestion) document.getElementById("next_question").disabled = true;
+    // else document.getElementById("next_question").disabled = false;
 
     fetch("{% url 'changequestion' %}", {
       method: "POST",
@@ -309,8 +312,12 @@
           questionForm.appendChild(label);
         });
 
+        // Load history if there was
+        updateHistory(data);
+
         // Disable buttons is necessary
         document.getElementById("prev_question").disabled = data.disable_prev_question;
+        document.getElementById("next_question").disabled = data.disable_next_question;
         document.getElementById("feedback").textContent = "";
 
         // Update hint
@@ -340,6 +347,24 @@
         }
       })
       .catch((error) => console.error("Error:", error));
+  }
+
+  function updateHistory(data) {
+    const options = document.querySelectorAll("input[name='answer']");
+
+    // Reset all option classes and colors
+    options.forEach((input) => {
+      input.classList.remove("correct", "incorrect");
+    });
+
+    // Highlight the selected option based on correctness
+    options.forEach((input) => {
+      if (input.value == data.selected_opt_idx) {
+        console.log(input.value);
+        input.classList.add(data.is_correct ? "correct" : "incorrect");
+        input.checked = true;
+      }
+    });
   }
 
   function changeHint(isNextHint) {
