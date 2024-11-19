@@ -21,8 +21,8 @@
       <!-- Options Section (Multiple Choice) -->
       <form class="options" method="post" id="questionForm">
         {% csrf_token %}
-        <div style="display: flex;">
-          <div id="question_option" style="width: 50%;">
+        <div style="display: flex">
+          <div id="question_option" style="width: 50%">
             <!-- <input type="hidden" name="unique_identifier" value="submit_answer" /> -->
             {% for choice in choices_question %}
             <label class="option">
@@ -39,23 +39,26 @@
           </div>
         </div>
         <div class="submit-section">
-          
           <button type="submit">Submit</button>
           <div class="see-example-section">
             <button type="button" id="seeExample">See Example</button>
           </div>
-          
         </div>
       </form>
-      
     </div>
     <div>
       {% if disable_prev_question %}
-      <button id="prev_question" onclick="changeQuestion(false)" disabled>Previous</button>
+      <button id="prev_question" onclick="changeQuestion(false)" disabled>
+        Previous
+      </button>
       {% else %}
-      <button id="prev_question" onclick="changeQuestion(false)">Previous</button>
+      <button id="prev_question" onclick="changeQuestion(false)">
+        Previous
+      </button>
       {% endif %}
-      <button id="next_question" onclick="changeQuestion(true)" disabled>Next</button>
+      <button id="next_question" onclick="changeQuestion(true)" disabled>
+        Next
+      </button>
     </div>
     <!-- Knowledge Components Section -->
     <div class="knowledge-section" id="kc_display">
@@ -128,7 +131,9 @@
 
     <!-- Feedback Section -->
     <h3>Feedback:</h3>
-    <div class="feedback-section" id="feedback">{{ feedback|linebreaks|safe }}</div>
+    <div class="feedback-section" id="feedback">
+      {{ feedback|linebreaks|safe }}
+    </div>
   </div>
 
   <!-- Overlay for 'See Example' -->
@@ -174,7 +179,8 @@
         });
 
         // Activate Next question button if correct
-        if (data.correct) document.getElementById("next_question").disabled = false;
+        if (data.correct)
+          document.getElementById("next_question").disabled = false;
 
         // Update feedback section
         document.querySelector(".feedback-section").textContent = data.feedback;
@@ -243,7 +249,8 @@
     formData.append("unique_identifier", "change_question");
     formData.append("isNextQuestion", isNextQuestion);
     // Deactivate Next question button if next question
-    if (isNextQuestion) document.getElementById("next_question").disabled = true;
+    if (isNextQuestion)
+      document.getElementById("next_question").disabled = true;
     else document.getElementById("next_question").disabled = false;
 
     fetch("{% url 'changequestion' %}", {
@@ -265,7 +272,8 @@
         const questionOptionDiv = document.getElementById("question_option");
         if (data.question_img_url) {
           const questionFigure = document.createElement("img");
-          questionFigure.src = "/static/storyboard/images/" + data.question_img_url;
+          questionFigure.src =
+            "/static/storyboard/images/" + data.question_img_url;
           questionFigure.style.display = "block";
           questionFigureDiv.appendChild(questionFigure);
           questionFigureDiv.style.width = "50%";
@@ -297,7 +305,8 @@
         });
 
         // Disable buttons is necessary
-        document.getElementById("prev_question").disabled = data.disable_prev_question;
+        document.getElementById("prev_question").disabled =
+          data.disable_prev_question;
         document.getElementById("feedback").textContent = "";
 
         // Update hint
@@ -308,7 +317,7 @@
 
         // Update example question
         const overlay = document.getElementById("exampleOverlay");
-        overlay.innerHTML = ""
+        overlay.innerHTML = "";
         const overlay_content = document.createElement("div");
         overlay_content.className = "overlay-content";
         overlay_content.innerText = data.example_problem;
@@ -333,7 +342,14 @@
     const formData = new FormData();
     formData.append("unique_identifier", "change_hint");
     formData.append("isNextHint", isNextHint);
-    formData.append("hint_option_idx", 0);
+
+    // Retrieve the selected hint option
+    const selectedHint = document.querySelector(
+      'input[name="hint_answer"]:checked'
+    );
+    const hintOptionIdx = selectedHint ? selectedHint.value : 0; // Default to 0 if none selected
+
+    formData.append("hint_option_idx", hintOptionIdx);
 
     fetch("{% url 'changehint' %}", {
       method: "POST",
@@ -416,7 +432,7 @@
 
       const div = document.createElement("div");
       div.className = "stars";
-      
+
       kc.stars.forEach((star) => {
         const s = document.createElement("div");
         s.className = star;

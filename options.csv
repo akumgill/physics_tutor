@@ -52,108 +52,145 @@ q1.h3.o2,"\(v_f = v_0 + at\) <br>
 q1.h3.o3,"\(v_t^2 - v_0^2 = 2ah\)",TRUE,"This is a valid equation of motion to solve this problem! There are others that are also valid, but we can use this one in the next steps. Feel free to get another hint or try again on the original problem if you feel ready."
 q1.h3.o4,"\(v_t^2 - v_0^2 = ah\)",FALSE,"Good try, but that's not correct because there is a constant term missing from the expression. Look for another answer choice with the correct constant."
 q1.h3.o5,"\(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\) <br>",TRUE,"This is a valid equation of motion to solve this problem! There are others that are also valid, but we can use this one in the next steps. Feel free to get another hint or try again on the original problem if you feel ready."
-q1.h4_1.o1,\(0 = (25 \sin(30^\circ))^2 + 2(-9.8)h\),TRUE,That's the correct answer. Congratulations on completing the problem!
-q1.h4_1.o2,\(0 = (25 \cos(30^\circ))^2 + 2(-9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_1.o3,\(0 = (25 \sin(30^\circ))^2 - 2(9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_1.o4,\(0 = (25 \cos(30^\circ))^2 - 2(9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_1.o5,\(0 = (25)^2 + 2(-9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_2.o1,\(0 - (25 \sin(30^\circ))^2 = 2(-9.8)h\),TRUE,That's the correct answer. Congratulations on completing the problem!
-q1.h4_2.o2,\(0 - (25 \cos(30^\circ))^2 = 2(-9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_2.o3,\(0 - (25 \sin(30^\circ))^2 = -2(9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_2.o4,\(0 - (25 \cos(30^\circ))^2 = -2(9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_2.o5,\(0 - (25)^2 = 2(-9.8)h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_3.o1,\(\frac{1}{2} (0 - (25 \sin(30^\circ))^2) = 9.8h\),TRUE,That's the correct answer. Congratulations on completing the problem!
-q1.h4_3.o2,\(\frac{1}{2} (0 - (25 \cos(30^\circ))^2) = 9.8h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_3.o3,\(\frac{1}{2} (0 - (25 \sin(30^\circ))^2) = -9.8h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_3.o4,\(\frac{1}{2} (0 - (25 \cos(30^\circ))^2) = -9.8h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q1.h4_3.o5,\(\frac{1}{2} (0 - (25)^2) = 9.8h\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h1.o1,"Known Information: \(v_{0,x} = 10 m/s\) <br>
-We are solving for the time it takes for the rock to hit the ground",TRUE,"Correct hint. Good job!"
-q2.h1.o2,"Known Information: \(v_{0,y} = 10 m/s\) <br>
-We are solving for the maximum height of the rock's trajectory",FALSE,"Wrong hint. Try again."
-q2.h1.o3,"Known Information: \(v_{0,x} = 10 m/s\) <br>
-We are solving for the maximum horizontal distance of the rock's trajectory",FALSE,"Wrong hint. Try again."
-q2.h1.o4,"Known Information: \(v_{0,x} < 10 m/s\) <br>
-We are solving for the maximum horizontal distance of the rock's trajectory",FALSE,"Wrong hint. Try again."
-q2.h1.o5,"Known Information: \(v_{0,x} = 0 m/s\) <br>
-We are solving for the time it takes for the rock to hit the ground",FALSE,"Wrong hint. Try again."
-q2.h2.o1,"\(v_{0,x} = 10 \sin(0^o) m/s\) <br> 
-\(v_{0,y} = 10 \sin(0^o) m/s\)",FALSE,"Wrong hint. Try again."
-q2.h2.o2,"\(v_{0,x} = 10 \cos(0^o) m/s\) <br> 
-\(v_{0,y} = 25 \cos(0^o) m/s\)",FALSE,"Wrong hint. Try again."
-q2.h2.o3,"\(v_{0,x} = 10 \cos(0^o) m/s\) <br> 
-\(v_{0,y} = 10 \sin(0^o) m/s\)",TRUE,"Correct hint. Good job!" 
-q2.h2.o4,"\(v_{0,x} = 10 \tan(0^o) m/s\) <br> 
-\(v_{0,y} = 10 \sin(0^o) m/s\)",FALSE,"Wrong hint. Try again."
-q2.h2.o5,"\(v_{0,x} = 0 m/s\) <br> 
-\(v_{0,y} = 10 m/s\)",FALSE,"Wrong hint. Try again."
-q2.h3.o1,\(d = vt\),TRUE,That's the correct answer. Congratulations on completing the problem!
-q2.h3.o2,\(v^2 = v_0^2 + 2ad\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h3.o3,\(d = v_0t + \frac{1}{2}at^2\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h3.o4,\(v_f = v_0 + at\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h3.o5,\( t = (\frac{2d}{a})^{0.5} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h4_1.o1,\(t = \frac{55}{10} \text{ s} = 5.5 \text{ s}\),TRUE,That's the correct answer. Congratulations on completing the problem!
-q2.h4_1.o2,\(t = \frac{10}{55} \text{ s}\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h4_1.o3,\(t = \frac{55 - 10}{10} \text{ s}\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h4_1.o4,\(t = \frac{55 + 10}{10} \text{ s}\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q2.h4_1.o5,\(t = 55 \times 10 \text{ s}\),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h1.o1,The initial velocity is 10 m/s at an angle of 60° above the horizontal. We need to find the horizontal distance Eric covers until reaching 2 m height.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q3.h1.o2,The initial velocity is 10 m/s at an angle of 30° above the horizontal. We need to find the total flight time.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h1.o3,The initial velocity is 20 m/s at an angle of 45° above the horizontal. We need to find the vertical height reached.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h1.o4,The problem gives a starting point of 5 m/s at 90° and asks the maximum height reached.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h1.o5,The problem specifies a velocity of 15 m/s horizontally. It asks for the speed before landing.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h2.o1,The horizontal component is 10 \(\cos(60^\circ)\) m/s and the vertical component is 10 \(\sin(60^\circ)\) m/s.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q3.h2.o2,The horizontal component is 10 \(\sin(60^\circ)\) m/s and the vertical component is 10 \(\cos(60^\circ)\) m/s.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h2.o3,The horizontal component is 10 \(\tan(60^\circ)\) m/s and the vertical component is 10 m/s.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h2.o4,The horizontal component is 0 m/s and the vertical component is 10 m/s.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h2.o5,The horizontal component is 10 \(\cos(45^\circ)\) m/s and the vertical component is \(\sqrt{10}\) m/s.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h3.o1,Use the vertical motion equation: \( y = v_{0y} \cdot t + \frac{1}{2} a \cdot t^2 \) to find time and then \( x = v_{0x} \cdot t \) for horizontal distance.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q3.h3.o2,Use \( v = u + at \) for vertical motion to determine horizontal distance.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h3.o3,Use \( x = v_{0x}t + \frac{1}{2} a_x t^2 \) with horizontal acceleration.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h3.o4,Use \( v_f^2 = v_i^2 + 2ay \) to solve for horizontal distance.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h3.o5,Use \( v^2 = u^2 + 2ax \) for finding vertical time first before calculating distance.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h4_1.o1,"Solve \( 2 = 10 \sin(60^\circ)t - \frac{1}{2} (9.8) t^2 \), then use \( x = 10 \cos(60^\circ) t \).",TRUE,That's the correct answer. Congratulations on completing the problem!
-q3.h4_1.o2,"Solve \( 2 = 10 \cos(60^\circ)t + \frac{1}{2} (-9.8) t^2 \), then use \( x = 10 \sin(60^\circ) t \).",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h4_1.o3,"Solve \( 0 = 10 \tan(60^\circ)t + \frac{1}{2} (9.8) t^2 \), then use \( x = 10 \cos(60^\circ) t \).",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h4_1.o4,"Solve \( 0 = 10t - \frac{1}{2} (9.8) t^2 \), then use \( x = 10 \cos(30^\circ) t \).",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q3.h4_1.o5,"Solve \( 2 = 10 t + \frac{1}{2} (-9.8) t^2 \), then use \( x = 10 \tan(45^\circ) t \).",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h1.o1,We need the angles of projection and the ratio of their ranges.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q4.h1.o2,We need the time of flight for each egg.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h1.o3,We need the initial height from which the eggs are thrown.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h1.o4,We need the lateral displacement of both eggs.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h1.o5,We need the velocities at the highest points of the trajectories.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h2.o1,"For W: \(v_{w,x} = v_W \cos(75^\circ)\), For Z: \(v_{z,x} = v_Z \cos(30^\circ)\)",TRUE,That's the correct answer. Congratulations on completing the problem!
-q4.h2.o2,"For W: \(v_{w,x} = v_W \sin(75^\circ)\), For Z: \(v_{z,x} = v_Z \sin(30^\circ)\)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h2.o3,"For W: \(v_{w,x} = v_W \tan(75^\circ)\), For Z: \(v_{z,x} = v_Z \tan(30^\circ)\)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h2.o4,"For W: \(v_{w,x} = v_W \cos(30^\circ)\), For Z: \(v_{z,x} = v_Z \cos(75^\circ)\)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h2.o5,"For W: \(v_{w,x} = 0\), For Z: \(v_{z,x} = 0\)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h3.o1,\( R = \frac{v_0^2}{g} \sin(2\theta) \),TRUE,That's the correct answer. Congratulations on completing the problem!
-q4.h3.o2,\( R = v_0 t \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h3.o3,\( R = \frac{v_0 t}{\cos(\theta)} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h3.o4,"\( R = \frac{2v_0^2 \, \cos^2(\theta)}{g} \)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h3.o5,\( R = u^2 \tan(\theta) \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h4_1.o1,\( \frac{v_W}{v_Z} = \sqrt{\frac{5}{8} \cdot \frac{\sin(60^\circ)}{\sin(150^\circ)}} \),TRUE,That's the correct answer. Congratulations on completing the problem!
-q4.h4_1.o2,\( \frac{v_W}{v_Z} = \sqrt{\frac{8}{5}} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h4_1.o3,\( \frac{v_W}{v_Z} = \frac{5}{8} \cdot \frac{\sin(60^\circ)}{\sin(30^\circ)} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h4_1.o4,\( \frac{v_W}{v_Z} = \frac{8}{5} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q4.h4_1.o5,\( \frac{v_W}{v_Z} = \sqrt{\frac{5}{8} \cdot \frac{\sin(150^\circ)}{\sin(60^\circ)}} \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h1.o1,Locations where the only force is gravity.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q5.h1.o2,Locations where friction equals gravitational force.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h1.o3,Locations where mass has zero velocity.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h1.o4,Locations where the ramp is horizontal.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h1.o5,Locations where acceleration equals zero.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h2.o1,Normal and gravitational components are acting on the mass.,TRUE,That's the correct answer. Congratulations on completing the problem!
-q5.h2.o2,"Only gravitational force acts, no components.",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h2.o3,Friction is present and decomposes into components.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h2.o4,Only normal force has components.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h2.o5,Air resistance components affect the motion.,FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h3.o1,Net acceleration in y is due to y-component of gravity: \( a_y = g \sin(\theta) \),TRUE,That's the correct answer. Congratulations on completing the problem!
-q5.h3.o2,Net acceleration in y is zero: \( a_y = 0 \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h3.o3,Net acceleration in y by normal force: \( a_y = N \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h3.o4,"All forces cancel, \( a_y = 0 \) due to equilibrium.",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h3.o5,Net acceleration by friction \( a_y = f/m \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h4_1.o1,All locations on the ramp where angle \( \theta \) causes \( a_y = g \sin(\theta) \),TRUE,That's the correct answer. Congratulations on completing the problem!
-q5.h4_1.o2,Only at the peak of each location where \( a_y = 0 \),FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h4_1.o3,"At the bottom where velocity high, \( a_y > g \sin(\theta) \)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h4_1.o4,"Never, as y-components cancel out always.",FALSE,"Good try, but that's not correct. Maybe try a hint?"
-q5.h4_1.o5,"Only when \( \theta = 90^\circ \), \( a_y = g \)",FALSE,"Good try, but that's not correct. Maybe try a hint?"
+q1.h4_2.o1,\(0 = (25 \sin(30^\circ)) - 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),TRUE,Correct! 
+q1.h4_2.o2,\(0 = (25 \sin(30^\circ)) - 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct sign of acceleration.    
+q1.h4_2.o3,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
+q1.h4_2.o4,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t-\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
+q1.h4_2.o5,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct operands and correct sign of acceleration.
+q1.h4_3.o1,\(0 - (25 \sin(30^\circ))^2 = 2(-9.8)h\),TRUE,Correct! Now you can solve for the height.
+q1.h4_3.o2,\(0 - (25 \cos(30^\circ))^2 = 2(-9.8)h\),FALSE,Do not use the cosine component for vertical calculations.
+q1.h4_3.o3,\(0 - (25 \sin(30^\circ))^2 = -2(9.8)h\),FALSE,The sign of acceleration is not applied correctly here.
+q1.h4_3.o4,\(0 - (25 \cos(30^\circ))^2 = -2(9.8)h\),FALSE,Cosine is irrelevant for vertical velocity or height.
+q1.h4_3.o5,\(0 - (25)^2 = 2(-9.8)h\),FALSE,Initial velocity requires breakdown into its components.
+q1.h4_5.o1,\(\frac{1}{2} (0 - (25 \sin(30^\circ))^2) = 9.8h\),TRUE,You've got it! This correctly applies the energy equation for height.
+q1.h4_5.o2,\(\frac{1}{2} (0 - (25 \cos(30^\circ))^2) = 9.8h\),FALSE,"The horizontal component, resolved by cosine, is incorrect for vertical analysis."
+q1.h4_5.o3,\(\frac{1}{2} (0 - (25 \sin(30^\circ))^2) = -9.8h\),FALSE,The gravitational term should be positive as it equals the potential energy at height.
+q1.h4_5.o4,\(\frac{1}{2} (0 - (25 \cos(30^\circ))^2) = -9.8h\),FALSE,"Again, use sine for the vertical evaluation, and mind the signs."
+q1.h4_5.o5,\(\frac{1}{2} (0 - (25)^2) = 9.8h\),FALSE,Direct velocity value without resolution into components leads us astray.
+q2.h1.o1,"Known: Initial horizontal speed is 10 m/s, horizontal distance is 55 m 
+ Solve for: time in the air",TRUE,"Yes, we have the initial horizontal speed and the horizontal distance, and we need to find the time the rock is in the air."
+q2.h1.o2,"Known: Vertical speed is 10 m/s initially, horizontal distance is 55 m 
+ Solve for: height of the cliff",FALSE,The initial vertical speed is actually zero because the rock is launched horizontally.
+q2.h1.o3,"Known: Vertical speed is not given, horizontal speed is 10 m/s 
+ Solve for: height of the cliff",FALSE,"We are asked to find the time in the air, not the height of the cliff."
+q2.h1.o4,"Known: Total distance traveled is 65 m 
+ Solve for: time in the air",FALSE,The total distance traveled horizontally is 55 m. We are solving for the time in the air.
+q2.h1.o5,"Known: Initial speed is 20 m/s at an unknown angle 
+ Solve for: time in the air",FALSE,"The rock is launched horizontally at 10 m/s, and we need to find the time in the air using that information."
+q2.h2.o1,"Horizontal: 10 m/s, Vertical: 0 m/s",TRUE,"Correct, the horizontal initial velocity is 10 m/s and since it is launched horizontally, the vertical initial velocity is 0 m/s."
+q2.h2.o2,"Horizontal: 0 m/s, Vertical: 10 m/s",FALSE,"The rock is launched horizontally, so the horizontal velocity is 10 m/s and vertical is 0 m/s at the start."
+q2.h2.o3,"Horizontal: 10 m/s, Vertical: 10 m/s",FALSE,The horizontal initial velocity is 10 m/s but the vertical initial velocity should be 0 m/s because it's launched horizontally.
+q2.h2.o4,"Horizontal: 5 m/s, Vertical: 5 m/s",FALSE,The rock is launched with a horizontal speed of 10 m/s and a vertical speed of 0 m/s.
+q2.h2.o5,"Horizontal: 10 m/s, Vertical: 10 m/s upward",FALSE,The vertical velocity should be 0 m/s initially because the rock is launched horizontally.
+q2.h3.o1,"Horizontal: Distance = Speed x Time 
+ Vertical: Use acceleration due to gravity 
+ Time = sqrt(2H/g), where H is the height",TRUE,"This set of equations will allow you to solve for the time of flight using the horizontal distance and horizontal speed, as well as verify using vertical motion."
+q2.h3.o2,"Horizontal: Speed = Distance x Time 
+ Vertical: Final velocity = Initial velocity + (Gravity x Time)",FALSE,"No, it should be Distance = Speed x Time."
+q2.h3.o3,Only use Vertical: Height = (1/2) x g x (Time^2),FALSE,You can't solve this with only the vertical equation without knowing the height.
+q2.h3.o4,"Horizontal: Speed = Distance x Time 
+ Vertical: Final velocity = Initial velocity - (Gravity x Time)",FALSE,The horizontal motion should have distance equal to speed times time; the vertical motion equation should have the correct acceleration sign.
+q2.h3.o5,"Horizontal: Acceleration = (Speed x Distance) / Time 
+ Vertical: Time = (2xHeight)/Gravity",FALSE,"Horizontal motion has a constant speed motion, so no acceleration. Also, check the vertical equation for using height and gravity appropriately."
+q2.h4_1.o1,Time = 55 m / 10 m/s,TRUE,Correct! Horizontal distance divided by horizontal speed gives the time in the air.
+q2.h4_1.o2,Time = 55 m x 10 m/s,FALSE,This would give you a distance^2/time unit. Make sure you divide distance by speed.
+q2.h4_1.o3,Time = 10 m/s / 55 m,FALSE,You've inverted the equation; distance should be divided by speed to find time.
+q2.h4_1.o4,Time = sqrt(55 m / 10 m/s),FALSE,There is no need to take the square root here; simply divide distance by speed.
+q2.h4_1.o5,Time = (55 m x 10 m/s)^{1/2},FALSE,Multiplying and taking the square root is incorrect. Just divide the distance by the speed.
+q3.h1.o1,"Known Information: \(v_{0} = 10 \text{ m/s}\), \(\theta = 60^\circ\), \(h = 2 \text{ m}\);
+We are solving for the horizontal distance, \(d\).",TRUE,Great! We have identified the known variables and the goal is to find the horizontal distance for the net placement.
+q3.h1.o2,"Known Information: \(v_{0} = 10 \text{ m/s}\), \(\theta = 30^\circ\), \(h = 2 \text{ m}\);
+We are solving for time of flight.",FALSE,Check the angle orientation; the cannon is oriented at 60° not 30°.
+q3.h1.o3,"Known Information: \(v_{0} = 10 \text{ m/s}\), \(\theta = 90^\circ\);
+We are solving for the maximum height reached.",FALSE,"Be careful with the angle; it's given as 60° not vertical, and we are finding the horizontal distance, not maximum height."
+q3.h1.o4,"Known Information: \(v_{0} = 10 \text{ m/s}\);
+We are solving for the speed at landing.",FALSE,We need more information than just the initial speed; identify components and solving for horizontal distance is the goal.
+q3.h1.o5,"Known Information: \(v_{0} = 10 \text{ m/s}\), \(\theta = 60^\circ\), \(h = 2 \text{ m}\);
+We are solving for the landing angle.",FALSE,"The problem requires the horizontal distance for placing the net, not the angle at which Eric lands."
+q3.h2.o1,"\(v_{0,x} = 10 \sin(60^\circ) \text{ m/s}\) \quad v_{0,y} = 10 \cos(60^\circ) \text{ m/s}\)",FALSE,Review trigonometric identities: cosine for horizontal (x) and sine for vertical (y) components.
+q3.h2.o2,"\(v_{0,x} = 10 \cos(60^\circ) \text{ m/s}\) \quad v_{0,y} = 10 \sin(60^\circ) \text{ m/s}\)",TRUE,Correct application of trigonometric components for the given angle.
+q3.h2.o3,"\(v_{0,x} = 10 \tan(60^\circ) \text{ m/s}\) \quad v_{0,y} = 10 \sin(60^\circ) \text{ m/s}\)",FALSE,Tangent is not used for determining velocity components in this context.
+q3.h2.o4,"\(v_{0,x} = 0 \text{ m/s}\) \quad v_{0,y} = 10 \text{ m/s}\)",FALSE,Initial velocity has both x and y components since the cannon is at 60°.
+q3.h2.o5,"\(v_{0,x} = 10 \text{ m/s}\) \quad v_{0,y} = 0 \text{ m/s}\)",FALSE,A 60° angle implies non-zero components in both x and y directions.
+q3.h3.o1,"Use vertical motion: \(h = v_{0,y} t + \frac{1}{2} a_y t^2\) 
+Horizontal motion: \(d = v_{0,x}t\)",TRUE,Correct! These equations help solve for time and eventually the horizontal distance.
+q3.h3.o2,"Use vertical motion: \(v_f = v_0 + at\) 
+Horizontal motion: \(d = v_{0,x}t\)",FALSE,The vertical motion equation doesn't take final velocity into account effectively for height.
+q3.h3.o3,"Vertical energy equation: \(mgh_f - mgh_0 = \frac{1}{2}mv^2 - \frac{1}{2}mv_0^2\) 
+Horizontal motion: \(d = v_{0,x}t\)",FALSE,This energy approach isn't straightforwardly applicable for the time to distance calculation.
+q3.h3.o4,"Use vertical motion: \(v_{f,y}^2 = v_{0,y}^2 + 2a_yh\) 
+Horizontal motion: \(d = v_{0,x}t\)",FALSE,"This vertical equation solves velocities, not directly time or distance."
+q3.h3.o5,"Use momentum equations for vertical: \(h = \frac{mv^2}{2mg}\) 
+Horizontal motion: \(d = v_{f,x}t\)",FALSE,"Momentum-based equations not applicable here, focus on basic kinematics for time and displacement."
+q3.h4_1.o1,Solve the quadratic equation: \(-4.9t^2 + 8.66t - 2 = 0\) for \(t\),TRUE,Correct! Use the quadratic formula to find \(t\) for computing horizontal range.
+q3.h4_1.o2,"Rearrange as \(t = \frac{v_{0,y}}{a_y}\)",FALSE,Misapplied formula: rearranging as given doesn’t address the height condition.
+q3.h4_1.o3,"Use \(t = \frac{2h}{v_{0,y} + v_f}\)",FALSE,This new time calculation doesn’t relate all known values correctly.
+q3.h4_1.o4,"Simplify as \(t = v_{0,y} - \frac{1}{2} gt\)",FALSE,"Reckon potential error on simplifying incorrectly, height needs a more solid equation."
+q3.h4_1.o5,Express \(t\) as \(\frac{h}{g}\),FALSE,The incorrect form could lead to a miscalculation related to height-time dependency.
+q4.h1.o1,The launch angles and gravitational acceleration are constants for both eggs; we are solving for the ratio of initial speeds.,TRUE,"That's correct. Both eggs are subject to the same gravitational acceleration, and we are given their launch angles. We aim to find the ratio of their initial speeds."
+q4.h1.o2,The final velocities of both eggs are the same; we are solving for the ratio of ranges.,FALSE,"Not quite. The problem gives the ratio of ranges and asks for the ratio of initial speeds, not the other way around."
+q4.h1.o3,The horizontal distances traveled by both eggs are equal; we are solving for the ratio of initial speeds.,FALSE,"Incorrect. The problem specifies a ratio for the range (
+R_W/R_Z = 5/8
+), not equal ranges."
+q4.h1.o4,The initial vertical velocities are the same for both eggs; we are solving for gravitational acceleration.,FALSE,"No, we are not solving for gravitational acceleration. Focus on initial speeds related to trajectory ranges."
+q4.h1.o5,The time of flight is the same for both eggs; we are solving for acceleration due to gravity.,FALSE,"Incorrect. The problem deals with initial speeds and given range ratios, not time or gravitational calculation."
+q4.h2.o1,"For W: 
+\(v_{0,W,x} = v_W \\ cos(75^\circ) \) 
+\( v_{0,W,y} = v_W \\ sin(75^\circ) \) 
+For Z: 
+\( v_{0,Z,x} = v_Z \\ cos(30^\circ) \) 
+\( v_{0,Z,y} = v_Z \\ sin(30^\circ) \)",TRUE,Correct! The horizontal and vertical components are calculated using the cosine and sine of their respective launch angles.
+q4.h2.o2,"For W: 
+\(v_{0,W,x} = v_W \\ sin(75^\circ) \) 
+\( v_{0,W,y} = v_W \\ cos(75^\circ) \) 
+For Z: 
+\( v_{0,Z,x} = v_Z \\ sin(30^\circ) \) 
+\( v_{0,Z,y} = v_Z \\ cos(30^\circ) \)",FALSE,Incorrect. The horizontal component uses the cosine and not the sine.
+q4.h2.o3,"For W: 
+\(v_{0,W,x} = v_W \\ tan(75^\circ) \) 
+\( v_{0,W,y} = v_W \\ tan(75^\circ) \) 
+For Z: 
+\( v_{0,Z,x} = v_Z \\ tan(30^\circ) \) 
+\( v_{0,Z,y} = v_Z \\ tan(30^\circ) \)",FALSE,Incorrect. Tangent is not used for breaking velocity into components.
+q4.h2.o4,"For W: 
+\(v_{0,W,x} = 0\) 
+\( v_{0,W,y} = v_W\) 
+For Z: 
+\( v_{0,Z,x} = 0\) 
+\( v_{0,Z,y} = v_Z\)",FALSE,"Incorrect. This implies no horizontal initial velocity component, which is not true here."
+q4.h2.o5,"For W: 
+\(v_{0,W,x} = v_W \) 
+\( v_{0,W,y} = 0\) 
+For Z: 
+\( v_{0,Z,x} = v_Z\) 
+\( v_{0,Z,y} = 0\)",FALSE,"Incorrect. This implies no vertical initial velocity component, which is not true here."
+q4.h3.o1,\(R = \frac{v_0^2 \sin(2\theta)}{g}\),TRUE,Great! This is the correct equation to find the range in projectile motion using initial velocity and launch angle.
+q4.h3.o2,\(R = \frac{v_0 \sin(2\theta)}{g}\),FALSE,"Close, but remember the range equation involves the square of the initial speed, \(v_0^2\)."
+q4.h3.o3,\(R = v_0 \cos(\theta)\),FALSE,"No, this expression relates to horizontal velocity, not the range of projectile motion."
+q4.h3.o4,\(R = \frac{v_0 \tan(\theta)}{g}\),FALSE,Incorrect. Tangent is not used directly in the range formula for projectile motion.
+q4.h3.o5,\(R = \frac{\sin(\theta) v_0}{g}\),FALSE,Incorrect. The range formula relates to the square of the velocity and the sine of twice the angle.
+q4.h4_1.o1,\(\frac{R_W}{R_Z} = \frac{v_W^2 \sin(150^\circ)}{v_Z^2 \sin(60^\circ)}\) and solve for \(\frac{v_W}{v_Z}\),TRUE,Correct! This is the right approach given the equations and known range ratios.
+q4.h4_1.o2,\(\frac{R_W}{R_Z} = \frac{v_W \sin(150^\circ)}{v_Z \sin(60^\circ)}\) and solve for \(\frac{v_W}{v_Z}\),FALSE,"Incorrect, the speeds should both be squared in the equation for range."
+q4.h4_1.o3,\(\frac{R_W}{R_Z} = \frac{v_W^2 \sin(60^\circ)}{v_Z^2 \sin(150^\circ)}\) and solve for \(\frac{v_W}{v_Z}\),FALSE,"Incorrect. Recheck the setup, specifically the angles used in the equation."
+q4.h4_1.o4,\(\frac{R_W}{R_Z} = \frac{v_Z^2 \sin(60^\circ)}{v_W^2 \sin(150^\circ)}\) and solve for \(\frac{v_W}{v_Z}\),FALSE,Incorrect setup; ensure the ratios are set correctly with the launch angles.
+q4.h4_1.o5,\(\frac{R_W}{R_Z} = \frac{v_W \cos(150^\circ)}{v_Z \sin(60^\circ)}\) and solve for \(\frac{v_W}{v_Z}\),FALSE,"Incorrect, cosine is not used in this part of the setup for calculating range with respect to initial speed."
+q5.h1.o1,"The ramp is frictionless, and gravity acts vertically downward.",TRUE,"Correct! The ramp being frictionless implies no opposing force to gravity, which acts vertically downward."
+q5.h1.o2,The net acceleration is horizontal due to friction.,FALSE,Incorrect. There is no friction on the ramp.
+q5.h1.o3,The ramp has a net force acting upwards at all locations.,FALSE,"Incorrect. The only force acting is gravity, which acts downward."
+q5.h1.o4,The mass is accelerated upward by an engine.,FALSE,Incorrect. There is no engine; only gravity acts here.
+q5.h1.o5,Air resistance affects the acceleration at all points.,FALSE,"Not quite. The problem doesn't mention air resistance, it focuses on gravity."
+q5.h2.o1,Gravity can be split into components parallel and perpendicular to the ramp.,TRUE,"Correct. On a ramp, gravity is split into components: one parallel to the ramp and one perpendicular to it."
+q5.h2.o2,Gravity only acts perpendicular to the ramp at all points.,FALSE,Incorrect. The gravity splits into a parallel and a normal component relative to the ramp.
+q5.h2.o3,The net acceleration is always horizontal.,FALSE,"Incorrect. The net acceleration is related to gravity, which acts downwards."
+q5.h2.o4,The net acceleration only depends on the speed of the object.,FALSE,"Incorrect. Acceleration is due to gravity, not the speed."
+q5.h2.o5,Gravity acts parallel to the positive y direction at all points.,FALSE,Incorrect. Gravity always acts vertically downwards; you must consider components on the slope.
+q5.h3.o1,The component of gravity parallel to the ramp is \(mg \sin(\theta)\) and perpendicular is \(mg \cos(\theta)\),TRUE,Correct! These are the equations used to split gravitational force into components along and perpendicular to the ramp.
+q5.h3.o2,The component of gravity parallel to the ramp is \(mg \cos(\theta)\) and perpendicular is \(mg \sin(\theta)\),FALSE,"Incorrect. Cosine gives the component perpendicular to the ramp, while sine gives parallel."
+q5.h3.o3,The gravitational force has no effect on acceleration.,FALSE,Incorrect. Gravity directly affects acceleration even on an inclined plane.
+q5.h3.o4,Acceleration is only based on frictional force.,FALSE,"Incorrect. The ramp is frictionless, so consider just gravity's impact."
+q5.h3.o5,Normal force is parallel to the y-axis and doesn't affect other components.,FALSE,Incorrect. Normal force counters the perpendicular component of gravity.
+q5.h4_1.o1,"At location 1, the net acceleration is in the positive y direction.",FALSE,"Incorrect. At location 1, gravity acts downward, and causes acceleration down the plane."
+q5.h4_1.o2,"At location 2, the component of gravity in the +y direction is zero, so net acceleration is not positive y.",TRUE,"Correct! At the top of the ramp at location 2, there is no component in the positive y direction; it's balanced."
+q5.h4_1.o3,"At location 3, the net acceleration can have a positive y component because it's going down the plane.",FALSE,Incorrect. The net force down the ramp isn't aligned with the positive y direction.
+q5.h4_1.o4,All locations experience a net force along the positive y direction.,FALSE,"Incorrect, evaluate each location's net force based on gravity."
+q5.h4_1.o5,There is no acceleration impacted y-wise at any location on a frictionless ramp.,FALSE,"Gravity acts at each point, but only specific orientations affect y-alignment."

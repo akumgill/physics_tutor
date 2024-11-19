@@ -89,7 +89,7 @@ def section1_questionpage(request):
 
     # HINT
     h_id = cur_progress.current_h_id
-    print(f"q{q_id}.h{h_id}")
+    print(f"hint: q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
     context["disable_prev_hint"] = h_id == str(0)
 
@@ -201,7 +201,8 @@ def changehint(request):
         q_id = cur_progress.current_q_id
         h_id = cur_progress.current_h_id
         question = get_object_or_404(Question, q_id=f"q{q_id}")
-        cur_opt = request.POST["hint_option_idx"]
+        cur_opt = request.POST.get("hint_option_idx", "0")
+        print(f"Hint Option Index selected before changing hint: {cur_opt}")
         all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
         all_hints_of_question = [h.h_id for h in all_hints_of_question]
 
@@ -214,20 +215,25 @@ def changehint(request):
             next_hint_id = str(max(int(h_id[0]) - 1, 1))  
 
         # Update current hint ID in user's progress
-        cur_progress.current_h_id = str(next_hint_id)
-        cur_progress.save()
+        
         context["disable_prev_hint"] = str(next_hint_id) == str(0)
 
         if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}")
             context = findHint(context, q_id, next_hint_id)
+            cur_progress.current_h_id = str(next_hint_id)
+            cur_progress.save()
         elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}_{cur_opt}")
             context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
+            cur_progress.current_h_id = f"{next_hint_id}_{cur_opt}"
+            cur_progress.save()
         else:
             context["hint"] = ""
             context["hint_img_url"] = ""
-            context["choices_hint"] = ["", "", "", "", ""]
+            context["choices_hint"] = [
+                {"idx": i + 1, "text": "", "feedback": "", "is_correct": False} for i in range(5)
+            ]
         return JsonResponse(context)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
