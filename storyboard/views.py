@@ -112,10 +112,6 @@ def section1_questionpage(request):
             if is_correct:
                 print(is_correct)
                 print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id + 1}")
-                # TODO better way to move to next question than refreshing
-                # TODO better handling for final question overflow
-                # cur_progress.current_q_id += 1
-                # cur_progress.current_h_id = 0
                 
                 # Increase KCs for correct answers
                 for kc in question.kcs.all():
@@ -125,7 +121,17 @@ def section1_questionpage(request):
                     kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id] + 1, 5)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
+            else:
+                # Decrease KCs for incorrect answers
+                for kc in question.kcs.all():
+                    # Initialize KC to 1 if this is the first time the student is answering a question
+                    if kc.kc_id not in kc_progress:
+                        kc_progress[kc.kc_id] = 0
+                    kc_progress[kc.kc_id] = max(kc_progress[kc.kc_id] - 1, 0)
+                cur_progress.kc_progress = kc_progress
+                cur_progress.save()
             return JsonResponse(response)
+
         elif unique_identifier == 'submit_hint':
             hint_answer_index = int(request.POST.get('hint_answer')) - 1
             print(f"hint_answer_index: {hint_answer_index}")
