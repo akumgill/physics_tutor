@@ -95,9 +95,12 @@ def section1_questionpage(request):
 
     # HINT
     h_id = cur_progress.current_h_id
-    print(f"q{q_id}.h{h_id}")
+    print(f"hint: q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
     context["disable_prev_hint"] = h_id == str(0)
+
+    # Load kc_progress from JSONField
+    kc_progress = cur_progress.kc_progress
 
     if request.method == "POST" and request.POST.get('unique_identifier'):
         unique_identifier = request.POST.get('unique_identifier')
@@ -144,7 +147,17 @@ def section1_questionpage(request):
                     kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id] + 1, 5)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
+            else:
+                # Decrease KCs for incorrect answers
+                for kc in question.kcs.all():
+                    # Initialize KC to 1 if this is the first time the student is answering a question
+                    if kc.kc_id not in kc_progress:
+                        kc_progress[kc.kc_id] = 0
+                    kc_progress[kc.kc_id] = max(kc_progress[kc.kc_id] - 1, 0)
+                cur_progress.kc_progress = kc_progress
+                cur_progress.save()
             return JsonResponse(response)
+
         elif unique_identifier == 'submit_hint':
             hint_answer_index = int(request.POST.get('hint_answer')) - 1
             print(f"hint_answer_index: {hint_answer_index}")
@@ -153,6 +166,20 @@ def section1_questionpage(request):
                 'correct': context["choices_hint"][hint_answer_index]["is_correct"], 
                 'feedback': feedback
             }
+
+            # Update KCs based on successful or unsuccessful hint completion
+            if context["hint_kc"] != "":
+                # Initialize if necessary
+                if context["hint_kc"] not in kc_progress:
+                        kc_progress[context["hint_kc"]] = 0
+                # Increment
+                if context["choices_hint"][hint_answer_index]["is_correct"]:
+                    kc_progress[context["hint_kc"]] = min(kc_progress[context["hint_kc"]] + 1, 5)
+                # Decrement
+                else:
+                    kc_progress[context["hint_kc"]] = max(kc_progress[context["hint_kc"]] - 1, 0)
+                cur_progress.kc_progress = kc_progress
+                cur_progress.save()
             return JsonResponse(response)
 
     return render(request, 'storyboard/questionpage.html', context)
@@ -235,7 +262,8 @@ def changehint(request):
         q_id = cur_progress.current_q_id
         h_id = cur_progress.current_h_id
         question = get_object_or_404(Question, q_id=f"q{q_id}")
-        cur_opt = request.POST["hint_option_idx"]
+        cur_opt = request.POST.get("hint_option_idx", "0")
+        print(f"Hint Option Index selected before changing hint: {cur_opt}")
         all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
         all_hints_of_question = [h.h_id for h in all_hints_of_question]
 
@@ -248,20 +276,25 @@ def changehint(request):
             next_hint_id = str(max(int(h_id[0]) - 1, 1))  
 
         # Update current hint ID in user's progress
-        cur_progress.current_h_id = str(next_hint_id)
-        cur_progress.save()
+        
         context["disable_prev_hint"] = str(next_hint_id) == str(0)
 
         if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}")
             context = findHint(context, q_id, next_hint_id)
+            cur_progress.current_h_id = str(next_hint_id)
+            cur_progress.save()
         elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}_{cur_opt}")
             context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
+            cur_progress.current_h_id = f"{next_hint_id}_{cur_opt}"
+            cur_progress.save()
         else:
             context["hint"] = ""
             context["hint_img_url"] = ""
-            context["choices_hint"] = ["", "", "", "", ""]
+            context["choices_hint"] = [
+                {"idx": i + 1, "text": "", "feedback": "", "is_correct": False} for i in range(5)
+            ]
         return JsonResponse(context)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -272,6 +305,7 @@ def findHint(context, q_id, h_id):
         hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
         context["hint"] = hint.text
         context["hint_img_url"] = hint.img_name if hint.img_name != "no_img" else ""
+        context["hint_kc"] = hint.kc_id if hint.kc_id != "none" else ""
 
         # HINT OPTIONS
         choices_hint = Option.objects.filter(o_id__startswith=f"q{q_id}.h{h_id}.o")
@@ -367,8 +401,7 @@ def import_hints():
         entry = data.iloc[i]
         hint = Hint(
             h_id = entry["h_id"],
-            # TODO[Akum]: add kc_id as foreign key after I import them
-            # kc_id = entry["kc_id"],
+            kc_id = entry["kc_id"],
             text = entry["text"],
             img_name = entry["img_name"],
         )
