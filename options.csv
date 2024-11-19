@@ -52,11 +52,11 @@ q1.h3.o2,"\(v_f = v_0 + at\) <br>
 q1.h3.o3,"\(v_t^2 - v_0^2 = 2ah\)",TRUE,"This is a valid equation of motion to solve this problem! There are others that are also valid, but we can use this one in the next steps. Feel free to get another hint or try again on the original problem if you feel ready."
 q1.h3.o4,"\(v_t^2 - v_0^2 = ah\)",FALSE,"Good try, but that's not correct because there is a constant term missing from the expression. Look for another answer choice with the correct constant."
 q1.h3.o5,"\(\frac{1}{2} (mv_f^2 - mv_0^2) = mgh\) <br>",TRUE,"This is a valid equation of motion to solve this problem! There are others that are also valid, but we can use this one in the next steps. Feel free to get another hint or try again on the original problem if you feel ready."
-q1.h4_2.o1,\(0 = (25 \sin(30^\circ)) - 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),TRUE,Correct! 
-q1.h4_2.o2,\(0 = (25 \sin(30^\circ)) - 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct sign of acceleration.    
-q1.h4_2.o3,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
-q1.h4_2.o4,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t-\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
-q1.h4_2.o5,\(0 = (25 \sin(30^\circ)) + 9.8t h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct operands and correct sign of acceleration.
+q1.h4_2.o1,\(0 = (25 \sin(30^\circ)) - 9.8t <br> h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),TRUE,Correct! 
+q1.h4_2.o2,\(0 = (25 \sin(30^\circ)) - 9.8t <br> h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct sign of acceleration.    
+q1.h4_2.o3,\(0 = (25 \sin(30^\circ)) + 9.8t <br> h = (25 \sin(30^\circ))t+\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
+q1.h4_2.o4,\(0 = (25 \sin(30^\circ)) + 9.8t <br> h = (25 \sin(30^\circ))t-\frac{1}{2}(-9.8)t^2\),FALSE,Check for the correct operands. 
+q1.h4_2.o5,\(0 = (25 \sin(30^\circ)) + 9.8t <br> h = (25 \sin(30^\circ))t+\frac{1}{2}(9.8)t^2\),FALSE,Check for the correct operands and correct sign of acceleration.
 q1.h4_3.o1,\(0 - (25 \sin(30^\circ))^2 = 2(-9.8)h\),TRUE,Correct! Now you can solve for the height.
 q1.h4_3.o2,\(0 - (25 \cos(30^\circ))^2 = 2(-9.8)h\),FALSE,Do not use the cosine component for vertical calculations.
 q1.h4_3.o3,\(0 - (25 \sin(30^\circ))^2 = -2(9.8)h\),FALSE,The sign of acceleration is not applied correctly here.
