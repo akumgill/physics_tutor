@@ -21,8 +21,8 @@
       <!-- Options Section (Multiple Choice) -->
       <form class="options" method="post" id="questionForm">
         {% csrf_token %}
-        <div style="display: flex;">
-          <div id="question_option" style="width: 50%;">
+        <div style="display: flex">
+          <div id="question_option" style="width: 50%">
             <!-- <input type="hidden" name="unique_identifier" value="submit_answer" /> -->
             {% for choice in choices_question %}
             <label class="option">
@@ -44,15 +44,12 @@
           </div>
         </div>
         <div class="submit-section">
-          
           <button type="submit">Submit</button>
           <div class="see-example-section">
             <button type="button" id="seeExample">See Example</button>
           </div>
-          
         </div>
       </form>
-      
     </div>
     <div>
       <button id="prev_question" onclick="changeQuestion(false)" 
@@ -131,7 +128,9 @@
 
     <!-- Feedback Section -->
     <h3>Feedback:</h3>
-    <div class="feedback-section" id="feedback">{{ feedback|linebreaks|safe }}</div>
+    <div class="feedback-section" id="feedback">
+      {{ feedback|linebreaks|safe }}
+    </div>
   </div>
 
   <!-- Overlay for 'See Example' -->
@@ -184,7 +183,8 @@
         });
 
         // Activate Next question button if correct
-        if (data.correct) document.getElementById("next_question").disabled = false;
+        if (data.correct)
+          document.getElementById("next_question").disabled = false;
 
         // Update feedback section
         document.querySelector(".feedback-section").textContent = data.feedback;
@@ -281,7 +281,8 @@
         const questionOptionDiv = document.getElementById("question_option");
         if (data.question_img_url) {
           const questionFigure = document.createElement("img");
-          questionFigure.src = "/static/storyboard/images/" + data.question_img_url;
+          questionFigure.src =
+            "/static/storyboard/images/" + data.question_img_url;
           questionFigure.style.display = "block";
           questionFigureDiv.appendChild(questionFigure);
           questionFigureDiv.style.width = "50%";
@@ -328,7 +329,7 @@
 
         // Update example question
         const overlay = document.getElementById("exampleOverlay");
-        overlay.innerHTML = ""
+        overlay.innerHTML = "";
         const overlay_content = document.createElement("div");
         overlay_content.className = "overlay-content";
         overlay_content.innerText = data.example_problem;
@@ -371,7 +372,14 @@
     const formData = new FormData();
     formData.append("unique_identifier", "change_hint");
     formData.append("isNextHint", isNextHint);
-    formData.append("hint_option_idx", 0);
+
+    // Retrieve the selected hint option
+    const selectedHint = document.querySelector(
+      'input[name="hint_answer"]:checked'
+    );
+    const hintOptionIdx = selectedHint ? selectedHint.value : 0; // Default to 0 if none selected
+
+    formData.append("hint_option_idx", hintOptionIdx);
 
     fetch("{% url 'changehint' %}", {
       method: "POST",
@@ -454,7 +462,7 @@
 
       const div = document.createElement("div");
       div.className = "stars";
-      
+
       kc.stars.forEach((star) => {
         const s = document.createElement("div");
         s.className = star;
