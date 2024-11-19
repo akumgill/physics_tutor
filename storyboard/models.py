@@ -54,6 +54,7 @@ class Hint(models.Model):
     h_id = models.TextField(primary_key=True)
     text = models.TextField(verbose_name="text", default="")
     img_name = models.TextField(verbose_name="img_name", default="")
+    kc_id = models.TextField(verbose_name="kc_id", default="")
     def __unicode__(self):
         return 'id='+ str(self.pk)
     
