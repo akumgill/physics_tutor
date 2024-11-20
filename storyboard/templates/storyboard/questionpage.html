@@ -44,7 +44,7 @@
           </div>
         </div>
         <div class="submit-section">
-          <button type="submit">Submit</button>
+          <button type="submit" id="submit"{% if is_correct %} disabled {% endif %}>Submit</button>
           <div class="see-example-section">
             <button type="button" id="seeExample">See Example</button>
           </div>
@@ -183,11 +183,17 @@
         });
 
         // Activate Next question button if correct
-        if (data.correct)
+        if (data.correct){
           document.getElementById("next_question").disabled = false;
+          document.querySelector(".submit-section button[type='submit']").disabled = true;
+        }
+        
 
         // Update feedback section
         document.querySelector(".feedback-section").textContent = data.feedback;
+
+        // **Update Knowledge Components**
+        updateKC(data.kc_progress); // Call the function to update KCs
 
         // If all answers are correct
         if (data.isAllCorrect) {
@@ -240,6 +246,9 @@
             // Update feedback from server response
             document.querySelector(".feedback-section").textContent =
               data.feedback;
+
+            // **Update Knowledge Components**
+            updateKC(data.kc_progress); // Call the function to update KCs
           })
           .catch((error) => console.error("Error:", error));
       });
@@ -313,10 +322,13 @@
           questionForm.appendChild(label);
         });
 
+        document.querySelector(".submit-section button[type='submit']").disabled = false;
+
         // Load history if there was
         updateHistory(data);
 
         // Disable buttons is necessary
+        document.getElementById("submit").disabled = data.is_correct;
         document.getElementById("prev_question").disabled = data.disable_prev_question;
         document.getElementById("next_question").disabled = data.disable_next_question;
         document.getElementById("feedback").textContent = "";
@@ -325,7 +337,7 @@
         updateHint(data);
 
         // Update KC
-        updateKC(data);
+        // updateKC(data);
 
         // Update example question
         const overlay = document.getElementById("exampleOverlay");
@@ -364,6 +376,7 @@
         console.log(input.value);
         input.classList.add(data.is_correct ? "correct" : "incorrect");
         input.checked = true;
+        document.querySelector(".submit-section button[type='submit']").disabled = true;
       }
     });
   }
@@ -448,32 +461,32 @@
     }
   }
 
-  function updateKC(data) {
-    const kc_section = document.getElementById("kc_display");
-    kc_section.innerHTML = "<h3>Knowledge Components:</h3>";
+// Function to update Knowledge Components
+function updateKC(kc_progress) {
+    // Convert kc_progress from an object to an array
+    const kcArray = Object.entries(kc_progress);
 
-    data.knowledge_components.forEach((kc) => {
-      const label = document.createElement("div");
-      label.className = "knowledge-stars";
+    kcArray.forEach(([kc_name, progress]) => {
+        // Use kc_name as the identifier (or update based on your actual structure)
+        const kcElements = document.querySelectorAll(".knowledge-stars");
 
-      const kc_name = document.createElement("div");
-      kc_name.className = "knowledge";
-      kc_name.textContent = kc.knowledge;
+        kcElements.forEach(kcElement => {
+            const kcNameElement = kcElement.querySelector(".knowledge");
+            if (kcNameElement && kcNameElement.textContent === kc_name) {
+                // Clear the existing stars
+                const starsContainer = kcElement.querySelector(".stars");
+                starsContainer.innerHTML = "";
 
-      const div = document.createElement("div");
-      div.className = "stars";
-
-      kc.stars.forEach((star) => {
-        const s = document.createElement("div");
-        s.className = star;
-        div.appendChild(s);
-      });
-
-      label.appendChild(kc_name);
-      label.appendChild(div);
-      kc_section.appendChild(label);
+                // Add updated stars based on the progress value
+                for (let i = 0; i < 5; i++) {
+                    const star = document.createElement("div");
+                    star.className = i < progress ? "star" : "starless";
+                    starsContainer.appendChild(star);
+                }
+            }
+        });
     });
-  }
+}
 
   function attachHintOptionListeners() {
     document
@@ -515,6 +528,9 @@
               // Update feedback from server response
               document.querySelector(".feedback-section").textContent =
                 data.feedback;
+
+              // **Update Knowledge Components**
+              updateKC(data.kc_progress); // Call the function to update KCs
 
               // **Add the following line to re-render LaTeX**
               if (window.MathJax) {

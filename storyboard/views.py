@@ -113,8 +113,7 @@ def section1_questionpage(request):
                 'feedback': feedback,
                 'isAllCorrect': False
             }
-            print(response)
-            
+
             # Save history
             if History.objects.filter(user=user).filter(q_id=q_id).exists():
                 history = get_object_or_404(History, user=user, q_id=q_id)
@@ -133,6 +132,8 @@ def section1_questionpage(request):
             kc_progress = cur_progress.kc_progress
             
             # Move on to the next question
+            
+            # Update KCs and, if correct, complete question
             if is_correct:
                 print(is_correct)
                 print(f"Completed question {cur_progress.current_q_id}. Moving to {cur_progress.current_q_id + 1}")
@@ -156,30 +157,51 @@ def section1_questionpage(request):
                     kc_progress[kc.kc_id] = max(kc_progress[kc.kc_id] - 1, 0)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
+            
+            kc_response = {}
+            for kc in KnowledgeComponent.objects.all():
+                if kc.kc_id in kc_progress.keys():
+                    kc_response[kc.text] = kc_progress[kc.kc_id]
+                else:
+                    kc_response[kc.text] = 0
+
+            response['kc_progress'] = kc_response
+            print(response)
             return JsonResponse(response)
 
         elif unique_identifier == 'submit_hint':
             hint_answer_index = int(request.POST.get('hint_answer')) - 1
             print(f"hint_answer_index: {hint_answer_index}")
             feedback = context["choices_hint"][hint_answer_index]["feedback"]
-            response = {
-                'correct': context["choices_hint"][hint_answer_index]["is_correct"], 
-                'feedback': feedback
-            }
 
             # Update KCs based on successful or unsuccessful hint completion
             if context["hint_kc"] != "":
                 # Initialize if necessary
                 if context["hint_kc"] not in kc_progress:
                         kc_progress[context["hint_kc"]] = 0
+                
+                is_correct = context["choices_hint"][hint_answer_index]["is_correct"]
                 # Increment
-                if context["choices_hint"][hint_answer_index]["is_correct"]:
+                if is_correct:
                     kc_progress[context["hint_kc"]] = min(kc_progress[context["hint_kc"]] + 1, 5)
                 # Decrement
                 else:
                     kc_progress[context["hint_kc"]] = max(kc_progress[context["hint_kc"]] - 1, 0)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
+            
+            kc_response = {}
+            for kc in KnowledgeComponent.objects.all():
+                if kc.kc_id in kc_progress.keys():
+                    kc_response[kc.text] = kc_progress[kc.kc_id]
+                else:
+                    kc_response[kc.text] = 0
+            response = {
+                'correct': is_correct,
+                'feedback': feedback,
+                'kc_progress': kc_response,
+            }
+            print(response)
             return JsonResponse(response)
 
     return render(request, 'storyboard/questionpage.html', context)
