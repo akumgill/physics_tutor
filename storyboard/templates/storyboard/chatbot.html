@@ -1,0 +1,11 @@
+{% extends "storyboard/base.html" %} {% load static %} {% static "" as baseUrl %} {% block user-info %}
+<div class = "col-sm-12">
+    <div id="chatBox" class="chat-box">
+        <!-- Chat messages will appear here -->
+        {{question}}
+    </div>
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
