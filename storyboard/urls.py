@@ -5,6 +5,8 @@ from storyboard import views as storyboard_views
 from django.contrib import admin
 import django.contrib.auth.urls
 from django.urls import include, path,re_path
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -37,7 +39,11 @@ urlpatterns  =[
     # re_path(r'^section4_questionpage/(?P<id>\d+)$', storyboard_views.section4_questionpage, name = 'section4_questionpage'),
 
     re_path(r'^changehint$', storyboard_views.changehint, name="changehint"),
-    re_path(r'^changequestion$', storyboard_views.changequestion, name="changequestion")
-    
+    re_path(r'^changequestion$', storyboard_views.changequestion, name="changequestion"),
+    re_path(r'^upload$', storyboard_views.upload_image, name='upload_image'),
+    re_path(r'^sendmessage$', storyboard_views.sendmessage, name ='sendmessage'),
 
     ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

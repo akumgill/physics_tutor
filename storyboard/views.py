@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import pandas as pd
 import ast
+import base64
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
@@ -18,6 +19,7 @@ import json
 from django.http import HttpResponse, Http404, JsonResponse
 from django.core.files import File
 from django.forms.models import model_to_dict
+from django.core.files.base import ContentFile
 import sqlite3
 import os
 import numpy as np
@@ -467,3 +469,36 @@ def startup():
     print (import_questions())
     print (import_options())
     print (import_hints())
+
+@login_required
+def upload_image(request):
+    user = request.user
+    context = {"user": user}
+    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    q_id = cur_progress.current_q_id
+    question = get_object_or_404(Question, q_id=f"q{q_id}")
+    context["question"] = question.text
+    return render(request, 'storyboard/chatbot.html', context)
+
+def sendmessage(request):
+    print("sendMessage")
+    user = request.user
+    if request.method == "POST":
+        context = {}
+        message = request.POST["message"]
+        img_data = request.POST["imageBase64"]
+        if img_data:
+            # Extract image file from Base64 data
+            img_format, imgstr = img_data.split(';base64,')  # Separate format and Base64 string
+            ext = img_format.split('/')[-1]  # Extract the file extension
+
+            # Save the image to the model
+            image = ContentFile(base64.b64decode(imgstr), name=f"uploaded_image.{ext}")
+            uploaded_image = UploadedImage.objects.create(image=image, text=message)
+            print(uploaded_image.image.url)
+        print(message)
+        
+        context['bot_message'] = "Your answer seems to have swapped the sine and cosine for the components of the initial velocity. You may refer to Hint 2 for some help."
+        response = json.dumps(context)
+        return HttpResponse(response, 'application/javascript')
+    

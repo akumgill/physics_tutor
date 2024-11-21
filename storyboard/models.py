@@ -83,3 +83,8 @@ class History(models.Model):
     updated_at = models.DateTimeField(auto_now = True, blank = True)
     def __unicode__(self):
         return 'id='+ str(self.pk)
+    
+class UploadedImage(models.Model):
+    image = models.ImageField(upload_to='uploads/')
+    text = models.TextField(default="")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
