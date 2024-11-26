@@ -40,7 +40,7 @@ urlpatterns  =[
 
     re_path(r'^changehint$', storyboard_views.changehint, name="changehint"),
     re_path(r'^changequestion$', storyboard_views.changequestion, name="changequestion"),
-    re_path(r'^upload$', storyboard_views.upload_image, name='upload_image'),
+    re_path(r'^chatbot$', storyboard_views.chatbot, name='chatbot'),
     re_path(r'^sendmessage$', storyboard_views.sendmessage, name ='sendmessage'),
 
     ]

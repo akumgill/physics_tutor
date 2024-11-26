@@ -41,7 +41,7 @@ from django.views.decorators.csrf import csrf_exempt
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
 numberofquestions_list = [5, 0, 0, 0]
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key="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")
 
 @ensure_csrf_cookie
 @login_required
@@ -478,14 +478,16 @@ def startup():
     print (import_hints())
 
 @login_required
-def upload_image(request):
-    user = request.user
-    context = {"user": user}
-    cur_progress = get_object_or_404(CurrentProgress, user=user)
-    q_id = cur_progress.current_q_id
-    question = get_object_or_404(Question, q_id=f"q{q_id}")
-    context["question"] = question.text
-    return render(request, 'storyboard/chatbot.html', context)
+def chatbot(request):
+    # user = request.user
+    # context = {"user": user}
+    # cur_progress = get_object_or_404(CurrentProgress, user=user)
+    # q_id = cur_progress.current_q_id
+    # question = get_object_or_404(Question, q_id=f"q{q_id}")
+    # context["question"] = question.text
+    chatbot_html = render_to_string('storyboard/chatbot.html')  # Path to your chatbot template
+    return JsonResponse({'html': chatbot_html})
+    # return render(request, 'storyboard/chatbot.html', context)
 
 def sendmessage(request):
     print("sendMessage")

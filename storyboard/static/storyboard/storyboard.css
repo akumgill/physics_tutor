@@ -427,3 +427,65 @@ img {
 .submitBtn:hover {
   background-color: #005bb5;
 }
+
+#chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40%;
+  max-width: 600px;
+  height: 90%;
+  max-height: 1000px;
+  padding: 20px;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.image-icon {
+  display: inline-block;
+  cursor: pointer;
+}
+.image-icon img {
+  width: 50px;
+  height: 50px;
+  border: 2px dashed #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
+.image-icon img:hover {
+  border-color: #007BFF;
+  transform: scale(1.1);
+}
+
+/* Style for the button */
+#toggle-chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for size */
+  font-size: 16px; /* Text size */
+  cursor: pointer; /* Change cursor to pointer */
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition for hover and click effects */
+}
+
+/* Style for hover effect */
+#toggle-chatbot:hover {
+  background-color: #0056b3; /* Slightly darker blue on hover */
+}
+
+/* Style for active/clicked state */
+#toggle-chatbot:active {
+  background-color: #003f7f; /* Even darker blue on click */
+  transform: scale(0.98); /* Slightly shrink the button for a click effect */
+}
+
+

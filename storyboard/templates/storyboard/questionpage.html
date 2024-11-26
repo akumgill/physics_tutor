@@ -6,6 +6,7 @@
   {{user.username}}
 </div>
 {% endblock %} {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <div class="entire-panel">
   <!-- Left Panel -->
@@ -133,6 +134,8 @@
     </div>
   </div>
 
+  <button id="toggle-chatbot">Chatbot</button>
+  
   <!-- Overlay for 'See Example' -->
   <div id="exampleOverlay" class="overlay" style="display: none">
     <div class="overlay-content">
@@ -146,6 +149,27 @@
       Congratulations! You've passed all the questions! <br>
       <button id="closeCongrat">Close</button>
     </div>
+  </div>
+
+  <div id="chatbot-container" style="display: none;">
+    <div class = "chat-container">
+      <div id="chatBox" class="chat-box">
+        <!-- Chat messages will appear here -->
+        <div class="message bot">Hi! How can I help you with the question?</div>
+      </div>
+      <div class="input-container">
+        <input type="text" id="userInput" class="userInput" placeholder="Type a message...">
+        <button id="submitBtn" class="submitBtn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label class="image-icon" for="image_input">
+        <img src="/static/storyboard/images/plus.png" alt="Upload Image">
+      </label>
+      <input type="file" id="image_input" name="image" accept="image/*" onchange="previewImage(event)" style="display:none;">
+      <div id="preview" style="margin-top: 10px;"></div>
+    </form>
   </div>
 </div>
 
@@ -570,6 +594,118 @@ function updateKC(kc_progress) {
     .addEventListener("click", function () {
       document.getElementById("congratOverlay").style.display = "none";
     }); 
+
+  document.getElementById('toggle-chatbot').addEventListener('click', function() {
+    const chatbotContainer = document.getElementById('chatbot-container');
+    if (chatbotContainer.style.display === 'none') {
+      chatbotContainer.style.display = 'block'; // Show chatbot
+    } else {
+      chatbotContainer.style.display = 'none';  // Hide chatbot
+    }
+  });
+</script>
+
+<script>
+  function previewImage(event) {
+      const previewDiv = document.getElementById('preview');
+      const file = event.target.files[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" id="preview_img" style="max-width: 200px; max-height: 200px; margin-top: 10px;">`;
+          };
+          reader.readAsDataURL(file);
+      }
+  }
+
+  function sendMessage() {
+      const inputField = document.getElementById('userInput');
+      const message = inputField.value;
+      const token = getCSRFToken();
+      if (message.trim() === "") return;
+
+      // Append user message
+      appendMessage('user', message);
+      // Clear input field
+      inputField.value = '';
+
+      // Append "Typing..." message from bot
+      const typingIndicator = document.createElement('div');
+      typingIndicator.classList.add('message', 'bot');
+      typingIndicator.setAttribute('id', 'typingIndicator');
+      typingIndicator.innerHTML = "Typing...";
+      document.getElementById('chatBox').appendChild(typingIndicator);
+
+      const imageFile = document.getElementById("image_input").files[0];
+      let base64String = "";
+      if (imageFile) {
+          let reader = new FileReader();
+          reader.onload = function (e) {
+              base64String = reader.result;
+              submitMessage(message, base64String, token);
+
+              const chatBox = document.getElementById('chatBox');
+              const messageElement = document.createElement('div');
+              messageElement.classList.add('message', 'user');
+              messageElement.innerHTML = `<img src="${e.target.result}" alt="uploaded_img" style="max-width: 400px; max-height: 400px;">`;
+              chatBox.appendChild(messageElement);
+              
+              document.getElementById("image_input").value = "";
+              document.getElementById("preview_img").remove();
+          }
+          reader.readAsDataURL(imageFile);
+      } else {
+          submitMessage(message, base64String, token);
+      }
+      
+  }
+
+  function submitMessage(msg, b64, token) {
+      $.ajax({
+          url: "sendmessage", 
+          type: "POST",
+          data: {
+              "message": msg,
+              "imageBase64": b64,
+              "csrfmiddlewaretoken": token, 
+          }, 
+          dataType: "json", 
+          success: function(response) {
+              console.log("Received.");
+              console.log(response.bot_message);
+              
+              // Remove "Typing..." indicator
+              const typingElement = document.getElementById('typingIndicator');
+              if (typingElement) typingElement.remove();
+
+              // Append bot response
+              appendMessage('bot', response.bot_message);
+          }
+      });
+  }
+
+  function appendMessage(sender, message) {
+      const chatBox = document.getElementById('chatBox');
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', sender);
+      messageElement.innerHTML = message;
+
+      chatBox.appendChild(messageElement);
+
+      // Scroll to the latest message
+      chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+
+  function getCSRFToken(){
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+          if (cookies[i].startsWith("csrftoken=")) {
+              return cookies[i].substring("csrftoken=".length, cookies[i].length);
+          }
+      }
+      return "unknown";
+  }
 </script>
 
 {% endblock %}
