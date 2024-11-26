@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 # from storyboard.forms import *
 from storyboard.models import *
+from storyboard.prompts import *
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 import json
@@ -20,6 +21,8 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.core.files import File
 from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
+from PIL import Image
+from openai import OpenAI
 import sqlite3
 import os
 import numpy as np
@@ -37,6 +40,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
 numberofquestions_list = [5, 0, 0, 0]
+
+client = OpenAI(api_key="")
 
 @ensure_csrf_cookie
 @login_required
@@ -78,7 +83,7 @@ def section1_questionpage(request):
     # QUESTION
     q_id = cur_progress.current_q_id
     question = get_object_or_404(Question, q_id=f"q{q_id}")
-    context["question"] = question.text
+    context["question"] = f"Question {q_id}: " + question.text
     context["question_img_url"] = question.img_name
     context["example_problem"] = question.example_problem
     context["disable_prev_question"] = q_id == 1
@@ -258,7 +263,7 @@ def findHistory(context, user, q_id):
 def findQuestion(context, q_id):
     try:
         question = get_object_or_404(Question, q_id=f"q{q_id}")
-        context["question"] = question.text
+        context["question"] = f"Question {q_id}: " + question.text
         context["question_img_url"] = question.img_name
         context["example_problem"] = question.example_problem
 
@@ -327,7 +332,9 @@ def changehint(request):
 def findHint(context, q_id, h_id):
     try:
         hint = get_object_or_404(Hint, h_id=f"q{q_id}.h{h_id}")
-        context["hint"] = hint.text
+        context["hint"] = f"Hint {h_id[0]}: " + hint.text
+        if h_id[0] == "0":
+            context["hint"] = hint.text
         context["hint_img_url"] = hint.img_name if hint.img_name != "no_img" else ""
         context["hint_kc"] = hint.kc_id if hint.kc_id != "none" else ""
 
@@ -485,8 +492,20 @@ def sendmessage(request):
     user = request.user
     if request.method == "POST":
         context = {}
+        cur_progress = get_object_or_404(CurrentProgress, user=user)
+        q_id = cur_progress.current_q_id
+        question = get_object_or_404(Question, q_id=f"q{q_id}")
         message = request.POST["message"]
         img_data = request.POST["imageBase64"]
+        prompt = PROMPT_QA.format(
+            std_msg=message,
+            hints=find_hint_with_answer(q_id)
+        )
+        print(prompt)
+        msg_to_gpt = [{
+            "role": "user",
+            "content": [{"type": "text", "text": prompt}]
+        }]
         if img_data:
             # Extract image file from Base64 data
             img_format, imgstr = img_data.split(';base64,')  # Separate format and Base64 string
@@ -496,9 +515,53 @@ def sendmessage(request):
             image = ContentFile(base64.b64decode(imgstr), name=f"uploaded_image.{ext}")
             uploaded_image = UploadedImage.objects.create(image=image, text=message)
             print(uploaded_image.image.url)
-        print(message)
+            base64_image = encode_image(uploaded_image.image.path)
+            img_to_gpt = {
+                "type": "image_url",
+                "image_url": {
+                    "url":  f"data:image/jpeg;base64,{base64_image}",
+                }
+            }
+            msg_to_gpt[0]['content'].append(img_to_gpt)
+        # print(message)
         
-        context['bot_message'] = "Your answer seems to have swapped the sine and cosine for the components of the initial velocity. You may refer to Hint 2 for some help."
+        gpt_response = client.chat.completions.create(
+            model="gpt-4o-mini", 
+            messages=msg_to_gpt, 
+            response_format={"type": "json_object"}
+        )
+        print(gpt_response.choices[0].message.content)
+        gpt_response_json = json.loads(gpt_response.choices[0].message.content)
+        context['bot_message'] = gpt_response_json['response'] + f" You may refer to Hint {gpt_response_json['hint_idx']} for help."
+        
+        # context['bot_message'] = "Your answer seems to have swapped the sine and cosine for the components of the initial velocity. You may refer to Hint 2 for some help."
         response = json.dumps(context)
         return HttpResponse(response, 'application/javascript')
-    
+
+# Function to encode the image
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8') 
+
+def find_hint_with_answer(q_id):
+    response = []
+    all_hints_of_question = Hint.objects.filter(h_id__startswith=f"q{q_id}.h")
+    all_hints_of_question = [h for h in all_hints_of_question if "_" not in h.h_id and h.h_id[-1] != "0"]
+    all_hints_of_question = [(h.h_id, h.text) for h in all_hints_of_question]
+    for h_id, h_text in all_hints_of_question:
+        options = Option.objects.filter(o_id__startswith=f"{h_id}.o", is_correct=True)
+        if options:
+            response.append(f"""\"{h_id[-1]}. {h_text} The answer should be: {options[0].text}\"""")
+    return "\n".join(response)
+
+def parse_json(response: str):
+	try:
+		out = json.loads(response)
+		return out
+	except:
+		if "{" in response and "}" in response:
+			cleaned_json = re.findall(r"\{.*\}", response, re.DOTALL)[0]
+			cleaned_json.replace("\n", "")
+			return parse_json(cleaned_json)
+		else:
+			raise Exception("Invalid JSON format.")
