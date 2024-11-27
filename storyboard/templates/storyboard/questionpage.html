@@ -53,9 +53,9 @@
       </form>
     </div>
     <div>
-      <button id="prev_question" onclick="changeQuestion(false)" class="btn-can-disable"
+      <button id="prev_question" onclick="changeQuestion(false)" 
       {% if disable_prev_question %} disabled {% endif %}>Previous</button>
-      <button id="next_question" onclick="changeQuestion(true)" class="btn-can-disable"
+      <button id="next_question" onclick="changeQuestion(true)" 
       {% if disable_next_question %} disabled {% endif %}>Next</button>
     </div>
     <!-- Knowledge Components Section -->
@@ -81,10 +81,8 @@
     <div class="hint-section">
       <div class="hint-navigation">
         
-        <button id="prevHint" class="btn-can-disable" 
-        {% if disable_prev_hint %} disabled {% endif %}>Previous Hint</button>
-        <button id="nextHint" class="btn-can-disable" 
-        {% if disable_next_hint %} disabled {% endif %}>Next Hint</button>
+        <button id="prevHint" {% if disable_prev_hint %} disabled {% endif %}>Previous Hint</button>
+        <button id="nextHint" {% if disable_next_hint %} disabled {% endif %}>Next Hint</button>
       </div>
       <!-- Hint Question Section -->
       <div class="hint" id="hint_text">{{ hint }}</div>
