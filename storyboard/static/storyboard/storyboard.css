@@ -494,4 +494,26 @@ img {
   cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
 }
 
+.btn-can-disable {
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Hover effect for the button */
+.btn-can-disable:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Disabled button style */
+.btn-can-disable:disabled {
+  background-color: #d3d3d3; /* Gray background for disabled */
+  color: #7d7d7d; /* Lighter gray text */
+  cursor: not-allowed; /* Disabled cursor */
+}
 
