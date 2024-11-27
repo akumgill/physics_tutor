@@ -104,7 +104,7 @@ def section1_questionpage(request):
     h_id = cur_progress.current_h_id
     print(f"hint: q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
-    context["disable_prev_hint"] = h_id == str(0)
+    context["disable_prev_hint"] = (h_id == str(0) or h_id == str(1))
     context["disable_next_hint"] = True
     if "_" not in h_id:
         if Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id)+1}").exists():
@@ -185,16 +185,16 @@ def section1_questionpage(request):
             print(f"hint_answer_index: {hint_answer_index}")
             feedback = context["choices_hint"][hint_answer_index]["feedback"]
             is_correct = context["choices_hint"][hint_answer_index]["is_correct"]
-            disable_next_hint = False
-            
+
             # Decide whether to disable "next_hint" button
-            try:
-                if is_correct and Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id) + 1}_{hint_answer_index + 1}").exists():
-                    disable_next_hint = False
-                else:
-                    disable_next_hint = True
-            except:
-                disable_next_hint = True    
+            if "_" in h_id:
+                disable_next_hint = True
+            elif Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id) + 1}").exists():
+                disable_next_hint = False
+            elif Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id) + 1}_{hint_answer_index + 1}").exists():
+                disable_next_hint = False
+            else:
+                disable_next_hint = True
             
             context["disable_next_hint"] = disable_next_hint          
 
@@ -327,7 +327,7 @@ def changehint(request):
 
         # Update current hint ID in user's progress
         
-        context["disable_prev_hint"] = str(next_hint_id) == str(0)
+        context["disable_prev_hint"] = (str(next_hint_id) == str(0) or str(next_hint_id) == str(1))
         context["disable_next_hint"] = False
 
         if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
