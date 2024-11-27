@@ -280,11 +280,11 @@
 
   // Add event listeners for hint navigation buttons
   document.getElementById("prevHint").addEventListener("click", function () {
-    changeHint(false); // false indicates we want the previous hint
+    changeHint(false, 0); // false indicates we want the previous hint
   });
 
   document.getElementById("nextHint").addEventListener("click", function () {
-    changeHint(true); // true indicates we want the next hint
+    changeHint(true, 0); // true indicates we want the next hint
   });
 
   function changeQuestion(isNextQuestion) {
@@ -405,7 +405,7 @@
     });
   }
 
-  function changeHint(isNextHint) {
+  function changeHint(isNextHint, hint_idx) {
     const formData = new FormData();
     formData.append("unique_identifier", "change_hint");
     formData.append("isNextHint", isNextHint);
@@ -417,6 +417,7 @@
     const hintOptionIdx = selectedHint ? selectedHint.value : 0; // Default to 0 if none selected
 
     formData.append("hint_option_idx", hintOptionIdx);
+    if (hint_idx > 0) formData.append("next_hint_idx", hint_idx);
 
     fetch("{% url 'changehint' %}", {
       method: "POST",
@@ -705,6 +706,11 @@ function updateKC(kc_progress) {
           }
       }
       return "unknown";
+  }
+
+  function clickHintInChat(hint_idx) {
+    document.getElementById("toggle-chatbot").click();
+    changeHint(false, hint_idx);
   }
 </script>
 

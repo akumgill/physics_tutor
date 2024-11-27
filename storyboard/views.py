@@ -298,8 +298,13 @@ def changehint(request):
 
         # Determine whether to get the next or previous hint
         isNextHint = request.POST.get("isNextHint") == 'true'
-
-        if isNextHint:
+        
+        # Determine whether next hint is manually assigned
+        next_hint_id = request.POST.get("next_hint_idx", "0")
+        
+        if int(next_hint_id) > 0:
+            next_hint_id = str(next_hint_id)
+        elif isNextHint:
             next_hint_id = str(min(int(h_id[0]) + 1, question.total_hints))
         else:
             next_hint_id = str(max(int(h_id[0]) - 1, 1))  
@@ -534,7 +539,9 @@ def sendmessage(request):
         )
         print(gpt_response.choices[0].message.content)
         gpt_response_json = json.loads(gpt_response.choices[0].message.content)
-        context['bot_message'] = gpt_response_json['response'] + f" You may refer to Hint {gpt_response_json['hint_idx']} for help."
+        hint_idx = gpt_response_json['hint_idx']
+        hint_click = f'<span class="clickable-text" onclick="clickHintInChat({hint_idx})">Hint {hint_idx}</span>'
+        context['bot_message'] = gpt_response_json['response'] + f" You may refer to {hint_click} for help."
         
         # context['bot_message'] = "Your answer seems to have swapped the sine and cosine for the components of the initial velocity. You may refer to Hint 2 for some help."
         response = json.dumps(context)

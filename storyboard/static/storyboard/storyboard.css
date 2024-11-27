@@ -488,4 +488,10 @@ img {
   transform: scale(0.98); /* Slightly shrink the button for a click effect */
 }
 
+.clickable-text {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+}
+
 
