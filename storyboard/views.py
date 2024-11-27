@@ -41,7 +41,7 @@ from django.views.decorators.csrf import csrf_exempt
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
 numberofquestions_list = [5, 0, 0, 0]
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="")
 
 @ensure_csrf_cookie
 @login_required
