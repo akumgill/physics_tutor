@@ -80,12 +80,9 @@
     <!-- Hint Section -->
     <div class="hint-section">
       <div class="hint-navigation">
-        {% if disable_prev_hint %}
-        <button id="prevHint" disabled>Previous Hint</button>
-        {% else %}
-        <button id="prevHint">Previous Hint</button>
-        {% endif %}
-        <button id="nextHint">Next Hint</button>
+        
+        <button id="prevHint" {% if disable_prev_hint %} disabled {% endif %}>Previous Hint</button>
+        <button id="nextHint" {% if disable_next_hint %} disabled {% endif %}>Next Hint</button>
       </div>
       <!-- Hint Question Section -->
       <div class="hint" id="hint_text">{{ hint }}</div>
@@ -229,52 +226,58 @@
   };
 
   // HINT FORM
+  function clickHintOption() {
+    const selectedValue = this.value;
+
+    const form = this.closest("form");
+    const formData = new FormData(form);
+    formData.append("hint_answer", selectedValue);
+    formData.append("unique_identifier", "submit_hint"); // To identify hint submissions in your view
+
+    fetch(window.location.href, {
+      // or specify a different URL for hint processing
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+          .value,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const hintOptions = document.querySelectorAll(
+          ".hint-section .option input[type='radio']"
+        );
+
+        // Reset all hint option classes
+        hintOptions.forEach((input) => {
+          input.classList.remove("correct", "incorrect");
+        });
+
+        // Highlight based on server response
+        hintOptions.forEach((input) => {
+          if (input.value === selectedValue) {
+            input.classList.add(data.correct ? "correct" : "incorrect");
+          }
+        });
+
+        // Update feedback from server response
+        document.querySelector(".feedback-section").textContent =
+          data.feedback;
+
+        // **Update Knowledge Components**
+        updateKC(data.kc_progress); // Call the function to update KCs
+
+        document.getElementById("nextHint").disabled = data.disable_next_hint;
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+
   document
     .querySelectorAll('.hint-section .option input[type="radio"]')
     .forEach((input) => {
       input.addEventListener("change", function () {
-        const selectedValue = this.value;
-
-        const form = this.closest("form");
-        const formData = new FormData(form);
-        formData.append("hint_answer", selectedValue);
-        formData.append("unique_identifier", "submit_hint"); // To identify hint submissions in your view
-
-        fetch(window.location.href, {
-          // or specify a different URL for hint processing
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
-              .value,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const hintOptions = document.querySelectorAll(
-              ".hint-section .option input[type='radio']"
-            );
-
-            // Reset all hint option classes
-            hintOptions.forEach((input) => {
-              input.classList.remove("correct", "incorrect");
-            });
-
-            // Highlight based on server response
-            hintOptions.forEach((input) => {
-              if (input.value === selectedValue) {
-                input.classList.add(data.correct ? "correct" : "incorrect");
-              }
-            });
-
-            // Update feedback from server response
-            document.querySelector(".feedback-section").textContent =
-              data.feedback;
-
-            // **Update Knowledge Components**
-            updateKC(data.kc_progress); // Call the function to update KCs
-          })
-          .catch((error) => console.error("Error:", error));
+        clickHintOption();
       });
     });
 
@@ -475,6 +478,7 @@
     });
 
     document.getElementById("prevHint").disabled = data.disable_prev_hint;
+    document.getElementById("nextHint").disabled = data.disable_next_hint;
     document.getElementById("feedback").textContent = "";
 
     // Reattach the event listeners for the new hint options
@@ -486,30 +490,30 @@
     }
   }
 
-// Function to update Knowledge Components
-function updateKC(kc_progress) {
+  // Function to update Knowledge Components
+  function updateKC(kc_progress) {
     // Convert kc_progress from an object to an array
     const kcArray = Object.entries(kc_progress);
 
     kcArray.forEach(([kc_name, progress]) => {
-        // Use kc_name as the identifier (or update based on your actual structure)
-        const kcElements = document.querySelectorAll(".knowledge-stars");
+      // Use kc_name as the identifier (or update based on your actual structure)
+      const kcElements = document.querySelectorAll(".knowledge-stars");
 
-        kcElements.forEach(kcElement => {
-            const kcNameElement = kcElement.querySelector(".knowledge");
-            if (kcNameElement && kcNameElement.textContent === kc_name) {
-                // Clear the existing stars
-                const starsContainer = kcElement.querySelector(".stars");
-                starsContainer.innerHTML = "";
+      kcElements.forEach(kcElement => {
+        const kcNameElement = kcElement.querySelector(".knowledge");
+        if (kcNameElement && kcNameElement.textContent === kc_name) {
+          // Clear the existing stars
+          const starsContainer = kcElement.querySelector(".stars");
+          starsContainer.innerHTML = "";
 
-                // Add updated stars based on the progress value
-                for (let i = 0; i < 5; i++) {
-                    const star = document.createElement("div");
-                    star.className = i < progress ? "star" : "starless";
-                    starsContainer.appendChild(star);
-                }
-            }
-        });
+          // Add updated stars based on the progress value
+          for (let i = 0; i < 5; i++) {
+            const star = document.createElement("div");
+            star.className = i < progress ? "star" : "starless";
+            starsContainer.appendChild(star);
+          }
+        }
+      });
     });
 }
 
@@ -517,53 +521,7 @@ function updateKC(kc_progress) {
     document
       .querySelectorAll('.hint-section .option input[type="radio"]')
       .forEach((input) => {
-        input.addEventListener("change", function () {
-          const selectedValue = this.value;
-
-          const form = this.closest("form");
-          const formData = new FormData(form);
-          formData.append("hint_answer", selectedValue);
-          formData.append("unique_identifier", "submit_hint");
-
-          fetch(window.location.href, {
-            method: "POST",
-            body: formData,
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const hintOptions = document.querySelectorAll(
-                ".hint-section .option input[type='radio']"
-              );
-
-              // Reset all hint option classes
-              hintOptions.forEach((input) => {
-                input.classList.remove("correct", "incorrect");
-              });
-
-              // Highlight based on server response
-              hintOptions.forEach((input) => {
-                if (input.value === selectedValue) {
-                  input.classList.add(data.correct ? "correct" : "incorrect");
-                }
-              });
-
-              // Update feedback from server response
-              document.querySelector(".feedback-section").textContent =
-                data.feedback;
-
-              // **Update Knowledge Components**
-              updateKC(data.kc_progress); // Call the function to update KCs
-
-              // **Add the following line to re-render LaTeX**
-              if (window.MathJax) {
-                MathJax.typeset();
-              }
-            })
-            .catch((error) => console.error("Error:", error));
-        });
+        input.addEventListener("change", clickHintOption);
       });
 
     // **Add the following line to re-render LaTeX after attaching listeners**

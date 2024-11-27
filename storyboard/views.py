@@ -41,7 +41,7 @@ from django.views.decorators.csrf import csrf_exempt
 section_names = ['Section 1 (2D Kinematics Problem)', 'Section 2 ()', 'Section 3 ()', 'Section 4 ()']
 numberofquestions_list = [5, 0, 0, 0]
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key="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")
 
 @ensure_csrf_cookie
 @login_required
@@ -105,6 +105,10 @@ def section1_questionpage(request):
     print(f"hint: q{q_id}.h{h_id}")
     context = findHint(context, q_id, h_id)
     context["disable_prev_hint"] = h_id == str(0)
+    context["disable_next_hint"] = True
+    if "_" not in h_id:
+        if Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id)+1}").exists():
+            context["disable_next_hint"] = False
 
     # Load kc_progress from JSONField
     kc_progress = cur_progress.kc_progress
@@ -180,14 +184,25 @@ def section1_questionpage(request):
             hint_answer_index = int(request.POST.get('hint_answer')) - 1
             print(f"hint_answer_index: {hint_answer_index}")
             feedback = context["choices_hint"][hint_answer_index]["feedback"]
+            is_correct = context["choices_hint"][hint_answer_index]["is_correct"]
+            disable_next_hint = False
+            
+            # Decide whether to disable "next_hint" button
+            try:
+                if is_correct and Hint.objects.filter(h_id=f"q{q_id}.h{int(h_id) + 1}_{hint_answer_index + 1}").exists():
+                    disable_next_hint = False
+                else:
+                    disable_next_hint = True
+            except:
+                disable_next_hint = True    
+            
+            context["disable_next_hint"] = disable_next_hint          
 
             # Update KCs based on successful or unsuccessful hint completion
             if context["hint_kc"] != "":
                 # Initialize if necessary
                 if context["hint_kc"] not in kc_progress:
-                        kc_progress[context["hint_kc"]] = 0
-                
-                is_correct = context["choices_hint"][hint_answer_index]["is_correct"]
+                    kc_progress[context["hint_kc"]] = 0                
                 # Increment
                 if is_correct:
                     kc_progress[context["hint_kc"]] = min(kc_progress[context["hint_kc"]] + 1, 5)
@@ -207,6 +222,7 @@ def section1_questionpage(request):
                 'correct': is_correct,
                 'feedback': feedback,
                 'kc_progress': kc_response,
+                'disable_next_hint': disable_next_hint
             }
             print(response)
             return JsonResponse(response)
@@ -312,17 +328,23 @@ def changehint(request):
         # Update current hint ID in user's progress
         
         context["disable_prev_hint"] = str(next_hint_id) == str(0)
+        context["disable_next_hint"] = False
 
         if f"q{q_id}.h{next_hint_id}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}")
             context = findHint(context, q_id, next_hint_id)
             cur_progress.current_h_id = str(next_hint_id)
             cur_progress.save()
+            if next_hint_id == str(question.total_hints):
+                context["disable_next_hint"] = True
+            if f"q{q_id}.h{int(next_hint_id) + 1}" not in all_hints_of_question:
+                context["disable_next_hint"] = True
         elif f"q{q_id}.h{next_hint_id}_{cur_opt}" in all_hints_of_question:
             print(f"q{q_id}.h{next_hint_id}_{cur_opt}")
             context = findHint(context, q_id, f"{next_hint_id}_{cur_opt}")
             cur_progress.current_h_id = f"{next_hint_id}_{cur_opt}"
             cur_progress.save()
+            context["disable_next_hint"] = True
         else:
             context["hint"] = ""
             context["hint_img_url"] = ""
