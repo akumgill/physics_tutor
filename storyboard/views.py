@@ -86,6 +86,7 @@ def section1_questionpage(request):
     context["question"] = f"Question {q_id}: " + question.text
     context["question_img_url"] = question.img_name
     context["example_problem"] = question.example_problem
+    context["solution"] = question.solution
     context["disable_prev_question"] = q_id == 1
     context["disable_next_question"] = True
     if History.objects.filter(user=user).filter(q_id=q_id).exists():
@@ -155,6 +156,7 @@ def section1_questionpage(request):
                     kc_progress[kc.kc_id] = min(kc_progress[kc.kc_id] + 1, 5)
                 cur_progress.kc_progress = kc_progress
                 cur_progress.save()
+
             else:
                 # Decrease KCs for incorrect answers
                 for kc in question.kcs.all():
@@ -266,7 +268,7 @@ def findQuestion(context, q_id):
         context["question"] = f"Question {q_id}: " + question.text
         context["question_img_url"] = question.img_name
         context["example_problem"] = question.example_problem
-
+        context["solution"] = question.solution
         # QUESTION OPTIONS
         choices_question = Option.objects.filter(o_id__startswith=f"q{q_id}.o")
         context["choices_question"] = [{"idx": i, "text": o.text} for i, o in enumerate(choices_question)]
@@ -276,6 +278,7 @@ def findQuestion(context, q_id):
         context["question"] = "No more question available."
         context["question_img_url"] = ""
         context["example_problem"] = ""
+        context["solution"] = ""
         context["choices_question"] = [{"idx": i + 1, "text": ""} for i, o in enumerate(5)]
     return context
 
@@ -404,6 +407,7 @@ def import_questions():
             text = entry["text"],
             img_name = entry["img_name"],
             example_problem = entry["example_problem"],
+            solution = entry["solution"],
         )
         question.save()
 

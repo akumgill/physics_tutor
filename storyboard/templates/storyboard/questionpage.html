@@ -57,6 +57,8 @@
       {% if disable_prev_question %} disabled {% endif %}>Previous</button>
       <button id="next_question" onclick="changeQuestion(true)" 
       {% if disable_next_question %} disabled {% endif %}>Next</button>
+      <button id="seeSolution"
+      {% if not is_correct %} disabled {% endif %}>See Solution</button>
     </div>
     <!-- Knowledge Components Section -->
     <div class="knowledge-section" id="kc_display">
@@ -144,6 +146,13 @@
     </div>
   </div>
 
+  <div id="solutionOverlay" class="overlay" style="display: none">
+    <div class="overlay-content">
+      {{ solution|linebreaks|safe }}
+      <button id="closeSolution">Close</button>
+    </div>
+  </div>
+
   <div id="congratOverlay" class="overlay" style="display: none">
     <div class="overlay-content">
       Congratulations! You've passed all the questions! <br>
@@ -209,6 +218,7 @@
         // Activate Next question button if correct
         if (data.correct){
           document.getElementById("next_question").disabled = false;
+          document.getElementById("seeSolution").disabled = false;
           document.querySelector(".submit-section button[type='submit']").disabled = true;
         }
         
@@ -355,6 +365,7 @@
         document.getElementById("submit").disabled = data.is_correct;
         document.getElementById("prev_question").disabled = data.disable_prev_question;
         document.getElementById("next_question").disabled = data.disable_next_question;
+        document.getElementById("seeSolution").disabled = !data.is_correct;
         document.getElementById("feedback").textContent = "";
 
         // Update hint
@@ -382,6 +393,21 @@
         if (window.MathJax) {
           MathJax.typeset();
         }
+
+        // Update solution overlay
+        const solutionOverlay = document.getElementById("solutionOverlay");
+        solutionOverlay.innerHTML = "";
+        const solutionContent = document.createElement("div");
+        solutionContent.className = "overlay-content";
+        solutionContent.innerText = data.solution;
+        const closeSolutionButton = document.createElement("button");
+        closeSolutionButton.id = "closeSolution";
+        closeSolutionButton.textContent = "Close";
+        closeSolutionButton.addEventListener("click", function () {
+          document.getElementById("solutionOverlay").style.display = "none";
+        });
+        solutionContent.appendChild(closeSolutionButton);
+        solutionOverlay.appendChild(solutionContent);
       })
       .catch((error) => console.error("Error:", error));
   }
@@ -603,6 +629,19 @@ function updateKC(kc_progress) {
     } else {
       chatbotContainer.style.display = 'none';  // Hide chatbot
     }
+  });
+
+  // Open the solution overlay when 'See Solution' button is clicked
+  document.getElementById("seeSolution").addEventListener("click", function () {
+    document.getElementById("solutionOverlay").style.display = "block";
+    if (window.MathJax) {
+      MathJax.typeset();
+    }
+  });
+
+  // Close the solution overlay when 'Close' button is clicked
+  document.getElementById("closeSolution").addEventListener("click", function () {
+    document.getElementById("solutionOverlay").style.display = "none";
   });
 </script>
 
