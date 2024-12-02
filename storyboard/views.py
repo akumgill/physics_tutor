@@ -75,7 +75,11 @@ def section1_questionpage(request):
     context = {"user": user}
     
     section = get_object_or_404(Section, s_id=1)
-    cur_progress = get_object_or_404(CurrentProgress, user=user)
+    if not CurrentProgress.objects.filter(user=user).exists():
+        cur_progress = CurrentProgress(user=user)
+        cur_progress.save()
+    else:
+        cur_progress = get_object_or_404(CurrentProgress, user=user)
 
     # KC
     context = updateKC(context, cur_progress)
@@ -88,7 +92,7 @@ def section1_questionpage(request):
     context["example_problem"] = question.example_problem
     context["disable_prev_question"] = q_id == 1
     context["disable_next_question"] = True
-    if History.objects.filter(user=user).filter(q_id=q_id).exists():
+    if History.objects.filter(user=user).filter(q_id=q_id).exists() and q_id < 5:
         context["disable_next_question"] = not get_object_or_404(History, user=user, q_id=q_id).is_correct
 
     # QUESTION OPTIONS
@@ -224,7 +228,7 @@ def section1_questionpage(request):
                 'kc_progress': kc_response,
                 'disable_next_hint': disable_next_hint
             }
-            print(response)
+            # print(response)
             return JsonResponse(response)
 
     return render(request, 'storyboard/questionpage.html', context)
@@ -234,7 +238,7 @@ def changequestion(request):
     print("Change Question")
     user = request.user
     cur_progress = get_object_or_404(CurrentProgress, user=user)
-    print(cur_progress)
+    # print(cur_progress)
     if request.method == "POST" and request.POST.get('unique_identifier') == "change_question":
         context = {}
         q_id = cur_progress.current_q_id
@@ -257,10 +261,10 @@ def changequestion(request):
         context["disable_prev_hint"] = True
         context["is_last_question"] = next_question_id == 5
         context["disable_next_question"] = True
-        if History.objects.filter(user=user).filter(q_id=next_question_id).exists():
+        if History.objects.filter(user=user).filter(q_id=next_question_id).exists() and next_question_id < 5:
             context["disable_next_question"] = not get_object_or_404(History, user=user, q_id=next_question_id).is_correct
            
-        print(context)
+        # print(context)
         return JsonResponse(context)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -301,7 +305,7 @@ def changehint(request):
     print("Change Hint")
     user = request.user
     cur_progress = get_object_or_404(CurrentProgress, user=user)
-    print(cur_progress)
+    # print(cur_progress)
     if request.method == "POST" and request.POST.get('unique_identifier') == "change_hint":
         context = {}
         q_id = cur_progress.current_q_id
