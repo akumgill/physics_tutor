@@ -93,6 +93,7 @@ class Migration(migrations.Migration):
                 ('img_name', models.TextField(default='', verbose_name='img_name')),
                 ('total_hints', models.PositiveIntegerField(default=0, verbose_name='total_hints')),
                 ('example_problem', models.TextField(default='', verbose_name='example_problem')),
+                ('solution', models.TextField(default='', verbose_name='solution')),
                 ('kcs', models.ManyToManyField(to='storyboard.knowledgecomponent')),
             ],
         ),

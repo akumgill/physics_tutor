@@ -40,6 +40,7 @@ class Question(models.Model):
     total_hints = models.PositiveIntegerField(verbose_name="total_hints", default=0)
     example_problem = models.TextField(verbose_name="example_problem", default="")
     kcs = models.ManyToManyField('KnowledgeComponent')
+    solution = models.TextField(verbose_name="solution", default="")
 
     def __unicode__(self):
         return 'id='+ str(self.pk)
